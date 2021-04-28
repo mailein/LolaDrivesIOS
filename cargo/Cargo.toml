@@ -1,0 +1,15 @@
+[package]
+name = "greetings"
+version = "0.1.0"
+authors = ["Mei Chen <s8mechen@stud.uni-saarland.de>"]
+edition = "2018"
+description = "Example static library project built for iOS"
+publish = false
+
+[lib]
+name = "greetings"
+crate-type = ["staticlib", "cdylib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
