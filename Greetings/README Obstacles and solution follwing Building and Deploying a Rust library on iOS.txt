@@ -15,7 +15,7 @@ error: component 'rust-std' for target 'armv7-apple-ios' is unavailable for down
 
 -----------------------------------
 Solution:
-rustup target add x86_64-apple-darlin aarch64-apple-darwin aarch64-apple-ios x86_64-apple-ios
+rustup target add x86_64-apple-darwin aarch64-apple-darwin aarch64-apple-ios x86_64-apple-ios
 -----------------------------------
 
 
