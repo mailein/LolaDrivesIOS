@@ -101,8 +101,10 @@ pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
     //----
 }
 
+pub struct RustTuple(i32, *mut f64);
+
 #[no_mangle]
-pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> *mut f64{
+pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> RustTuple{
     // //jdouble = f64 (seems to work)
     let num_values = IR.as_ref().unwrap().inputs.len() + 1;
     let mut event = vec![0.0; num_values];
@@ -127,9 +129,9 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> *mut f64{
         .accept_event(input, Duration::new(time.floor() as u64, 0));
 
     let num_updates = updates.timed.len();
-    let res = vec![0.0; num_updates * NUM_OUTPUTS];
+    let mut res = vec![0.0; num_updates * NUM_OUTPUTS];
     //Mei: what is the type of output_copy_res???
-    let output_copy_res = updates
+    let _output_copy_res = updates
         .timed
         .iter()
         .enumerate()
@@ -153,8 +155,7 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> *mut f64{
                 })
                 .collect();
             res[NUM_OUTPUTS * ix..].copy_from_slice(&output);
-        })
-        .collect();
+        });
     // debug_assert!(output_copy_res.is_ok());
-    res.as_mut_ptr()
+    RustTuple(num_values as i32, res.as_mut_ptr())
 }

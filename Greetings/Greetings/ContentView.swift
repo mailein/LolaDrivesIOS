@@ -12,11 +12,14 @@ struct ContentView: View {
         let rustGreetings = RustGreetings()
         let text = "\(rustGreetings.sayHello(to: "world"))"
         let num = "\(rustGreetings.add(a:1, b:2))"
-        let text1 = "\(rustGreetings.initmonitor(s: "hello"))"
+//        let text1 = "\(rustGreetings.initmonitor(s: "hello"))"
+        let bytes: [Double] = [39, 77, 111, 111, 102, 33, 39, 0]
+        let a = "\(rustGreetings.sendevent(inputs: bytes))"
         HStack{
             Text(text)
             Text(num)
-            Text(text1)
+//            Text(text1)
+            Text(a)
         }
         .padding()
     }
