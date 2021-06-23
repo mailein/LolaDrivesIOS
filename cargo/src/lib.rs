@@ -62,7 +62,7 @@ pub extern fn rust_add(a: i16, b:i16) -> i16 {
     a+b
 }
 
-pub unsafe extern fn java_de_unisaarland_loladrives_sinks_rdevalidator_initmonitor(s: *mut c_char)-> *mut c_char{
+pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
     let spec_file = unsafe {
         if s.is_null() { panic!() }
         CString::from_raw(s)
