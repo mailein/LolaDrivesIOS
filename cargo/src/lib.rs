@@ -62,43 +62,43 @@ pub extern fn rust_add(a: i16, b:i16) -> i16 {
     a+b
 }
 
-// pub unsafe extern fn java_de_unisaarland_loladrives_sinks_rdevalidator_initmonitor(s: *mut c_char)-> *mut c_char{
-//     let spec_file = unsafe {
-//         if s.is_null() { panic!() }
-//         CString::from_raw(s)
-//     };
+pub unsafe extern fn java_de_unisaarland_loladrives_sinks_rdevalidator_initmonitor(s: *mut c_char)-> *mut c_char{
+    let spec_file = unsafe {
+        if s.is_null() { panic!() }
+        CString::from_raw(s)
+    };
 
-//     let cfg = ParserConfig::for_string(String::from(spec_file.to_str().unwrap()));
-//     let mir = rtlola_frontend::parse(cfg).unwrap();
-//     let indices: Vec<usize> = RELEVANT_OUTPUTS
-//         .iter()
-//         .map(|name| {
-//             let r = mir
-//                 .outputs
-//                 .iter()
-//                 .find(|o| &o.name == *name)
-//                 .expect("ir does not contain required output stream")
-//                 .reference;
-//             if let StreamReference::Out(r) = r {
-//                 r
-//             } else {
-//                 panic!("output stream has input stream reference")
-//             }
-//         })
-//         .collect();
-//     for i in 0..RELEVANT_OUTPUT_IX.len() {
-//         // should prob be a mem copy of sorts.
-//         RELEVANT_OUTPUT_IX[i] = indices[i];
-//     }
-//     assert_eq!(NUM_OUTPUTS, RELEVANT_OUTPUTS.len());
-//     IR = Some(mir.clone());
-//     let ecfg = EvalConfig::api(TimeRepresentation::Relative(TimeFormat::HumanTime));
-//     MONITOR = Some(Config::new_api(ecfg, mir).into_monitor().unwrap());
+    let cfg = ParserConfig::for_string(String::from(spec_file.to_str().unwrap()));
+    let mir = rtlola_frontend::parse(cfg).unwrap();
+    let indices: Vec<usize> = RELEVANT_OUTPUTS
+        .iter()
+        .map(|name| {
+            let r = mir
+                .outputs
+                .iter()
+                .find(|o| &o.name == *name)
+                .expect("ir does not contain required output stream")
+                .reference;
+            if let StreamReference::Out(r) = r {
+                r
+            } else {
+                panic!("output stream has input stream reference")
+            }
+        })
+        .collect();
+    for i in 0..RELEVANT_OUTPUT_IX.len() {
+        // should prob be a mem copy of sorts.
+        RELEVANT_OUTPUT_IX[i] = indices[i];
+    }
+    assert_eq!(NUM_OUTPUTS, RELEVANT_OUTPUTS.len());
+    IR = Some(mir.clone());
+    let ecfg = EvalConfig::api(TimeRepresentation::Relative(TimeFormat::HumanTime));
+    MONITOR = Some(Config::new_api(ecfg, mir).into_monitor().unwrap());
 
-//     //Just to match the output-type, will remove this later
-//     CString::new("Worked ".to_owned()).unwrap().into_raw()
-//     //----
-// }
+    //Just to match the output-type, will remove this later
+    CString::new("Worked ".to_owned()).unwrap().into_raw()
+    //----
+}
 
 // pub unsafe extern fn java_org_rdeapp_pcdftester_sinks_rdevalidator_sendevent(inputs: *mut f64) -> *mut f64{
 //     // //jdouble = f64 (seems to work)
@@ -106,6 +106,7 @@ pub extern fn rust_add(a: i16, b:i16) -> i16 {
 //     let mut event = vec![0.0; num_values];
 //     event.copy_from_slice(unsafe { std::slice::from_raw_parts_mut(inputs, num_values)});
     
+//     //Mei: should I and how to check if the copy above works?
 //     // let copy_res = ???
 //     // debug_assert!(copy_res.is_ok());
 //     // if copy_res.is_err() {
@@ -125,6 +126,7 @@ pub extern fn rust_add(a: i16, b:i16) -> i16 {
 
 //     let num_updates = updates.timed.len();
 //     let res = vec![0.0; num_updates * NUM_OUTPUTS];
+//     //Mei: what is the type of output_copy_res???
 //     let output_copy_res = updates
 //         .timed
 //         .iter()

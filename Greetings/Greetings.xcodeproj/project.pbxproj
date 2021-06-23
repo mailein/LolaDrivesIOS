@@ -13,7 +13,7 @@
 		960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DACAD2639685A005DEABB /* Preview Assets.xcassets */; };
 		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
 		960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
-		96F2E540268347DA00D3DCAE /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
+		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 		960DACB7263968A5005DEABB /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
-		96F2E5412683492700D3DCAE /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
+		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,7 +36,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */,
-				96F2E540268347DA00D3DCAE /* libresolv.tbd in Frameworks */,
+				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,7 +46,7 @@
 		960DAC9A26396859005DEABB = {
 			isa = PBXGroup;
 			children = (
-				96F2E5412683492700D3DCAE /* greetings.h */,
+				966BAB97268398040075984D /* greetings.h */,
 				960DACA526396859005DEABB /* Greetings */,
 				960DACA426396859005DEABB /* Products */,
 				960DACB52639687D005DEABB /* Frameworks */,

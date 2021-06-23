@@ -19,7 +19,7 @@ class RustGreetings {
         return rust_add(a,b)
     }
     
-//    func initmonitor(s: String) -> String{
-//        return java_de_unisaarland_loladrives_sinks_rdevalidator_initmonitor(s);
-//    }
+    func initmonitor(s: String) -> String{
+        return String(cString: java_de_unisaarland_loladrives_sinks_rdevalidator_initmonitor(s)!);
+    }
 }
