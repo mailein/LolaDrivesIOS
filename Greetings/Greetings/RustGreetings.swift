@@ -20,6 +20,9 @@ class RustGreetings {
     }
     
     func initmonitor(s: String) -> String{
-        return String(cString: java_de_unisaarland_loladrives_sinks_rdevalidator_initmonitor(s)!);
+        let result = rust_initmonitor(s)
+        let swift_result = String(cString: result!)
+        rust_greeting_free(UnsafeMutablePointer(mutating: result))
+        return swift_result
     }
 }
