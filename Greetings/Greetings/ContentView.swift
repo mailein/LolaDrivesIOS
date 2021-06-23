@@ -12,7 +12,7 @@ struct ContentView: View {
         let rustGreetings = RustGreetings()
         let text = "\(rustGreetings.sayHello(to: "world"))"
         let num = "\(rustGreetings.add(a:1, b:2))"
-        let text1 = "\(rustGreetings.initmonitor(s: "world"))"
+        let text1 = "\(rustGreetings.initmonitor(s: "hello"))"
         HStack{
             Text(text)
             Text(num)

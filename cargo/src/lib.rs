@@ -62,6 +62,7 @@ pub extern fn rust_add(a: i16, b:i16) -> i16 {
     a+b
 }
 
+#[no_mangle]
 pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
     let spec_file = unsafe {
         if s.is_null() { panic!() }
@@ -100,59 +101,60 @@ pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
     //----
 }
 
-// pub unsafe extern fn java_org_rdeapp_pcdftester_sinks_rdevalidator_sendevent(inputs: *mut f64) -> *mut f64{
-//     // //jdouble = f64 (seems to work)
-//     let num_values = IR.as_ref().unwrap().inputs.len() + 1;
-//     let mut event = vec![0.0; num_values];
-//     event.copy_from_slice(unsafe { std::slice::from_raw_parts_mut(inputs, num_values)});
+#[no_mangle]
+pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> *mut f64{
+    // //jdouble = f64 (seems to work)
+    let num_values = IR.as_ref().unwrap().inputs.len() + 1;
+    let mut event = vec![0.0; num_values];
+    event.copy_from_slice(unsafe { std::slice::from_raw_parts_mut(inputs, num_values)});
     
-//     //Mei: should I and how to check if the copy above works?
-//     // let copy_res = ???
-//     // debug_assert!(copy_res.is_ok());
-//     // if copy_res.is_err() {
-//     //     let res = env.new_double_array(0).unwrap();
-//     //     return res;
-//     // }
+    //Mei: should I and how to check if the copy above works?
+    // let copy_res = ???
+    // debug_assert!(copy_res.is_ok());
+    // if copy_res.is_err() {
+    //     let res = env.new_double_array(0).unwrap();
+    //     return res;
+    // }
 
-//     let (time, input) = event.split_last().unwrap();
-//     let input: Vec<Value> = input
-//         .into_iter()
-//         .map(|f| Value::Float(NotNan::new(*f).unwrap()))
-//         .collect();
-//     let updates = MONITOR
-//         .as_mut()
-//         .unwrap()
-//         .accept_event(input, Duration::new(time.floor() as u64, 0));
+    let (time, input) = event.split_last().unwrap();
+    let input: Vec<Value> = input
+        .into_iter()
+        .map(|f| Value::Float(NotNan::new(*f).unwrap()))
+        .collect();
+    let updates = MONITOR
+        .as_mut()
+        .unwrap()
+        .accept_event(input, Duration::new(time.floor() as u64, 0));
 
-//     let num_updates = updates.timed.len();
-//     let res = vec![0.0; num_updates * NUM_OUTPUTS];
-//     //Mei: what is the type of output_copy_res???
-//     let output_copy_res = updates
-//         .timed
-//         .iter()
-//         .enumerate()
-//         .map(|(ix, update)| {
-//             let (_, values) = update;
-//             let output: Vec<f64> = values
-//                 .iter()
-//                 .filter_map(|(sr, v)| {
-//                     if RELEVANT_OUTPUT_IX.contains(sr) {
-//                         Some(v)
-//                     } else {
-//                         None
-//                     }
-//                 })
-//                 .map(|v| {
-//                     if let Value::Float(f) = v {
-//                         f.into_inner() as f64
-//                     } else {
-//                         0.0 as f64
-//                     }
-//                 })
-//                 .collect();
-//             res[NUM_OUTPUTS * ix..].copy_from_slice(&output);
-//         })
-//         .collect();
-//     // debug_assert!(output_copy_res.is_ok());
-//     res.as_mut_ptr()
-// }
+    let num_updates = updates.timed.len();
+    let res = vec![0.0; num_updates * NUM_OUTPUTS];
+    //Mei: what is the type of output_copy_res???
+    let output_copy_res = updates
+        .timed
+        .iter()
+        .enumerate()
+        .map(|(ix, update)| {
+            let (_, values) = update;
+            let output: Vec<f64> = values
+                .iter()
+                .filter_map(|(sr, v)| {
+                    if RELEVANT_OUTPUT_IX.contains(sr) {
+                        Some(v)
+                    } else {
+                        None
+                    }
+                })
+                .map(|v| {
+                    if let Value::Float(f) = v {
+                        f.into_inner() as f64
+                    } else {
+                        0.0 as f64
+                    }
+                })
+                .collect();
+            res[NUM_OUTPUTS * ix..].copy_from_slice(&output);
+        })
+        .collect();
+    // debug_assert!(output_copy_res.is_ok());
+    res.as_mut_ptr()
+}
