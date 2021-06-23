@@ -130,7 +130,6 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> RustTuple{
 
     let num_updates = updates.timed.len();
     let mut res = vec![0.0; num_updates * NUM_OUTPUTS];
-    //Mei: what is the type of output_copy_res???
     let _output_copy_res = updates
         .timed
         .iter()
