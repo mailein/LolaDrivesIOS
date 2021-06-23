@@ -11,8 +11,13 @@ struct ContentView: View {
     var body: some View {
         let rustGreetings = RustGreetings()
         let text = "\(rustGreetings.sayHello(to: "world"))"
-        Text(text)
-            .padding()
+        let num = "\(rustGreetings.add(a:1, b:2))"
+        HStack{
+            Text(text)
+                .padding()
+            Text(num)
+                .padding()
+        }
     }
 }
 
