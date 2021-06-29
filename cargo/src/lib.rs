@@ -1,5 +1,5 @@
 use core::f64;
-use std::os::raw::{c_char};
+use std::os::raw::{c_char, c_uint};
 use std::ffi::{CString, CStr};
 
 use core::time::Duration;
@@ -101,15 +101,15 @@ pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
     //----
 }
 
-pub struct RustTuple(i32, *mut f64);
-
 #[no_mangle]
-pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> RustTuple{
+pub unsafe extern fn rust_sendevent(inputs: *mut f64, len: *mut c_uint) -> *mut f64{
     // //jdouble = f64 (seems to work)
     let num_values = IR.as_ref().unwrap().inputs.len() + 1;
     let mut event = vec![0.0; num_values];
-    event.copy_from_slice(unsafe { std::slice::from_raw_parts_mut(inputs, num_values)});
-    
+    event.copy_from_slice( std::slice::from_raw_parts_mut(inputs, num_values));
+    // event = std::slice::from_raw_parts_mut(inputs, num_values).to_vec();
+    *len = event.len() as c_uint;
+
     //Mei: should I and how to check if the copy above works?
     // let copy_res = ???
     // debug_assert!(copy_res.is_ok());
@@ -156,5 +156,12 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64) -> RustTuple{
             res[NUM_OUTPUTS * ix..].copy_from_slice(&output);
         });
     // debug_assert!(output_copy_res.is_ok());
-    RustTuple(num_values as i32, res.as_mut_ptr())
+    Box::into_raw(res.into_boxed_slice()) as *mut f64
+}
+
+#[no_mangle]
+pub extern fn rust_array_free(arr: *mut f64) {
+    drop(unsafe {
+        Box::from_raw(arr)
+    });
 }
