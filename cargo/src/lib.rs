@@ -30,8 +30,8 @@ static RELEVANT_OUTPUTS: [&str; 19] = [
     "r_rpa",
     "m_rpa",
     "nox_per_kilometer",
-    "is_valid_test_num",
-    "not_rde_test_num",
+    "is_valid_test",
+    "not_rde_test",
 ];
 static mut RELEVANT_OUTPUT_IX: [usize; 19] =
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -64,12 +64,18 @@ pub extern fn rust_add(a: i16, b:i16) -> i16 {
 
 #[no_mangle]
 pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
-    let spec_file = unsafe {
+    let spec_file = {
         if s.is_null() { panic!() }
-        CString::from_raw(s)
+        // CString::from_raw(s)
+        let c_str = { CStr::from_ptr(s) };
+        let recipient = match c_str.to_str() {
+            Err(_) => "there",
+            Ok(string) => string,
+        };
+        recipient
     };
 
-    let cfg = ParserConfig::for_string(String::from(spec_file.to_str().unwrap()));
+    let cfg = ParserConfig::for_string(String::from(spec_file));
     let mir = rtlola_frontend::parse(cfg).unwrap();
     let indices: Vec<usize> = RELEVANT_OUTPUTS
         .iter()

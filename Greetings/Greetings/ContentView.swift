@@ -13,17 +13,17 @@ struct ContentView: View {
         let text = "\(rustGreetings.sayHello(to: "world"))"
         let num = "\(rustGreetings.add(a:1, b:2))"
         
-        let fileContent = SpecFile(filename: "rde-lola-test-drive-spec-no-percentile.lola")
+        let fileContent = SpecFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
         let text1 = "\(rustGreetings.initmonitor(s: fileContent))"
         
-//        var bytes: [Double] = [39, 77, 111, 111, 102, 33, 39, 0]
-//        let a = "\(rustGreetings.sendevent(inputs: &bytes))"
+        var bytes: [Double] = [39, 77, 111, 111, 102, 33, 39, 0]
+        let a = "\(rustGreetings.sendevent(inputs: &bytes))"
         
         HStack{
             Text(text)
             Text(num)
             Text(text1)
-//            Text(a)
+            Text(a)
         }
         .padding()
     }

@@ -1,0 +1,9 @@
+// number of visible GPS satellites
+input gps: UInt64
+output number_of_satellites_too_large := gps > 16
+trigger number_of_satellites_too_large
+  "Number of satellites is too large for flying near the ground."
+trigger gps = 3
+  "Few GPS satellites in range. 3 dimensional location unavailable"
+trigger gps < 3
+  "Few GPS satellites in range. No GPS location available."
