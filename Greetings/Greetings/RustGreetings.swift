@@ -31,11 +31,11 @@ class RustGreetings {
         let array: UnsafeMutablePointer<Double>
     }
     
-    func sendevent(inputs: (inout [Double])) -> [Double]{
+    func sendevent(inputs: (inout [Double]), len_in: UInt32) -> [Double]{
         var len: UInt32 = 0
-        let result = rust_sendevent(&inputs, &len)
+        let result = rust_sendevent(&inputs, len_in, &len)
         let swift_result: [Double] = Array(UnsafeBufferPointer(start: result, count: Int(len)))
-        rust_array_free(result)
+//        rust_array_free(result)
         return swift_result
     }
 }

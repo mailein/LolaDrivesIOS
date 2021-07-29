@@ -113,7 +113,7 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *
     // let num_values = IR.as_ref().unwrap().inputs.len() + 1;
     let event = std::slice::from_raw_parts(inputs, len_in as usize).to_vec();
     // event.copy_from_slice( std::slice::from_raw_parts_mut(inputs, num_values));
-    
+    // println!("{:?}", event);
 
     //Mei: should I and how to check if the copy above works?
     // let copy_res = ???
@@ -128,6 +128,8 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *
         .into_iter()
         .map(|f| Value::Float(NotNan::new(*f).unwrap()))
         .collect();
+    // println!("{:?}", input);
+    
     let updates = MONITOR
         .as_mut()
         .unwrap()

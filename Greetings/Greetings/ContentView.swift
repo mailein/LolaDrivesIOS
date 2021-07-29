@@ -16,14 +16,19 @@ struct ContentView: View {
         let fileContent = SpecFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
         let text1 = "\(rustGreetings.initmonitor(s: fileContent))"
         
-        var bytes: [Double] = [39, 77, 111, 111, 102, 33, 39, 0]
-        let a = "\(rustGreetings.sendevent(inputs: &bytes))"
+        //6 input var in spec.lola, plus 1 time => 7 elements
+        var bytes: [Double] = [18.0, 303.18824990035785, 288.15, 12.0, 15.94, 1.55, 5417.974006502]
+        let a = "\(rustGreetings.sendevent(inputs: &bytes, len_in: UInt32(bytes.count)))"
+        
+        var bytes2: [Double] = [18.0, 303.18824990035785, 288.15, 6.0, 15.02, 0.7, 5419.009988532]
+        let a2 = "\(rustGreetings.sendevent(inputs: &bytes2, len_in: UInt32(bytes2.count)))"
         
         HStack{
             Text(text)
             Text(num)
             Text(text1)
             Text(a)
+            Text(a2)
         }
         .padding()
     }
