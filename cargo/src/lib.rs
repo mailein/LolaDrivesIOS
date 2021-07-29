@@ -108,13 +108,12 @@ pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
 }
 
 #[no_mangle]
-pub unsafe extern fn rust_sendevent(inputs: *mut f64, len: *mut c_uint) -> *mut f64{
+pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *mut c_uint) -> *mut f64{
     // //jdouble = f64 (seems to work)
-    let num_values = IR.as_ref().unwrap().inputs.len() + 1;
-    let mut event = vec![0.0; num_values];
-    event.copy_from_slice( std::slice::from_raw_parts_mut(inputs, num_values));
-    // event = std::slice::from_raw_parts_mut(inputs, num_values).to_vec();
-    *len = event.len() as c_uint;
+    // let num_values = IR.as_ref().unwrap().inputs.len() + 1;
+    let event = std::slice::from_raw_parts(inputs, len_in as usize).to_vec();
+    // event.copy_from_slice( std::slice::from_raw_parts_mut(inputs, num_values));
+    
 
     //Mei: should I and how to check if the copy above works?
     // let copy_res = ???
@@ -135,6 +134,7 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64, len: *mut c_uint) -> *mut 
         .accept_event(input, Duration::new(time.floor() as u64, 0));
 
     let num_updates = updates.timed.len();
+    *len_out = (num_updates * NUM_OUTPUTS) as c_uint;
     let mut res = vec![0.0; num_updates * NUM_OUTPUTS];
     let _output_copy_res = updates
         .timed
@@ -166,8 +166,8 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64, len: *mut c_uint) -> *mut 
 }
 
 #[no_mangle]
-pub extern fn rust_array_free(arr: *mut f64) {
-    drop(unsafe {
+pub unsafe extern fn rust_array_free(arr: *mut f64) {
+    drop({
         Box::from_raw(arr)
     });
 }
