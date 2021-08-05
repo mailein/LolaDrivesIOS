@@ -14,7 +14,23 @@
 		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
 		960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
+		96F77EBA26B3276D00B22DE2 /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
+		96F77EBB26B3276D00B22DE2 /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		96F77EBC26B3276D00B22DE2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				96F77EBB26B3276D00B22DE2 /* pcdfcore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		960DACA326396859005DEABB /* Greetings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Greetings.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -28,6 +44,7 @@
 		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
+		96F77EB926B3276D00B22DE2 /* pcdfcore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = pcdfcore.framework; path = "../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/pcdfcore.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F77EBA26B3276D00B22DE2 /* pcdfcore.framework in Frameworks */,
 				960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
 			);
@@ -86,6 +104,7 @@
 		960DACB52639687D005DEABB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				96F77EB926B3276D00B22DE2 /* pcdfcore.framework */,
 				960DACB7263968A5005DEABB /* libresolv.tbd */,
 				960DACB62639687D005DEABB /* libgreetings.a */,
 			);
@@ -102,6 +121,7 @@
 				960DAC9F26396859005DEABB /* Sources */,
 				960DACA026396859005DEABB /* Frameworks */,
 				960DACA126396859005DEABB /* Resources */,
+				96F77EBC26B3276D00B22DE2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -295,6 +315,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Greetings/Preview Content\"";
 				DEVELOPMENT_TEAM = TN69MHQ4SY;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/";
 				INFOPLIST_FILE = Greetings/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -319,6 +340,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Greetings/Preview Content\"";
 				DEVELOPMENT_TEAM = TN69MHQ4SY;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/";
 				INFOPLIST_FILE = Greetings/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
