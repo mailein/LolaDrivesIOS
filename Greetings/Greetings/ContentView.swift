@@ -14,7 +14,7 @@ struct ContentView: View {
         let text = "\(rustGreetings.sayHello(to: "world"))"
         let num = "\(rustGreetings.add(a:1, b:2))"
         
-        let fileContent = SpecFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
+        let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
         let text1 = "\(rustGreetings.initmonitor(s: fileContent))"
         
         //6 input var in spec.lola, plus 1 time => 7 elements
@@ -37,24 +37,6 @@ struct ContentView: View {
         }
         .padding()
     }
-}
-
-func SpecFile(filename: String) -> String{
-    let file = filename //this is the file. we will write to and read from it
-    if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-        let fileURL = dir.appendingPathComponent(file)
-        //reading
-        do {
-            print(dir)
-            return try String(contentsOf: fileURL, encoding: .utf8)
-        }
-        catch {
-            //I put the spec file in this dir
-            print(dir)
-            return "a"
-        }
-    }
-    return "b"
 }
 
 struct ContentView_Previews: PreviewProvider {

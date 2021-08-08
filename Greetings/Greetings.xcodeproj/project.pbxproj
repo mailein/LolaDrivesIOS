@@ -14,6 +14,8 @@
 		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
 		960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
+		96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADC26BC205900934FCA /* RDEValidator.swift */; };
+		96A0DADF26BC241800934FCA /* MainActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADE26BC241800934FCA /* MainActivity.swift */; };
 		96F77EBA26B3276D00B22DE2 /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96F77EBB26B3276D00B22DE2 /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -44,6 +46,8 @@
 		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
+		96A0DADC26BC205900934FCA /* RDEValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDEValidator.swift; sourceTree = "<group>"; };
+		96A0DADE26BC241800934FCA /* MainActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainActivity.swift; sourceTree = "<group>"; };
 		96F77EB926B3276D00B22DE2 /* pcdfcore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = pcdfcore.framework; path = "../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/pcdfcore.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -89,6 +93,8 @@
 				960DACAC2639685A005DEABB /* Preview Content */,
 				960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */,
 				960DACBB26396D95005DEABB /* RustGreetings.swift */,
+				96A0DADC26BC205900934FCA /* RDEValidator.swift */,
+				96A0DADE26BC241800934FCA /* MainActivity.swift */,
 			);
 			path = Greetings;
 			sourceTree = "<group>";
@@ -183,6 +189,8 @@
 			files = (
 				960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */,
 				960DACA926396859005DEABB /* ContentView.swift in Sources */,
+				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
+				96A0DADF26BC241800934FCA /* MainActivity.swift in Sources */,
 				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
