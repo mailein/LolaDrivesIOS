@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,9 +13,12 @@
 		960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DACAD2639685A005DEABB /* Preview Assets.xcassets */; };
 		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
 		960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
+		9651D72726CAA324000F9A44 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = 9651D72626CAA324000F9A44 /* Files */; };
+		9651D72926CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */; };
+		9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
 		96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADC26BC205900934FCA /* RDEValidator.swift */; };
-		96A0DADF26BC241800934FCA /* MainActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADE26BC241800934FCA /* MainActivity.swift */; };
+		96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DAE026C143C400934FCA /* PatternParser.swift */; };
 		96F77EBA26B3276D00B22DE2 /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96F77EBB26B3276D00B22DE2 /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -45,9 +48,11 @@
 		960DACB7263968A5005DEABB /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
+		9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "rde-lola-test-drive-spec-no-percentile1.lola"; path = "Greetings/rde-lola-test-drive-spec-no-percentile1.lola"; sourceTree = "<group>"; };
+		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
 		96A0DADC26BC205900934FCA /* RDEValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDEValidator.swift; sourceTree = "<group>"; };
-		96A0DADE26BC241800934FCA /* MainActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainActivity.swift; sourceTree = "<group>"; };
+		96A0DAE026C143C400934FCA /* PatternParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternParser.swift; sourceTree = "<group>"; };
 		96F77EB926B3276D00B22DE2 /* pcdfcore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = pcdfcore.framework; path = "../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/pcdfcore.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9651D72726CAA324000F9A44 /* Files in Frameworks */,
 				96F77EBA26B3276D00B22DE2 /* pcdfcore.framework in Frameworks */,
 				960DACBE263975CF005DEABB /* libgreetings.a in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
@@ -68,6 +74,8 @@
 		960DAC9A26396859005DEABB = {
 			isa = PBXGroup;
 			children = (
+				9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */,
+				9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */,
 				966BAB97268398040075984D /* greetings.h */,
 				960DACA526396859005DEABB /* Greetings */,
 				960DACA426396859005DEABB /* Products */,
@@ -94,7 +102,7 @@
 				960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */,
 				960DACBB26396D95005DEABB /* RustGreetings.swift */,
 				96A0DADC26BC205900934FCA /* RDEValidator.swift */,
-				96A0DADE26BC241800934FCA /* MainActivity.swift */,
+				96A0DAE026C143C400934FCA /* PatternParser.swift */,
 			);
 			path = Greetings;
 			sourceTree = "<group>";
@@ -134,6 +142,9 @@
 			dependencies = (
 			);
 			name = Greetings;
+			packageProductDependencies = (
+				9651D72626CAA324000F9A44 /* Files */,
+			);
 			productName = Greetings;
 			productReference = 960DACA326396859005DEABB /* Greetings.app */;
 			productType = "com.apple.product-type.application";
@@ -161,6 +172,9 @@
 				Base,
 			);
 			mainGroup = 960DAC9A26396859005DEABB;
+			packageReferences = (
+				9651D72526CAA324000F9A44 /* XCRemoteSwiftPackageReference "Files" */,
+			);
 			productRefGroup = 960DACA426396859005DEABB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -175,7 +189,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */,
 				960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */,
+				9651D72926CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */,
 				960DACAB2639685A005DEABB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,8 +206,8 @@
 				960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */,
 				960DACA926396859005DEABB /* ContentView.swift in Sources */,
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
-				96A0DADF26BC241800934FCA /* MainActivity.swift in Sources */,
 				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,
+				96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +402,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9651D72526CAA324000F9A44 /* XCRemoteSwiftPackageReference "Files" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JohnSundell/Files.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9651D72626CAA324000F9A44 /* Files */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9651D72526CAA324000F9A44 /* XCRemoteSwiftPackageReference "Files" */;
+			productName = Files;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 960DAC9B26396859005DEABB /* Project object */;
 }

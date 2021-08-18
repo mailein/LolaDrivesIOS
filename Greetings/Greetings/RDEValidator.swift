@@ -7,16 +7,13 @@
 
 import Foundation
 import pcdfcore
+//import Files
+//
+//let projectRepo = "\(Folder.home.path)/Developer/masterThesisLab/RustInIOS/Greetings"
 
 let VERBOSITY_MODE = false
 
 class RDEValidator {
-    let activity: MainActivity
-    
-    init(Activity : MainActivity){
-        activity = Activity
-    }
-    
     // Last event time in seconds.
     private var time: Double = 0.0
     
@@ -27,16 +24,6 @@ class RDEValidator {
     private var fuelType = ""
     private var fuelRateSupported = false
     private var faeSupported = false
-
-    
-    // Second OBDSource used for determination of the sensor profile.
-        private let source = OBDSource( //todo
-            activity.mBluetoothSocket?.inputStream,
-            activity.mBluetoothSocket?.outputStream,
-            Channel(10000),
-            [],
-            activity.mUUID
-        )
 
     enum RDE_RTLOLA_INPUT_QUANTITIES {
         case  VELOCITY
@@ -58,6 +45,20 @@ class RDEValidator {
          .MASS_AIR_FLOW : nil,
          .FUEL_RATE : nil,
          .FUEL_AIR_EQUIVALENCE : nil]
+    
+    /*
+        Initial data is complete if we received values for all the sensors in the determined sensor profile and GPS data.
+        If complete, we can start communicating with the RTLola engine.
+     */
+    private var initialDataComplete: Bool {
+        var countAvailable = 0
+        for pair in inputs {
+            if (pair.value != nil) {
+                countAvailable += 1
+            }
+        }
+        return countAvailable == rdeProfile.count + 1
+    }
 
     let rustGreetings = RustGreetings()
 
@@ -90,7 +91,7 @@ class RDEValidator {
         }
         
         // Check Supported PIDs
-        let supported = checkSupportedPids(suppPids: suppPids, fuelType: fuelType)
+        let supported = checkSupportedPids(supportedPids: suppPids, fuelType: fuelType)
         if(!supported){
             throw RdeError.IllegalState
         }
@@ -114,33 +115,147 @@ class RDEValidator {
         }else if(event.type == pcdfcore.EventType.obdResponse){
             // Reduces the event if possible (e.g. NOx or FuelRate events) using the PCDFCore library.
             //todo ignore sensorreducer for now
+            if(event is SpeedEvent){
+                inputs[.VELOCITY] = Double((event as! SpeedEvent).speed)
+            }
+            if(event is AmbientAirTemperatureEvent){
+                inputs[.TEMPERATURE] = Double((event as! AmbientAirTemperatureEvent).temperature) + 273.15  // C -> K
+            }
+            if(event is MAFAirFlowRateEvent){
+                inputs[.MASS_AIR_FLOW] = (event as! MAFAirFlowRateEvent).rate
+            }
+            if(event is MAFSensorEvent){
+                inputs[.MASS_AIR_FLOW] = (event as! MAFSensorEvent).mafSensorA
+            }
             if(event is NOXSensorEvent){
                 inputs[.NOX_PPM] = Double((event as! NOXSensorEvent).sensor1_2)
-                
+            }
+            if(event is FuelRateReducedEvent){
+                inputs[.FUEL_RATE] = (event as! FuelRateReducedEvent).fuelRate
+            }
+            if(event is FuelAirEquivalenceRatioEvent){
+                inputs[.FUEL_AIR_EQUIVALENCE] = (event as! FuelAirEquivalenceRatioEvent).ratio
             }
         }
+        
+        // Check whether we have received data for every input needed and that we are not paused (bluetooth disconnected).
+        if (initialDataComplete && !isPaused) {
+            var inputsToSend : [Double] = []
+            for input in inputs.values {
+                if(input != nil){
+                    inputsToSend.append(input!)
+                }
+            }
+            // Prevent time from going backwards
+            time = max(time, Double(event.timestamp) / 1_000_000_000.0)
+            inputsToSend.append(time)
+            
+            if(VERBOSITY_MODE){
+                print("Sending(Lola): \(inputsToSend)")
+            }
+            // Send latest received inputs to the RTLola monitor to update our streams, in return we receive an array of
+            // values of selected OutputStreams (see: lola-rust-bridge) which we send to the outputchannel (e.g. the UI).
+            let lolaResult = rustGreetings.sendevent(inputs: &inputsToSend, len_in: UInt32(inputsToSend.count))
+            if(VERBOSITY_MODE){
+                print("Receiving(Lola): \(inputsToSend)")
+            }
+            // The result may be empty, since we are referring to periodic streams (1 Hz). So we receive updated results
+            // every full second.
+            if (!lolaResult.isEmpty) {
+//                outputChannel.offer(lolaResult)//todo
+            }
+            return lolaResult
+        }
+        return []
     }
 
     func specFile(filename: String) -> String{
-        let file = filename //this is the file. we will write to and read from it
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let fileURL = dir.appendingPathComponent(file)
-            //reading
-            do {
-                print(dir)
-                return try String(contentsOf: fileURL, encoding: .utf8)
-            }
-            catch {
-                //I put the spec file in this dir
-                print(dir)
-                return "a"
-            }
+        let filenameAndType = filename.components(separatedBy: ".")
+        let bundle = Bundle.main
+        let path = bundle.path(forResource: filenameAndType[0], ofType: filenameAndType[1])
+        print(path!)
+        
+        do {
+            return try String(contentsOf: URL(fileURLWithPath: path!), encoding: .utf8)
         }
-        return "b"
+        catch {
+            return "error: read specFile"
+        }
     }
     
-    private func checkSupportedPids(suppPids: [Int], fuelType: String) -> Bool {
+    private func checkSupportedPids(supportedPids: [Int], fuelType: String) -> Bool {
+        // If the car is not a diesel or gasoline, the RDE test is not possible since there are no corresponding
+        // specifications.
+        if(fuelType != "Diesel" && fuelType != "Gasoline"){
+            print("Incompatible for RDE: Fuel type unknown or invalid \(fuelType)")
+            return false
+        }
         
+        // Velocity information to determine acceleration, distance travelled and to calculate the driving dynamics.
+        if (supportedPids.contains(0x0D)) {
+            rdeProfile.append(OBDCommand.speed)
+        } else {
+            print("Incompatible for RDE: Speed data not provided by the car.")
+            return false
+        }
+        
+        // Ambient air temperature for checking compliance with the environmental constraints.
+        if (supportedPids.contains(0x46)) {
+            rdeProfile.append(OBDCommand.ambientAirTemperature)
+        } else {
+            print("Incompatible for RDE: Ambient air temperature not provided by the car.")
+            return false
+        }
+        
+        // NOx sensor(s) to check for violation of the EU regulations.
+        if(supportedPids.contains(0x83)){
+            rdeProfile.append(OBDCommand.noxSensor)
+        }else if(supportedPids.contains(0xA1)){
+            rdeProfile.append(OBDCommand.noxSensorCorrected)
+        }else if(supportedPids.contains(0xA7)){
+            rdeProfile.append(OBDCommand.noxSensorAlternative)
+        }else if(supportedPids.contains(0xA8)){
+            rdeProfile.append(OBDCommand.noxSensorCorrectedAlternative)
+        }else {
+            print("Incompatible for RDE: NOx sensor not provided by the car.")
+            return false
+        }
+        
+        // Fuelrate sensors for calculation of the exhaust mass flow. Can be replaced through MAF.
+        // TODO: ask Maxi for the EMF PID
+        if(supportedPids.contains(0x5E)) {
+            rdeProfile.append(OBDCommand.engineFuelRate)
+            fuelRateSupported = true
+        }else if(supportedPids.contains(0x9D)) {
+            rdeProfile.append(OBDCommand.engineFuelRateMulti)
+            fuelRateSupported = true
+        } else {
+            print("RDE: Fuel rate not provided by the car.")
+            fuelRateSupported = false
+        }
+
+        // Mass air flow rate for the calcuation of the exhaust mass flow.
+        if(supportedPids.contains(0x10)) {
+            rdeProfile.append(OBDCommand.mafAirFlowRate)
+        }else if(supportedPids.contains(0x66)) {
+            rdeProfile.append(OBDCommand.mafAirFlowRateSensor)
+        } else {
+            print("Incompatible for RDE: Mass air flow not provided by the car.")
+            return false
+        }
+
+        // Fuel air equivalence ratio for a more precise calculation of the fuel rate with MAF.
+        if (supportedPids.contains(0x44) && !fuelRateSupported) {
+            rdeProfile.append(OBDCommand.fuelAirEquivalenceRatio)
+            faeSupported = true
+        } else {
+            print("RDE: Fuel air equivalence ratio not provided by the car.")
+            faeSupported = false
+        }
+
+        print("Car compatible for RDE tests.")
+        
+        return true
     }
 
     enum RdeError : Error {
