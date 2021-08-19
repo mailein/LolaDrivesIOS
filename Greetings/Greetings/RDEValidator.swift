@@ -11,9 +11,9 @@ import pcdfcore
 //
 //let projectRepo = "\(Folder.home.path)/Developer/masterThesisLab/RustInIOS/Greetings"
 
-let VERBOSITY_MODE = false
-
 class RDEValidator {
+    let VERBOSITY_MODE = true
+    
     // Last event time in seconds.
     private var time: Double = 0.0
     
@@ -102,11 +102,12 @@ class RDEValidator {
         var result : [Double] = []
         for event in data {
             let lolaResult = collectData(event: event) //todo await, swift5.5
-            print("Results: \(lolaResult)")
             if(!lolaResult.isEmpty){
                 result = lolaResult
             }
         }
+        
+        print("Result: \(result)")
         return result
     }
 
@@ -132,8 +133,8 @@ class RDEValidator {
             if(rEvent is NOXSensorEvent){
                 inputs[.NOX_PPM] = Double((rEvent as! NOXSensorEvent).sensor1_2)
             }
-            if(rEvent is FuelRateReducedEvent){
-                inputs[.FUEL_RATE] = (rEvent as! FuelRateReducedEvent).fuelRate
+            if(rEvent is FuelRateEvent){
+                inputs[.FUEL_RATE] = (rEvent as! FuelRateEvent).engineFuelRate
             }
             if(rEvent is FuelAirEquivalenceRatioEvent){
                 inputs[.FUEL_AIR_EQUIVALENCE] = (rEvent as! FuelAirEquivalenceRatioEvent).ratio
@@ -159,7 +160,7 @@ class RDEValidator {
             // values of selected OutputStreams (see: lola-rust-bridge) which we send to the outputchannel (e.g. the UI).
             let lolaResult = rustGreetings.sendevent(inputs: &inputsToSend, len_in: UInt32(inputsToSend.count))
             if(VERBOSITY_MODE){
-                print("Receiving(Lola): \(inputsToSend)")
+                print("Receiving(Lola): \(lolaResult)")
             }
             // The result may be empty, since we are referring to periodic streams (1 Hz). So we receive updated results
             // every full second.

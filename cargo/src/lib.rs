@@ -138,12 +138,14 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *
     let num_updates = updates.timed.len();
     *len_out = (num_updates * NUM_OUTPUTS) as c_uint;
     let mut res = vec![0.0; num_updates * NUM_OUTPUTS];
-    let _output_copy_res = updates
+    let output_copy_res = updates
         .timed
         .iter()
         .enumerate()
         .map(|(ix, update)| {
+            //println!("RUST UPDATES----{:?}", (ix, update));
             let (_, values) = update;
+            //println!("RUST VALUES----{:?}", values);
             let output: Vec<f64> = values
                 .iter()
                 .filter_map(|(sr, v)| {
@@ -161,8 +163,10 @@ pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *
                     }
                 })
                 .collect();
-            res[NUM_OUTPUTS * ix..].copy_from_slice(&output);
-        });
+            //println!("RUST OUTPUT----{:?}", output);
+            res[NUM_OUTPUTS * ix..NUM_OUTPUTS * (ix + 1)].copy_from_slice(&output);
+        })
+        .collect::<Vec<_>>();
     // debug_assert!(output_copy_res.is_ok());
     Box::into_raw(res.into_boxed_slice()) as *mut f64
 }
