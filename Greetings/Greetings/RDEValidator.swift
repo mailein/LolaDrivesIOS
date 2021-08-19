@@ -102,6 +102,7 @@ class RDEValidator {
         var result : [Double] = []
         for event in data {
             let lolaResult = collectData(event: event) //todo await, swift5.5
+            print("Results: \(lolaResult)")
             if(!lolaResult.isEmpty){
                 result = lolaResult
             }
@@ -115,26 +116,27 @@ class RDEValidator {
         }else if(event.type == pcdfcore.EventType.obdResponse){
             // Reduces the event if possible (e.g. NOx or FuelRate events) using the PCDFCore library.
             //todo ignore sensorreducer for now
-            if(event is SpeedEvent){
-                inputs[.VELOCITY] = Double((event as! SpeedEvent).speed)
+            let rEvent = (event as! OBDEvent).toIntermediate()
+            if(rEvent is SpeedEvent){
+                inputs[.VELOCITY] = Double((rEvent as! SpeedEvent).speed)
             }
-            if(event is AmbientAirTemperatureEvent){
-                inputs[.TEMPERATURE] = Double((event as! AmbientAirTemperatureEvent).temperature) + 273.15  // C -> K
+            if(rEvent is AmbientAirTemperatureEvent){
+                inputs[.TEMPERATURE] = Double((rEvent as! AmbientAirTemperatureEvent).temperature) + 273.15  // C -> K
             }
-            if(event is MAFAirFlowRateEvent){
-                inputs[.MASS_AIR_FLOW] = (event as! MAFAirFlowRateEvent).rate
+            if(rEvent is MAFAirFlowRateEvent){
+                inputs[.MASS_AIR_FLOW] = (rEvent as! MAFAirFlowRateEvent).rate
             }
-            if(event is MAFSensorEvent){
-                inputs[.MASS_AIR_FLOW] = (event as! MAFSensorEvent).mafSensorA
+            if(rEvent is MAFSensorEvent){
+                inputs[.MASS_AIR_FLOW] = (rEvent as! MAFSensorEvent).mafSensorA
             }
-            if(event is NOXSensorEvent){
-                inputs[.NOX_PPM] = Double((event as! NOXSensorEvent).sensor1_2)
+            if(rEvent is NOXSensorEvent){
+                inputs[.NOX_PPM] = Double((rEvent as! NOXSensorEvent).sensor1_2)
             }
-            if(event is FuelRateReducedEvent){
-                inputs[.FUEL_RATE] = (event as! FuelRateReducedEvent).fuelRate
+            if(rEvent is FuelRateReducedEvent){
+                inputs[.FUEL_RATE] = (rEvent as! FuelRateReducedEvent).fuelRate
             }
-            if(event is FuelAirEquivalenceRatioEvent){
-                inputs[.FUEL_AIR_EQUIVALENCE] = (event as! FuelAirEquivalenceRatioEvent).ratio
+            if(rEvent is FuelAirEquivalenceRatioEvent){
+                inputs[.FUEL_AIR_EQUIVALENCE] = (rEvent as! FuelAirEquivalenceRatioEvent).ratio
             }
         }
         

@@ -32,6 +32,7 @@ struct ContentView: View {
 //        let e = PatternParser().toLines(filename: "nox-valid.ppcdf")
         
         let events = PatternParser().parse()
+        var f = try! RDEValidator().monitorOffline(data: events)
         
         VStack{
             Text(text)
@@ -41,7 +42,7 @@ struct ContentView: View {
             Text(a2)
 //            Text(c.source)
 //            Text("parser: \(e)")
-            Text(String(events.count))
+            Text(String(f.count))
         }
         .padding()
     }
