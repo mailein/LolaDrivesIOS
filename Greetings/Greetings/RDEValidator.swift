@@ -168,20 +168,6 @@ class RDEValidator {
         }
         return []
     }
-
-    func specFile(filename: String) -> String{
-        let filenameAndType = filename.components(separatedBy: ".")
-        let bundle = Bundle.main
-        let path = bundle.path(forResource: filenameAndType[0], ofType: filenameAndType[1])
-        print(path!)
-        
-        do {
-            return try String(contentsOf: URL(fileURLWithPath: path!), encoding: .utf8)
-        }
-        catch {
-            return "error: read specFile"
-        }
-    }
     
     private func checkSupportedPids(supportedPids: [Int], fuelType: String) -> Bool {
         // If the car is not a diesel or gasoline, the RDE test is not possible since there are no corresponding

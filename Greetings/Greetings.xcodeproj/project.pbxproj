@@ -20,6 +20,7 @@
 		96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DAE026C143C400934FCA /* PatternParser.swift */; };
 		96F77EBA26B3276D00B22DE2 /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96F77EBB26B3276D00B22DE2 /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		96FEAE8326CE6251005255D0 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FEAE8226CE6251005255D0 /* Util.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +54,7 @@
 		96A0DADC26BC205900934FCA /* RDEValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDEValidator.swift; sourceTree = "<group>"; };
 		96A0DAE026C143C400934FCA /* PatternParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternParser.swift; sourceTree = "<group>"; };
 		96F77EB926B3276D00B22DE2 /* pcdfcore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = pcdfcore.framework; path = "../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/pcdfcore.framework"; sourceTree = "<group>"; };
+		96FEAE8226CE6251005255D0 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 				960DACBB26396D95005DEABB /* RustGreetings.swift */,
 				96A0DADC26BC205900934FCA /* RDEValidator.swift */,
 				96A0DAE026C143C400934FCA /* PatternParser.swift */,
+				96FEAE8226CE6251005255D0 /* Util.swift */,
 			);
 			path = Greetings;
 			sourceTree = "<group>";
@@ -200,6 +203,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */,
+				96FEAE8326CE6251005255D0 /* Util.swift in Sources */,
 				960DACA926396859005DEABB /* ContentView.swift in Sources */,
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
 				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,

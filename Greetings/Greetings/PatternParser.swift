@@ -10,12 +10,22 @@ import pcdfcore
 
 struct PatternParser {
     
-    func parse(){
-        let s =
-            """
-            {"source":"00001101-0000-1000-8000-00805f9b34fb","type":"OBD_RESPONSE","timestamp":7787591305037,"data":{"bytes":"49020157424131503531303230354E3433303638"}}
-            """
-        PCDFEvent.Companion().fromString(string: s).toIntermediate()
+    func parse() -> [PCDFEvent] {
+        let content = specFile(filename: "nox-valid.ppcdf")
+        let lines = content.components(separatedBy: "\n")
+        var events : [PCDFEvent] = []
+        
+        for l in lines{
+            let line = l.trimmingCharacters(in: .whitespacesAndNewlines)
+            if line.isEmpty{
+                continue
+            }
+            let event = PCDFEvent.Companion().fromString(string: line)
+            let intermediate = event.toIntermediate()
+            events.append(intermediate)
+        }
+        
+        return events
     }
     
 }

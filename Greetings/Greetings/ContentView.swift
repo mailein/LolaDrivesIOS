@@ -14,7 +14,7 @@ struct ContentView: View {
         let text = "\(rustGreetings.sayHello(to: "world"))"
         let num = "\(rustGreetings.add(a:1, b:2))"
 
-        let fileContent = RDEValidator().specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
+        let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
         let text1 = "\(rustGreetings.initmonitor(s: fileContent))"
 
         //6 input var in spec.lola, plus 1 time => 7 elements
@@ -31,7 +31,9 @@ struct ContentView: View {
 //        let d = RDEValidator().monitorOffline(data: [p])
 //        let e = PatternParser().toLines(filename: "nox-valid.ppcdf")
         
-        HStack{
+        let events = PatternParser().parse()
+        
+        VStack{
             Text(text)
             Text(num)
             Text(text1)
@@ -39,6 +41,7 @@ struct ContentView: View {
             Text(a2)
 //            Text(c.source)
 //            Text("parser: \(e)")
+            Text(String(events.count))
         }
         .padding()
     }
