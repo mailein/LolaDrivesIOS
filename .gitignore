@@ -1,4 +1,7 @@
 .DS_Store
+cargo/.idea/
+Greetings/Podfile.lock
+Greetings/Pod/
 
 # Xcode
 #

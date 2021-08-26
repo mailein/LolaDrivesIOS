@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C87D9DC6D8BFD4AA6DDFCCB2BC1BEBE0"
+               BuildableName = "Pods_Greetings.framework"
+               BlueprintName = "Pods-Greetings"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "960DACA226396859005DEABB"
                BuildableName = "Greetings.app"
                BlueprintName = "Greetings"
