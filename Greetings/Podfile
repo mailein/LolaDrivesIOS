@@ -6,5 +6,6 @@ target 'Greetings' do
   use_frameworks!
 
   # Pods for Greetings
-  pod "OBD2-Swift"
+  # pod "OBD2-Swift"
+  pod 'LTSupportAutomotive', '~> 1.0'
 end
