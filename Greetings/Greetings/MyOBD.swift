@@ -6,13 +6,18 @@ class MyOBD{
     var _pids : [LTOBD2Command]
     var _transporter : LTBTLESerialTransporter
     var _obd2Adapter : LTOBD2Adapter?
-    var inputStream : InputStream?
-    var outputStream : OutputStream?
+    
+    var myRpm : String
+    var mySpeed : String
+    var myTemp : String
     
     init(){
         _serviceUUIDs = []
         _pids = []
         _transporter = LTBTLESerialTransporter()
+        myRpm = ""
+        mySpeed = ""
+        myTemp = ""
     }
     
     func viewDidLoad () -> () {
@@ -105,6 +110,7 @@ class MyOBD{
         _pids = ma
         
         _transporter = LTBTLESerialTransporter.init(identifier: nil, serviceUUIDs: _serviceUUIDs)
+        //The closure is called after transporter has connected! So updateSensorData() should be called inside the closure after adapter connects
         _transporter.connect({(inputStream : InputStream?, outputStream : OutputStream?) -> () in
             if((inputStream == nil)){
                 print("Could not connect to OBD2 adapter")
@@ -112,17 +118,33 @@ class MyOBD{
             }
             self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
             self._obd2Adapter!.connect()
+            print("adapter init and connected")
+            
+            self.updateSensorData()
                                 })
         
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
     }
     
+    func disconnect () -> () {
+        _obd2Adapter?.disconnect()
+        _transporter.disconnect()
+    }
+    
     func updateSensorData () -> () {
+        print("************adapter nil? \(_obd2Adapter == nil)")
+        let rpm : LTOBD2PID_ENGINE_RPM_0C = LTOBD2PID_ENGINE_RPM_0C.forMode1()
         let speed : LTOBD2PID_VEHICLE_SPEED_0D = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
-        _obd2Adapter!.transmitMultipleCommands([speed], completionHandler: {
+        let temp : LTOBD2PID_COOLANT_TEMP_05 = LTOBD2PID_COOLANT_TEMP_05.forMode1()
+        _obd2Adapter?.transmitMultipleCommands([rpm, speed, temp], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
-                print(speed.formattedResponse)
+                self.myRpm = rpm.formattedResponse
+                self.mySpeed = speed.formattedResponse
+                self.myTemp = temp.formattedResponse
+                print("*********** rpm in updateSensorData \(self.myRpm)")
+                print("*********** speed in updateSensorData \(self.mySpeed)")
+                print("*********** temp in updateSensorData \(self.myTemp)")
                 DispatchQueue.main.asyncAfter(deadline: .now() + (0.3 * Double(NSEC_PER_SEC)) as DispatchTime) {
                     self.updateSensorData()
                 }
