@@ -23,6 +23,10 @@ class MyOBD{
     func viewDidLoad () -> () {
         var ma : [CBUUID] = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
         _serviceUUIDs = ma
+        
+        //use notificationcenter, only call updateSensorData() when adapter status is Discovering / Connected
+        NotificationCenter.default.addObserver(self, selector: #selector(onAdapterChangedState), name: Notification.Name(LTOBD2AdapterDidUpdateState), object: nil)
+        
         self.connect()
     }
     
@@ -152,4 +156,15 @@ class MyOBD{
         })
     }
     
+    @objc func onAdapterChangedState(){
+        DispatchQueue.main.async {
+            switch self._obd2Adapter?.adapterState{
+                case OBD2AdapterStateDiscovering,
+            OBD2AdapterStateConnected:
+                self.updateSensorData()
+            default:
+                print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
+            }
+        }
+    }
 }
