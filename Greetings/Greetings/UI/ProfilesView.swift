@@ -9,6 +9,7 @@ struct ProfilesView: View {
                     Image(systemName: "plus.app.fill")
                 })
             }
+            Spacer()
         }
     }
 }

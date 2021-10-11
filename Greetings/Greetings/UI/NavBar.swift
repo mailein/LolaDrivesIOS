@@ -15,13 +15,19 @@ struct ConnectedDisconnectedView: View{
     var body: some View{
         if connected {
             VStack{
-                Image(systemName: "lightbulb")
+                Image("elm_logo_green")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25)
                 Text("connected")
             }
             .foregroundColor(.green)
         }else{
             VStack{
-                Image(systemName: "lightbulb.slash")
+                Image("elm_logo_red")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25)
                 Text("disconnected")
             }
             .foregroundColor(.red)
