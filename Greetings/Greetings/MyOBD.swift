@@ -149,7 +149,7 @@ class MyOBD: ObservableObject{
                 print("*********** rpm in updateSensorData \(self.myRpm)")
                 print("*********** speed in updateSensorData \(self.mySpeed)")
                 print("*********** temp in updateSensorData \(self.myTemp)")
-                DispatchQueue.main.asyncAfter(deadline: .now() + (0.3 * Double(NSEC_PER_SEC)) as DispatchTime) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.updateSensorData()
                 }
             }

@@ -27,7 +27,7 @@ struct ContentView: View {
                         case "RDE":
                             RdeSettingsView()
                         case "Monitoring":
-                            MonitoringView(speed: obd.mySpeed)
+                            MonitoringView(rpm: obd.myRpm, speed: obd.mySpeed, temp: obd.myTemp)
                         case "Profiles":
                             ProfilesView()
                         case "History":

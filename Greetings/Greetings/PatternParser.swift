@@ -11,7 +11,13 @@ import pcdfcore
 struct PatternParser {
     
     func parse() -> [PCDFEvent] {
-        let content = specFile(filename: "nox-valid.ppcdf")
+//        let content = specFile(filename: "ppcdf/nox-valid.ppcdf")
+        let content = specFile(filename: "ppcdf/2021-09-13_11-45-26.ppcdf")
+//        let content = specFile(filename: "ppcdf/2021-09-13_12-02-52.ppcdf")
+//        let content = specFile(filename: "ppcdf/2021-09-13_12-03-30.ppcdf")
+//        let content = specFile(filename: "ppcdf/2021-09-13_12-04-29.ppcdf")
+//        let content = specFile(filename: "ppcdf/2021-09-13_12-12-53.ppcdf")
+//        let content = specFile(filename: "ppcdf/2021-09-13_15-07-19.ppcdf")
         let lines = content.components(separatedBy: "\n")
         var events : [PCDFEvent] = []
         
