@@ -11,6 +11,7 @@ struct RdeSettingsView: View{
             Text("Choose a distance for your test ride")
                 .font(.subheadline)
                 .foregroundColor(.gray)
+            Spacer()
             Text("\(Int(sliderValue)) km")
                 .font(.system(size: 60))
             Slider(value: $sliderValue, in: 48...100)

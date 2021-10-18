@@ -1,5 +1,26 @@
 import SwiftUI
 
+struct NavBar: ViewModifier{
+    func body(content: Content) -> some View {
+        content
+            .toolbar{
+                ToolbarItem(placement: .navigationBarLeading){
+                    HomeIconView()
+                }
+                ToolbarItem(placement: .navigationBarTrailing){
+                    ConnectedDisconnectedView(connected: false)
+                }
+            }
+    }
+}
+
+extension View{
+    func LolaNavBarStyle() -> some View{
+        modifier(NavBar())
+    }
+}
+
+// MARK: - Elements in nav bar
 struct HomeIconView: View{
     var body: some View{
         HStack{
@@ -14,20 +35,20 @@ struct ConnectedDisconnectedView: View{
     
     var body: some View{
         if connected {
-            VStack{
+            VStack(alignment: .center, spacing: 0){
                 Image("elm_logo_green")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 25)
+                    .frame(width: 30)
                 Text("connected")
             }
             .foregroundColor(.green)
         }else{
-            VStack{
+            VStack(alignment: .center, spacing: 0){
                 Image("elm_logo_red")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 25)
+                    .frame(width: 30)
                 Text("disconnected")
             }
             .foregroundColor(.red)

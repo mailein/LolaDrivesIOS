@@ -18,16 +18,16 @@ struct RdeView: View {
             }
             Text("Valid RDE trip\(validRdeTrip ? "!" : "?")")
             
-            Text("NOx")
+            Text("NOₓ")
                 .frame(maxWidth: .infinity, alignment: .leading)
-            CapsuleView(barOffset: [0.75, 0.9])
+            CapsuleView()
             Text("0 mg/km")
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             ForEach(["Urban" , "Rural", "Motorway"], id: \.self) { terrain in
                 Text("\(terrain)")
                     .frame(maxWidth: .infinity, alignment: .leading)
-                CapsuleView(barOffset: [0.75, 0.9])
+                CapsuleView()
                 HStack{
                     Text("0 mg/km")
                     Spacer()
@@ -74,27 +74,38 @@ struct RdeEventLogView: View{
             Text("Valid RDE Trip:")
             Text("Total Duration:")
             Text("Total Distance:")
-            Text("NOx Emissions:")
+            Text("NOₓ Emissions:")
         }
     }
 }
 
 struct CapsuleView: View{
-    var barOffset: [Double] = []
-    var ballOffset: [Double] = []
+    var barOffset: [Double] = [0, 0.5, 1]
+    var ballOffset: [Double] = [0, 0.5, 1]
+    
+    var barWidth: CGFloat = 1
+    var ballHeight: CGFloat = 10
     
     var body: some View{
         GeometryReader{ geometry in
-            ZStack{
+            ZStack(alignment: .leading){
                 Capsule()
                     .fill(Color.blue)
-                Rectangle()
-                    .frame(width: 1)
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 10, height: 10)
-                    .offset(x: -0.1 * geometry.size.width, y: 0)
+                    .frame(height: ballHeight)
+                ForEach(barOffset, id: \.self){bar in
+                    Rectangle()
+                        .fill(Color.black)
+                        .frame(width: barWidth, height: ballHeight)
+                        .offset(x: bar * (geometry.size.width - barWidth), y: 0)
+                }
+                ForEach(ballOffset, id: \.self) {ball in
+                    Circle()
+                        .fill(Color.black)
+                        .frame(width: ballHeight, height: ballHeight)
+                        .offset(x: ball * (geometry.size.width - ballHeight), y: 0)
+                }
             }
         }
+//        .border(Color.yellow)
     }
 }

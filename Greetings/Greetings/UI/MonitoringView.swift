@@ -2,11 +2,12 @@ import SwiftUI
 import LTSupportAutomotive
 
 struct MonitoringView: View {
-    var commands : [LTOBD2PID] = []
+//    var commands : [LTOBD2PID] = []
+    var speed: String
     var body: some View {
         VStack{
             Text("Speed")
-            Text("-")
+            Text("\(speed)")
             Text("km/h")
             Text("RPM")
             Text("-")
@@ -26,6 +27,6 @@ struct MonitoringView: View {
 
 struct MonitoringView_Previews: PreviewProvider {
     static var previews: some View {
-        MonitoringView()
+        MonitoringView(speed: "1")
     }
 }

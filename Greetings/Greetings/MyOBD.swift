@@ -1,15 +1,15 @@
 import Foundation
 import LTSupportAutomotive
 
-class MyOBD{
+class MyOBD: ObservableObject{
     var _serviceUUIDs : [CBUUID]
     var _pids : [LTOBD2Command]
     var _transporter : LTBTLESerialTransporter
     var _obd2Adapter : LTOBD2Adapter?
     
-    var myRpm : String
-    var mySpeed : String
-    var myTemp : String
+    @Published var myRpm : String
+    @Published var mySpeed : String
+    @Published var myTemp : String
     
     init(){
         _serviceUUIDs = []
