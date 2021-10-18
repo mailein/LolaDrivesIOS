@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RdeSettingsView: View{
+    var obd: MyOBD
     
     @State var sliderValue: Double = 83
     
@@ -21,7 +22,7 @@ struct RdeSettingsView: View{
                     .foregroundColor(.gray)
             })
             Spacer()
-            NavigationLink(destination: RdeView(), label: {
+            NavigationLink(destination: RdeView(obd: obd)){
                 Text("Start")
                     .bold()
                     .font(.title2)
@@ -29,7 +30,7 @@ struct RdeSettingsView: View{
                     .background(Color(.systemRed))
                     .foregroundColor(.white)
                     .cornerRadius(10)
-            })
+            }
         }
         .navigationBarItems(trailing: ConnectedDisconnectedView(connected: false))
         .padding(30)
@@ -38,6 +39,6 @@ struct RdeSettingsView: View{
 
 struct RdeSettingView_Previews: PreviewProvider {
     static var previews: some View {
-        RdeSettingsView()
+        RdeSettingsView(obd: MyOBD())
     }
 }

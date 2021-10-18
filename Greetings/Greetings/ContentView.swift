@@ -25,7 +25,7 @@ struct ContentView: View {
                     NavigationLink(destination: {
                         switch menuItem.title {
                         case "RDE":
-                            RdeSettingsView()
+                            RdeSettingsView(obd: obd)
                         case "Monitoring":
                             MonitoringView(rpm: obd.myRpm, speed: obd.mySpeed, temp: obd.myTemp)
                         case "Profiles":
@@ -56,7 +56,7 @@ struct ContentView: View {
             .LolaNavBarStyle()
             .padding()
         }
-        .onAppear(perform: obd.viewDidLoad)
+//        .onAppear(perform: myObd.viewDidLoad)
     }
 }
 

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct RdeView: View {
+    var obd: MyOBD
+    
     var totalTime : Int = 0
     var totalDistance : Int = 0
     var validRdeTrip : Bool = false
@@ -16,6 +18,7 @@ struct RdeView: View {
                     Text("Total Distance")
                 }
             }
+            
             Text("Valid RDE trip\(validRdeTrip ? "!" : "?")")
             
             Text("NOₓ")
@@ -53,6 +56,7 @@ struct RdeView: View {
         .foregroundColor(.gray)
         .font(.subheadline)
         .padding(30)
+        .onAppear(perform: obd.viewDidLoad)
     }
 }
 
