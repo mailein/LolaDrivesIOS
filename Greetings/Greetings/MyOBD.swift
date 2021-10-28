@@ -7,17 +7,22 @@ class MyOBD: ObservableObject{
     var _transporter : LTBTLESerialTransporter
     var _obd2Adapter : LTOBD2Adapter?
     
-    @Published var myRpm : String
-    @Published var mySpeed : String
-    @Published var myTemp : String
+    // LOLA
+    let rustGreetings = RustGreetings()
+    let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
+    
+    @Published var mySpeed : String = ""
+    @Published var myTemp : String = ""
+    @Published var myNox: String = ""
+    @Published var myFuelRate: String = ""
+    @Published var myMAFRate: String = ""
+    @Published var myAirFuelEqvRatio2: String = ""
+    @Published var myAirFuelEqvRatio3: String = ""
     
     init(){
         _serviceUUIDs = []
         _pids = []
         _transporter = LTBTLESerialTransporter()
-        myRpm = ""
-        mySpeed = ""
-        myTemp = ""
     }
     
     func viewDidLoad () -> () {
@@ -28,6 +33,7 @@ class MyOBD: ObservableObject{
         NotificationCenter.default.addObserver(self, selector: #selector(onAdapterChangedState), name: Notification.Name(LTOBD2AdapterDidUpdateState), object: nil)
         
         self.connect()
+        rustGreetings.initmonitor(s: fileContent)
     }
     
     func connect () -> () {
@@ -111,6 +117,8 @@ class MyOBD: ObservableObject{
         ma.append(LTOBD2PID_MAX_VALUE_INTAKE_MAP_4F.forMode1())
         ma.append(LTOBD2PID_MAX_VALUE_MAF_AIR_FLOW_RATE_50.forMode1())
         
+        ma.append(LTOBD2PID_NOX_SENSOR_83.forMode1())
+        
         _pids = ma
         
         _transporter = LTBTLESerialTransporter.init(identifier: nil, serviceUUIDs: _serviceUUIDs)
@@ -137,18 +145,35 @@ class MyOBD: ObservableObject{
     
     func updateSensorData () -> () {
         print("************adapter nil? \(_obd2Adapter == nil)")
-        let rpm : LTOBD2PID_ENGINE_RPM_0C = LTOBD2PID_ENGINE_RPM_0C.forMode1()
         let speed : LTOBD2PID_VEHICLE_SPEED_0D = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
-        let temp : LTOBD2PID_COOLANT_TEMP_05 = LTOBD2PID_COOLANT_TEMP_05.forMode1()
-        _obd2Adapter?.transmitMultipleCommands([rpm, speed, temp], completionHandler: {
+        let temp : LTOBD2PID_AMBIENT_TEMP_46 = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
+        let nox : LTOBD2PID_NOX_SENSOR_83 = LTOBD2PID_NOX_SENSOR_83.forMode1()
+        let fuelRate : LTOBD2PID_ENGINE_FUEL_RATE_5E = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
+        let mafRate : LTOBD2PID_MAF_FLOW_10 = LTOBD2PID_MAF_FLOW_10.forMode1()
+        let airFuelEqvRatio2: LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
+        let airFuelEqvRatio3: LTOBD2PID_OXYGEN_SENSOR_INFO_3_SENSOR_0_34 = LTOBD2PID_OXYGEN_SENSOR_INFO_3_SENSOR_0_34.forMode1()
+        
+        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio2, airFuelEqvRatio3], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
-                self.myRpm = rpm.formattedResponse
                 self.mySpeed = speed.formattedResponse
                 self.myTemp = temp.formattedResponse
-                print("*********** rpm in updateSensorData \(self.myRpm)")
+                self.myNox = nox.formattedResponse
+                self.myFuelRate = fuelRate.formattedResponse
+                self.myMAFRate = mafRate.formattedResponse
+                self.myAirFuelEqvRatio2 = airFuelEqvRatio2.formattedResponse
+                self.myAirFuelEqvRatio3 = airFuelEqvRatio3.formattedResponse
+                
                 print("*********** speed in updateSensorData \(self.mySpeed)")
                 print("*********** temp in updateSensorData \(self.myTemp)")
+                print("*********** nox in updateSensorData \(self.myNox)")
+                print("*********** fuelRate in updateSensorData \(self.myFuelRate)")
+                print("*********** mafRate in updateSensorData \(self.myMAFRate)")
+                print("*********** myAirFuelEqvRatio2 in updateSensorData \(self.myAirFuelEqvRatio2)")
+                print("*********** myAirFuelEqvRatio3 in updateSensorData \(self.myAirFuelEqvRatio3)")
+                
+//                rustGreetings.sendevent(inputs: [speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio2, now???], len_in: 7)
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.updateSensorData()
                 }

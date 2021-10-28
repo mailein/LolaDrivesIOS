@@ -1,0 +1,6 @@
+framework module LTSupportAutomotive {
+  umbrella header "LTSupportAutomotive-umbrella.h"
+
+  export *
+  module * { export * }
+}

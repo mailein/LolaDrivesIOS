@@ -3,13 +3,11 @@ import LTSupportAutomotive
 
 struct MonitoringView: View {
 //    var commands : [LTOBD2PID] = []
-    var rpm: String
     var speed: String
     var temp: String
     
     var body: some View {
         VStack{
-            Text("RPM: \(rpm)")
             Text("Speed: \(speed)")
             Text("Tempature: \(temp)")
             Spacer()
@@ -27,6 +25,6 @@ struct MonitoringView: View {
 
 struct MonitoringView_Previews: PreviewProvider {
     static var previews: some View {
-        MonitoringView(rpm: "", speed: "", temp: "")
+        MonitoringView(speed: "", temp: "")
     }
 }

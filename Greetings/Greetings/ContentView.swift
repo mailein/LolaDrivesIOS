@@ -6,16 +6,16 @@
 //
 
 import SwiftUI
-import pcdfcore
+//import pcdfcore
 
 struct ContentView: View {
-
+    // UI
     var menuItems: [MenuItem] = Menu.menuItems
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-    
+    // bluetooth
     @StateObject var obd = MyOBD()
 
     var body: some View {
@@ -27,7 +27,7 @@ struct ContentView: View {
                         case "RDE":
                             RdeSettingsView(obd: obd)
                         case "Monitoring":
-                            MonitoringView(rpm: obd.myRpm, speed: obd.mySpeed, temp: obd.myTemp)
+                            MonitoringView(speed: obd.mySpeed, temp: obd.myTemp)
                         case "Profiles":
                             ProfilesView()
                         case "History":

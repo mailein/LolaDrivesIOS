@@ -25,15 +25,15 @@ class RDEValidator {
     private var fuelRateSupported = false
     private var faeSupported = false
 
-    enum RDE_RTLOLA_INPUT_QUANTITIES {
-        case  VELOCITY
-        case     ALTITUDE
-        case     TEMPERATURE
-        case     NOX_PPM
-        case    MASS_AIR_FLOW
-        case    FUEL_RATE
-        case   FUEL_AIR_EQUIVALENCE
-            }
+    enum RDE_RTLOLA_INPUT_QUANTITIES { 
+        case VELOCITY
+        case ALTITUDE
+        case TEMPERATURE
+        case NOX_PPM
+        case MASS_AIR_FLOW
+        case FUEL_RATE
+        case FUEL_AIR_EQUIVALENCE
+    }
 
     
     // Latest relevant values from OBD- and GPSSource.
