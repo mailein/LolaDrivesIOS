@@ -15,7 +15,9 @@ struct ContentView: View {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
+    
     // bluetooth
+    @ObservedObject var locationHelper = LocationHelper()
     @StateObject var obd = MyOBD()
 
     var body: some View {
@@ -27,7 +29,8 @@ struct ContentView: View {
                         case "RDE":
                             RdeSettingsView(obd: obd)
                         case "Monitoring":
-                            MonitoringView(speed: obd.mySpeed, temp: obd.myTemp)
+                            MonitoringView(speed: obd.mySpeed, altitude: obd.myAltitude, temp: obd.myTemp,
+                                           nox: obd.myNox, fuelRate: obd.myFuelRate, MAFRate: obd.myMAFRate)
                         case "Profiles":
                             ProfilesView()
                         case "History":
@@ -56,7 +59,13 @@ struct ContentView: View {
             .LolaNavBarStyle()
             .padding()
         }
-//        .onAppear(perform: myObd.viewDidLoad)
+        .onAppear{
+            obd._locationHelper = locationHelper
+            locationHelper.checkIfLocationServicesIsEnabled()
+        }
+        .alert(isPresented: $locationHelper.showAlert) {
+            locationHelper.alert!
+        }
     }
 }
 

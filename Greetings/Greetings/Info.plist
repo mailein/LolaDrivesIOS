@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>gps</key>
+	<string>gps</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location to get the altitude.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Greetings, OBD</string>
 	<key>CFBundleDevelopmentRegion</key>

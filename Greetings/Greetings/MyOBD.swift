@@ -1,5 +1,7 @@
 import Foundation
 import LTSupportAutomotive
+import CoreLocation
+import SwiftUI
 
 class MyOBD: ObservableObject{
     var _serviceUUIDs : [CBUUID]
@@ -12,17 +14,22 @@ class MyOBD: ObservableObject{
     let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
     
     @Published var mySpeed : String = ""
+    @Published var myAltitude : String = ""
     @Published var myTemp : String = ""
     @Published var myNox: String = ""
     @Published var myFuelRate: String = ""
     @Published var myMAFRate: String = ""
-    @Published var myAirFuelEqvRatio2: String = ""
-    @Published var myAirFuelEqvRatio3: String = ""
+//    @Published var myAirFuelEqvRatio2: String = ""
+//    @Published var myAirFuelEqvRatio3: String = ""
+    var startTime: Date? = nil
+    
+    var _locationHelper: LocationHelper?
     
     init(){
         _serviceUUIDs = []
         _pids = []
         _transporter = LTBTLESerialTransporter()
+        _locationHelper = nil
     }
     
     func viewDidLoad () -> () {
@@ -150,29 +157,46 @@ class MyOBD: ObservableObject{
         let nox : LTOBD2PID_NOX_SENSOR_83 = LTOBD2PID_NOX_SENSOR_83.forMode1()
         let fuelRate : LTOBD2PID_ENGINE_FUEL_RATE_5E = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
         let mafRate : LTOBD2PID_MAF_FLOW_10 = LTOBD2PID_MAF_FLOW_10.forMode1()
-        let airFuelEqvRatio2: LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
-        let airFuelEqvRatio3: LTOBD2PID_OXYGEN_SENSOR_INFO_3_SENSOR_0_34 = LTOBD2PID_OXYGEN_SENSOR_INFO_3_SENSOR_0_34.forMode1()
+//        let airFuelEqvRatio2: LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
+//        let airFuelEqvRatio3: LTOBD2PID_OXYGEN_SENSOR_INFO_3_SENSOR_0_34 = LTOBD2PID_OXYGEN_SENSOR_INFO_3_SENSOR_0_34.forMode1()
         
-        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio2, airFuelEqvRatio3], completionHandler: {
+        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
+                if self.startTime == nil {
+                    self.startTime = Date()
+                }
+                var duration = Date().timeIntervalSince(self.startTime!)
                 self.mySpeed = speed.formattedResponse
+                let altitude = self._locationHelper?.altitude
+                self.myAltitude = "\(altitude ?? 0) m"
                 self.myTemp = temp.formattedResponse
                 self.myNox = nox.formattedResponse
                 self.myFuelRate = fuelRate.formattedResponse
                 self.myMAFRate = mafRate.formattedResponse
-                self.myAirFuelEqvRatio2 = airFuelEqvRatio2.formattedResponse
-                self.myAirFuelEqvRatio3 = airFuelEqvRatio3.formattedResponse
+//                self.myAirFuelEqvRatio2 = airFuelEqvRatio2.formattedResponse
+//                self.myAirFuelEqvRatio3 = airFuelEqvRatio3.formattedResponse
                 
                 print("*********** speed in updateSensorData \(self.mySpeed)")
+                print("*********** altitude in updateSensorData \(self.myAltitude)")
                 print("*********** temp in updateSensorData \(self.myTemp)")
                 print("*********** nox in updateSensorData \(self.myNox)")
                 print("*********** fuelRate in updateSensorData \(self.myFuelRate)")
                 print("*********** mafRate in updateSensorData \(self.myMAFRate)")
-                print("*********** myAirFuelEqvRatio2 in updateSensorData \(self.myAirFuelEqvRatio2)")
-                print("*********** myAirFuelEqvRatio3 in updateSensorData \(self.myAirFuelEqvRatio3)")
+//                print("*********** myAirFuelEqvRatio2 in updateSensorData \(self.myAirFuelEqvRatio2)")
+//                print("*********** myAirFuelEqvRatio3 in updateSensorData \(self.myAirFuelEqvRatio3)")
                 
-//                rustGreetings.sendevent(inputs: [speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio2, now???], len_in: 7)
+//                if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
+//                   && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
+//                    rustGreetings.sendevent(inputs: [speed.cookedResponse.values.first!.first!.doubleValue,
+//                                                     altitude!,
+//                                                     temp.cookedResponse.values.first!.first!.doubleValue,
+//                                                     nox.cookedResponse.values.first!.first!.doubleValue,
+//                                                     fuelRate.cookedResponse.values.first!.first!.doubleValue,
+//                                                     mafRate.cookedResponse.values.first!.first!.doubleValue,
+//                                                     duration
+//                                                    ], len_in: 7)
+//                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.updateSensorData()

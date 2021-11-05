@@ -4,12 +4,20 @@ import LTSupportAutomotive
 struct MonitoringView: View {
 //    var commands : [LTOBD2PID] = []
     var speed: String
+    var altitude: String
     var temp: String
+    var nox: String
+    var fuelRate: String
+    var MAFRate: String
     
     var body: some View {
         VStack{
             Text("Speed: \(speed)")
+            Text("Altitude: \(altitude)")
             Text("Tempature: \(temp)")
+            Text("NOₓ: \(nox)")
+            Text("Fuel Rate: \(fuelRate)")
+            Text("MAF Rate: \(MAFRate)")
             Spacer()
         }
         
@@ -20,11 +28,5 @@ struct MonitoringView: View {
 //                Text("\(command.formattedResponse)")
 //            }
 //        }
-    }
-}
-
-struct MonitoringView_Previews: PreviewProvider {
-    static var previews: some View {
-        MonitoringView(speed: "", temp: "")
     }
 }

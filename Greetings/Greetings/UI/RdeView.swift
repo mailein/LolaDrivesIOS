@@ -6,6 +6,7 @@ struct RdeView: View {
     var totalTime : Int = 0
     var totalDistance : Int = 0
     var validRdeTrip : Bool = false
+    
     var body: some View {
         VStack{
             HStack{
