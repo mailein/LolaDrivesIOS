@@ -186,17 +186,19 @@ class MyOBD: ObservableObject{
 //                print("*********** myAirFuelEqvRatio2 in updateSensorData \(self.myAirFuelEqvRatio2)")
 //                print("*********** myAirFuelEqvRatio3 in updateSensorData \(self.myAirFuelEqvRatio3)")
                 
-//                if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
-//                   && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
-//                    rustGreetings.sendevent(inputs: [speed.cookedResponse.values.first!.first!.doubleValue,
-//                                                     altitude!,
-//                                                     temp.cookedResponse.values.first!.first!.doubleValue,
-//                                                     nox.cookedResponse.values.first!.first!.doubleValue,
-//                                                     fuelRate.cookedResponse.values.first!.first!.doubleValue,
-//                                                     mafRate.cookedResponse.values.first!.first!.doubleValue,
-//                                                     duration
-//                                                    ], len_in: 7)
-//                }
+                if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
+                   && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
+                    var s = [speed.cookedResponse.values.first!.first!.doubleValue,
+                             altitude!,
+                             temp.cookedResponse.values.first!.first!.doubleValue,
+                             nox.cookedResponse.values.first!.first!.doubleValue,
+                             fuelRate.cookedResponse.values.first!.first!.doubleValue,
+                             mafRate.cookedResponse.values.first!.first!.doubleValue,
+                             duration]
+                    
+                    let ret = self.rustGreetings.sendevent(inputs: &s, len_in: 7)
+                    print("*********** ret: \(ret)")
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.updateSensorData()
