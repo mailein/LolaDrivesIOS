@@ -22,41 +22,44 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView{
-            LazyVGrid(columns: columns, spacing: 10){
-                ForEach(Menu.menuItems, id: \.id){ menuItem in
-                    NavigationLink(destination: {
-                        switch menuItem.title {
-                        case "RDE":
-                            RdeSettingsView(obd: obd)
-                        case "Monitoring":
-                            MonitoringView(speed: obd.mySpeed, altitude: obd.myAltitude, temp: obd.myTemp,
-                                           nox: obd.myNox, fuelRate: obd.myFuelRate, MAFRate: obd.myMAFRate)
-                        case "Profiles":
-                            ProfilesView()
-                        case "History":
-                            HistoryView()
-                        case "Privacy":
-                            PrivacyView()
-                        case "Help":
-                            HelpView()
-                        default:
-                            ContentView()
-                        }
-                    }, label: {
-                        VStack(spacing: 10){
-                            menuItem.icon
-                            Text("\(menuItem.title)")
-                        }
-                    })
-                        .font(.title)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                        .foregroundColor(.white)
-                        .background(Color.gray)
-                        .cornerRadius(10)
-                        .aspectRatio(1, contentMode: .fit)
+            ScrollView{
+                LazyVGrid(columns: columns, spacing: 10){
+                    ForEach(Menu.menuItems, id: \.id){ menuItem in
+                        NavigationLink(destination: {
+                            switch menuItem.title {
+                            case "RDE":
+                                RdeSettingsView(obd: obd)
+                            case "Monitoring":
+                                MonitoringView(speed: obd.mySpeed, altitude: obd.myAltitude, temp: obd.myTemp,
+                                               nox: obd.myNox, fuelRate: obd.myFuelRate, MAFRate: obd.myMAFRate)
+                            case "Profiles":
+                                ProfilesView()
+                            case "History":
+                                HistoryView()
+                            case "Privacy":
+                                PrivacyView()
+                            case "Help":
+                                HelpView()
+                            default:
+                                ContentView()
+                            }
+                        }, label: {
+                            VStack(spacing: 10){
+                                menuItem.icon
+                                Text("\(menuItem.title)")
+                            }
+                        })
+                            .font(.title)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                            .foregroundColor(.white)
+                            .background(Color.gray)
+                            .cornerRadius(10)
+                            .aspectRatio(1, contentMode: .fit)
+                    }
                 }
             }
             .LolaNavBarStyle()
+            .navigationBarTitle("Menu")
             .padding()
         }
         .onAppear{

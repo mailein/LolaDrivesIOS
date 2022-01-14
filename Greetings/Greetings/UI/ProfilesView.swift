@@ -1,5 +1,4 @@
 import SwiftUI
-import Foundation
 
 enum ProfileCommands{
     static let commands: [String] = [
