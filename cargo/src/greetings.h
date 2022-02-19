@@ -1,8 +1,7 @@
 #include <stdint.h>
 
-const char* rust_greeting(const char* to);
-void rust_greeting_free(char *);
-int16_t rust_add(int16_t a, int16_t b);
-const char* rust_initmonitor(const char* s);
-double* rust_sendevent(double* inputs, unsigned int len_in, unsigned int *len_out);
-void rust_array_free(double* arr);
+const KotlinMonitor* init(const char* spec, const char* relevant_outputs);
+double* receive_single_value(long monitor, int input_ix, double value, double timestamp, unsigned int* len_out);
+double* receive_total_event(long monitor, double* inputs, unsigned int *len_out);
+double* receive_partial_event(long monitor, double* inputs, bool* active, unsigned int *len_out);
+void deallocate_rust_buffer(int* ptr, unsigned int len);

@@ -36,3 +36,10 @@ struct RdeSettingsView: View{
         .padding(30)
     }
 }
+
+struct RdeSettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        RdeSettingsView(obd: MyOBD()
+                            )
+    }
+}

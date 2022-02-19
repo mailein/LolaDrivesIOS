@@ -1,179 +1,217 @@
 use core::f64;
-use std::os::raw::{c_char, c_uint};
-use std::ffi::{CString, CStr};
+use std::os::raw::{c_char, c_uint, c_int, c_long};
+use std::ffi::{CStr};
+use std::mem;
 
 use core::time::Duration;
 use std::vec;
 use ordered_float::NotNan;
-use rtlola_frontend::mir::StreamReference;
-use rtlola_frontend::RtLolaMir;
-use rtlola_interpreter::{Config, EvalConfig, Monitor, TimeFormat, TimeRepresentation, Value};
-use rtlola_parser::ParserConfig;
+use rtlola_frontend::ParserConfig;
+use rtlola_interpreter::{EvalConfig, Incremental, Monitor, TimeFormat, TimeRepresentation, Value};
 
-static mut MONITOR: Option<Monitor> = None;
-static mut IR: Option<RtLolaMir> = None;
-static RELEVANT_OUTPUTS: [&str; 19] = [
-    "d",
-    "d_u",
-    "d_r",
-    "d_m",
-    "t_u",
-    "t_r",
-    "t_m",
-    "u_avg_v",
-    "r_avg_v",
-    "m_avg_v",
-    "u_va_pct",
-    "r_va_pct",
-    "m_va_pct",
-    "u_rpa",
-    "r_rpa",
-    "m_rpa",
-    "nox_per_kilometer",
-    "is_valid_test",
-    "not_rde_test",
-];
-static mut RELEVANT_OUTPUT_IX: [usize; 19] =
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-static NUM_OUTPUTS: usize = 19;
-
-#[no_mangle]
-pub extern fn rust_greeting(to: *const c_char) -> *mut c_char {
-    let c_str = unsafe { CStr::from_ptr(to) };
-    let recipient = match c_str.to_str() {
-        Err(_) => "there",
-        Ok(string) => string,
-    };
-
-    CString::new("Hello ".to_owned() + recipient).unwrap().into_raw()
+/// Represents the monitor, should only be an opaque pointer in Kotlin.
+pub struct KotlinMonitor {
+    monitor: Monitor<Incremental>,
+    relevant_ixs: Vec<usize>,
+    num_inputs: usize,
 }
 
+/// Initializes a monitor for a given spec.
+///
+/// The `spec` is a string representation of the specification. The `relevant_output` argument is a string containing
+/// the names of all relevant output streams, separated by commas.  Only the outputs of these streams will be reported by the monitor.
 #[no_mangle]
-pub extern fn rust_greeting_free(s: *mut c_char) {
-    unsafe {
-        if s.is_null() { return }
-        CString::from_raw(s)
-    };
-}
-
-#[no_mangle]
-pub extern fn rust_add(a: i16, b:i16) -> i16 {
-    a+b
-}
-
-#[no_mangle]
-pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
-    let spec_file = {
-        if s.is_null() { panic!() }
+pub unsafe extern "C" fn init(
+    spec: *mut c_char,
+    relevant_outputs: *mut c_char,
+) -> *const KotlinMonitor {
+    let spec = {
+        if spec.is_null() { panic!() }
         // CString::from_raw(s)
-        let c_str = { CStr::from_ptr(s) };
+        let c_str = { CStr::from_ptr(spec) };
         let recipient = match c_str.to_str() {
-            Err(_) => "there",
+            Err(_) => "spec error",
             Ok(string) => string,
         };
         recipient
     };
+    let relevant_outputs = {
+       if relevant_outputs.is_null() { panic!() }
+       // CString::from_raw(s)
+       let c_str = { CStr::from_ptr(relevant_outputs) };
+       let recipient = match c_str.to_str() {
+           Err(_) => "relevant outputs error",
+           Ok(string) => string,
+       };
+       recipient
+    };
 
-    let cfg = ParserConfig::for_string(String::from(spec_file));
-    let mir = rtlola_frontend::parse(cfg).unwrap();
-    let indices: Vec<usize> = RELEVANT_OUTPUTS
-        .iter()
+    let ir = rtlola_frontend::parse(ParserConfig::for_string(spec.to_string())).unwrap();
+    let ec = EvalConfig::api(TimeRepresentation::Relative(TimeFormat::HumanTime));
+
+    let relevant_ixs = relevant_outputs
+        .split(',')
         .map(|name| {
-            let r = mir
-                .outputs
+            ir.outputs
                 .iter()
-                .find(|o| &o.name == *name)
+                .find(|o| o.name == name)
                 .expect("ir does not contain required output stream")
-                .reference;
-            if let StreamReference::Out(r) = r {
-                r
-            } else {
-                panic!("output stream has input stream reference")
-            }
+                .reference
+                .out_ix()
         })
         .collect();
-    for i in 0..RELEVANT_OUTPUT_IX.len() {
-        // should prob be a mem copy of sorts.
-        RELEVANT_OUTPUT_IX[i] = indices[i];
-    }
-    assert_eq!(NUM_OUTPUTS, RELEVANT_OUTPUTS.len());
-    IR = Some(mir.clone());
-    let ecfg = EvalConfig::api(TimeRepresentation::Relative(TimeFormat::HumanTime));
-    MONITOR = Some(Config::new_api(ecfg, mir).into_monitor().unwrap());
 
-    //Just to match the output-type, will remove this later
-    CString::new("Worked ".to_owned()).unwrap().into_raw()
-    //----
+    let num_inputs = ir.inputs.len();
+    let m: Monitor<Incremental> = rtlola_interpreter::Config::new_api(ec, ir).as_api();
+    let monitor = KotlinMonitor {
+        monitor: m,
+        relevant_ixs,
+        num_inputs,
+    };
+
+    Box::into_raw(Box::new(monitor))
 }
 
+/// Receives a single event and returns an array of verdicts.
+///
+/// Interprets the `monitor` input as pointer to a `KotlinMonitor` received via the `init` function.
+/// The `input` argument contains a long value for each input of the specification plus the current timestamp at the end.
 #[no_mangle]
-pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *mut c_uint) -> *mut f64{
-    // //jdouble = f64 (seems to work)
-    // let num_values = IR.as_ref().unwrap().inputs.len() + 1;
-    let event = std::slice::from_raw_parts(inputs, len_in as usize).to_vec();
-    // event.copy_from_slice( std::slice::from_raw_parts_mut(inputs, num_values));
-    // println!("{:?}", event);
+pub unsafe extern "C" fn receive_single_value(
+    monitor: c_long,
+    input_ix: c_int,
+    value: f64,
+    timestamp: f64,
+    len_out: *mut c_uint
+) -> *mut f64 {
+    let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
+    let mut event = vec![Value::None; mon.num_inputs];
+    event[input_ix as usize] = Value::Float(NotNan::new(value).unwrap());
+    process_event(&mut mon, &event, timestamp, len_out)
+}
 
-    //Mei: should I and how to check if the copy above works?
-    // let copy_res = ???
-    // debug_assert!(copy_res.is_ok());
-    // if copy_res.is_err() {
-    //     let res = env.new_double_array(0).unwrap();
-    //     return res;
-    // }
+/// Receives a single event and returns an array of verdicts.
+///
+/// Interprets the `monitor` input as pointer to a `KotlinMonitor` received via the `init` function.
+/// The `input` argument contains a long value for each input of the specification plus the current timestamp at the end.
+#[no_mangle]
+pub unsafe extern "C" fn receive_total_event(
+    monitor: c_long,
+    inputs: *mut f64,
+    len_out: *mut c_uint
+) -> *mut f64 {
+    let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
+    let num_values = mon.num_inputs + 1;
+    let inputs = std::slice::from_raw_parts(inputs, num_values as usize).to_vec();
 
-    let (time, input) = event.split_last().unwrap();
-    let input: Vec<Value> = input
-        .into_iter()
-        .map(|f| Value::Float(NotNan::new(*f).unwrap()))
+    //TODO
+    //debug_assert!(inputs.is_ok());
+    //if inputs.is_err() {
+        // In release config, ignore invalid inputs.
+        //*len_out = 1;
+        //return &vec![0.0; 1];
+    //}
+
+    let (time, inputs) = inputs.split_last().unwrap();
+    let inputs = inputs
+        .iter()
+        .copied()
+        .map(|f| Value::Float(NotNan::new(f).unwrap()))
+        .collect::<Vec<_>>();
+    process_event(&mut mon, &inputs, *time, len_out)
+}
+
+/// Receives a single event and returns an array of verdicts.
+///
+/// Interprets the `monitor` input as pointer to a `KotlinMonitor` received via the `init` function.
+/// The `input` argument contains a long value for each input of the specification plus the current timestamp at the end.
+/// The `active` argument is a bool array where a `true` value at position `ix` indicates that the `ix`th value of
+/// `input` contains a meaningful new value.  All other values will be ignored.
+/// The timestamp must always be active, so the following invariant must hold:
+/// `len(inputs) == len(active) && last(active) || len(inputs) == len(active) + 1
+#[no_mangle]
+pub unsafe extern "C" fn receive_partial_event(
+    monitor: c_long,
+    inputs: *mut f64,
+    active: *mut bool,
+    len_out: *mut c_uint
+) -> *mut f64 {
+    let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
+    let num_values = mon.num_inputs + 1;
+
+    let inputs = std::slice::from_raw_parts(inputs, num_values as usize).to_vec();
+    let active = std::slice::from_raw_parts(active, num_values as usize).to_vec();
+    //TODO
+    // crash in debug
+    //debug_assert!(inputs.is_ok());
+    //debug_assert!(active.is_ok());
+    //if active.is_err() || inputs.is_err() {
+        // In release config, ignore invalid inputs.
+        //return env.new_double_array(0).unwrap();
+    //}
+
+    let (time, input) = inputs.split_last().unwrap();
+
+    let event: Vec<Value> = input
+        .iter()
+        .zip(active)
+        .map(|(f, a)| if a { Value::Float(NotNan::new(*f).unwrap()) } else { Value::None })
         .collect();
-    // println!("{:?}", input);
-    
-    let updates = MONITOR
-        .as_mut()
-        .unwrap()
-        .accept_event(input, Duration::new(time.floor() as u64, 0));
+    process_event(&mut mon, &event, *time, len_out)
+}
+
+unsafe fn process_event(
+    mon: &mut KotlinMonitor,
+    event: &[Value],
+    time: f64,
+    len_out: *mut c_uint
+) -> *mut f64 {
+    let updates = mon
+        .monitor
+        .accept_event(event, Duration::new(time.floor() as u64, 0));
 
     let num_updates = updates.timed.len();
-    *len_out = (num_updates * NUM_OUTPUTS) as c_uint;
-    let mut res = vec![0.0; num_updates * NUM_OUTPUTS];
-    let output_copy_res = updates
-        .timed
-        .iter()
-        .enumerate()
-        .map(|(ix, update)| {
-            //println!("RUST UPDATES----{:?}", (ix, update));
-            let (_, values) = update;
-            //println!("RUST VALUES----{:?}", values);
-            let output: Vec<f64> = values
-                .iter()
-                .filter_map(|(sr, v)| {
-                    if RELEVANT_OUTPUT_IX.contains(sr) {
-                        Some(v)
-                    } else {
-                        None
-                    }
-                })
-                .map(|v| {
-                    if let Value::Float(f) = v {
-                        f.into_inner() as f64
-                    } else {
-                        0.0 as f64
-                    }
-                })
-                .collect();
-            //println!("RUST OUTPUT----{:?}", output);
-            res[NUM_OUTPUTS * ix..NUM_OUTPUTS * (ix + 1)].copy_from_slice(&output);
-        })
-        .collect::<Vec<_>>();
-    // debug_assert!(output_copy_res.is_ok());
-    Box::into_raw(res.into_boxed_slice()) as *mut f64
+    let mut res = vec![0f64; (num_updates * mon.relevant_ixs.len()) as usize];
+    *len_out = (num_updates * mon.relevant_ixs.len()) as c_uint;
+
+    let output_copy_res =
+        updates
+            .timed
+            .iter()
+            .enumerate()
+            .for_each(|(ix, update)| {
+                let (_, values) = update;
+                let output: Vec<f64> = values
+                    .iter()
+                    .filter(|(sr, _v)| mon.relevant_ixs.contains(sr))
+                    .map(|(_sr, v)| {
+                        if let Value::Float(f) = v {
+                            f.into_inner()
+                        } else {
+                            0f64
+                        }
+                    })
+                    .collect();
+                //env.set_double_array_region(res, (mon.relevant_ixs.len() * ix) as i32, &output)
+                for (pos, e) in output.iter().enumerate() {
+                    res[mon.relevant_ixs.len() * ix + pos] = *e
+                }
+            });
+    //debug_assert!(output_copy_res.is_ok());
+
+    *len_out = res.len() as c_uint;
+    let ptr = res.as_mut_ptr();
+    // prevent deallocation in Rust.
+    // The array is still there but no Rust object feels responsible.
+    // We only have ptr/len now to reach it.
+    mem::forget(res);
+    return ptr;
 }
 
 #[no_mangle]
-pub unsafe extern fn rust_array_free(arr: *mut f64) {
-    drop({
-        Box::from_raw(arr)
-    });
+/// This is intended for the C code to call for deallocating the
+/// Rust-allocated i32 array.
+unsafe extern "C" fn deallocate_rust_buffer(ptr: *mut i32, len: c_uint) {
+    let len = len as usize;
+    drop(Vec::from_raw_parts(ptr, len, len));
 }
