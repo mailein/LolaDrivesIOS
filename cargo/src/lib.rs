@@ -10,10 +10,12 @@ use rtlola_frontend::ParserConfig;
 use rtlola_interpreter::{EvalConfig, Incremental, Monitor, TimeFormat, TimeRepresentation, Value};
 
 /// Represents the monitor, should only be an opaque pointer in Kotlin.
-pub struct KotlinMonitor {
-    monitor: Monitor<Incremental>,
-    relevant_ixs: Vec<usize>,
-    num_inputs: usize,
+///https://users.rust-lang.org/t/defining-structs-enums-based-on-h-file-input/41240/9
+#[repr(C)]
+pub struct Rust_Bridge_Monitor{
+    pub monitor: Monitor<Incremental>,
+    pub relevant_ixs: Vec<usize>,
+    pub num_inputs: usize
 }
 
 /// Initializes a monitor for a given spec.
@@ -21,10 +23,10 @@ pub struct KotlinMonitor {
 /// The `spec` is a string representation of the specification. The `relevant_output` argument is a string containing
 /// the names of all relevant output streams, separated by commas.  Only the outputs of these streams will be reported by the monitor.
 #[no_mangle]
-pub unsafe extern "C" fn init(
+pub unsafe extern "C" fn rust_init(
     spec: *mut c_char,
     relevant_outputs: *mut c_char,
-) -> *const KotlinMonitor {
+) -> *const Rust_Bridge_Monitor {
     let spec = {
         if spec.is_null() { panic!() }
         // CString::from_raw(s)
@@ -63,7 +65,7 @@ pub unsafe extern "C" fn init(
 
     let num_inputs = ir.inputs.len();
     let m: Monitor<Incremental> = rtlola_interpreter::Config::new_api(ec, ir).as_api();
-    let monitor = KotlinMonitor {
+    let monitor = Rust_Bridge_Monitor {
         monitor: m,
         relevant_ixs,
         num_inputs,
@@ -74,17 +76,17 @@ pub unsafe extern "C" fn init(
 
 /// Receives a single event and returns an array of verdicts.
 ///
-/// Interprets the `monitor` input as pointer to a `KotlinMonitor` received via the `init` function.
+/// Interprets the `monitor` input as pointer to a `Rust_Bridge_Monitor` received via the `init` function.
 /// The `input` argument contains a long value for each input of the specification plus the current timestamp at the end.
 #[no_mangle]
-pub unsafe extern "C" fn receive_single_value(
+pub unsafe extern "C" fn rust_receive_single_value(
     monitor: c_long,
     input_ix: c_int,
     value: f64,
     timestamp: f64,
     len_out: *mut c_uint
 ) -> *mut f64 {
-    let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
+    let mut mon = unsafe { Box::from_raw(monitor as *mut Rust_Bridge_Monitor) };
     let mut event = vec![Value::None; mon.num_inputs];
     event[input_ix as usize] = Value::Float(NotNan::new(value).unwrap());
     process_event(&mut mon, &event, timestamp, len_out)
@@ -92,15 +94,15 @@ pub unsafe extern "C" fn receive_single_value(
 
 /// Receives a single event and returns an array of verdicts.
 ///
-/// Interprets the `monitor` input as pointer to a `KotlinMonitor` received via the `init` function.
+/// Interprets the `monitor` input as pointer to a `Rust_Bridge_Monitor` received via the `init` function.
 /// The `input` argument contains a long value for each input of the specification plus the current timestamp at the end.
 #[no_mangle]
-pub unsafe extern "C" fn receive_total_event(
+pub unsafe extern "C" fn rust_receive_total_event(
     monitor: c_long,
     inputs: *mut f64,
     len_out: *mut c_uint
 ) -> *mut f64 {
-    let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
+    let mut mon = unsafe { Box::from_raw(monitor as *mut Rust_Bridge_Monitor) };
     let num_values = mon.num_inputs + 1;
     let inputs = std::slice::from_raw_parts(inputs, num_values as usize).to_vec();
 
@@ -123,20 +125,20 @@ pub unsafe extern "C" fn receive_total_event(
 
 /// Receives a single event and returns an array of verdicts.
 ///
-/// Interprets the `monitor` input as pointer to a `KotlinMonitor` received via the `init` function.
+/// Interprets the `monitor` input as pointer to a `Rust_Bridge_Monitor` received via the `init` function.
 /// The `input` argument contains a long value for each input of the specification plus the current timestamp at the end.
 /// The `active` argument is a bool array where a `true` value at position `ix` indicates that the `ix`th value of
 /// `input` contains a meaningful new value.  All other values will be ignored.
 /// The timestamp must always be active, so the following invariant must hold:
 /// `len(inputs) == len(active) && last(active) || len(inputs) == len(active) + 1
 #[no_mangle]
-pub unsafe extern "C" fn receive_partial_event(
+pub unsafe extern "C" fn rust_receive_partial_event(
     monitor: c_long,
     inputs: *mut f64,
     active: *mut bool,
     len_out: *mut c_uint
 ) -> *mut f64 {
-    let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
+    let mut mon = unsafe { Box::from_raw(monitor as *mut Rust_Bridge_Monitor) };
     let num_values = mon.num_inputs + 1;
 
     let inputs = std::slice::from_raw_parts(inputs, num_values as usize).to_vec();
@@ -161,7 +163,7 @@ pub unsafe extern "C" fn receive_partial_event(
 }
 
 unsafe fn process_event(
-    mon: &mut KotlinMonitor,
+    mon: &mut Rust_Bridge_Monitor,
     event: &[Value],
     time: f64,
     len_out: *mut c_uint

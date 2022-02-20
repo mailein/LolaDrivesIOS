@@ -1,5 +1,9 @@
 Rust: trying to follow the link (https://mozilla.github.io/firefox-browser-architecture/experiments/2017-09-06-rust-on-ios.html)
 
+path: RustInIOS/cargo
+run: cargo build
+Run: cargo lipo --release
+Then the lib .a file is under RustInIOS/cargo/target/universal/release/libgreetings.a
 
 --
 1| add targets, but some are no longer supported
