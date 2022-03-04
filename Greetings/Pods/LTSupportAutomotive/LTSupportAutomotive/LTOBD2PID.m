@@ -119,6 +119,35 @@
     return [NSString stringWithFormat:formatString, adapted];
 }
 
+-(NSString*)formatFiveByteDoubleValueWithString:(NSString*)formatString offset:(double)offset factor:(double)factor
+{
+    NSArray<NSNumber*>* responseFromAnyECU = [self anyResponseWithMinimumLength:5];
+    if ( !responseFromAnyECU )
+    {
+        return OBD2_NO_DATA;
+    }
+    uint A = responseFromAnyECU[0].unsignedIntValue;
+    uint B = responseFromAnyECU[1].unsignedIntValue;
+    uint C = responseFromAnyECU[2].unsignedIntValue;
+    uint D = responseFromAnyECU[3].unsignedIntValue;
+    uint E = responseFromAnyECU[4].unsignedIntValue;
+    
+    double sensorA = -1;
+    double sensorB = -1;
+    if ( (A>>0&1) == 1 && A>>(0+4) == 0)
+    {
+        sensorA = (double) (B * 256 + C);//big-endian
+        sensorA = offset + sensorA * factor;
+    }
+    if ( (A>>1&1) == 1 && A>>(1+4) == 0)
+    {
+        sensorB = (double) (D * 256 + E);
+        sensorB = offset + sensorB * factor;
+    }
+    
+    return [NSString stringWithFormat:formatString, sensorA, sensorB];
+}
+
 -(NSString*)formatNineByteDoubleValueWithString:(NSString*)formatString
 {
     NSArray<NSNumber*>* responseFromAnyECU = [self anyResponseWithMinimumLength:9];
@@ -1704,6 +1733,15 @@
 -(NSString*)formattedResponse
 {
     return [self formatTwoByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"Nm" offset:0 factor:1];
+}
+
+@end
+
+@implementation LTOBD2PID_MASS_AIR_FLOW_SNESOR_66
+
+-(NSString*)formattedResponse
+{
+    return [self formatFiveByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"grams/sec, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"grams/sec" offset:0 factor:0.03125];
 }
 
 @end

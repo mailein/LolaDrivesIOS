@@ -638,6 +638,12 @@ typedef enum : NSUInteger {
 
 @end
 
+@interface LTOBD2PID_MASS_AIR_FLOW_SNESOR_66 : LTOBD2PID
+
++(instancetype)pid NS_UNAVAILABLE;
+
+@end
+
 @interface LTOBD2PID_NOX_SENSOR_83 : LTOBD2PID
 
 +(instancetype)pid NS_UNAVAILABLE;
