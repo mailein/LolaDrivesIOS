@@ -21,6 +21,7 @@ class MyOBD: ObservableObject{
     @Published var myMAFRate: String = ""
     
     @Published var myMAFRateSensor: String = ""
+    @Published var myIntakeAirTempSensor: String = ""
     
 //    @Published var myAirFuelEqvRatio2: String = ""
 //    @Published var myAirFuelEqvRatio3: String = ""
@@ -212,22 +213,25 @@ class MyOBD: ObservableObject{
         let catalystTemp21 = LTOBD2PID_CATALYST_TEMP_B2S1_3D.forMode1()
         let catalystTemp22 = LTOBD2PID_CATALYST_TEMP_B2S2_3F.forMode1()
         let ambientAirTemp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
-//        let maxValues = ??????
+        let maxValueFuelAirEqvRatio = LTOBD2PID_MAX_VALUE_FUEL_AIR_EQUIVALENCE_RATIO_4F.forMode1()
+        let maxValueOxygenSensorVoltage = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_VOLTAGE_4F.forMode1()
+        let maxValueOxygenSensorCurrent = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_CURRENT_4F.forMode1()
+        let maxValueIntakeMAP = LTOBD2PID_MAX_VALUE_INTAKE_MAP_4F.forMode1()
         let maxAirFlowRate = LTOBD2PID_MAX_VALUE_MAF_AIR_FLOW_RATE_50.forMode1()
         let fuelType = LTOBD2PID_FUEL_TYPE_51.forMode1()
         let engineOilTemp = LTOBD2PID_ENGINE_OIL_TEMP_5C.forMode1()
-//        let intakeTempSensor = LTOBD2PID_INTAKE_TEMP_SENSOR_68
-//        let noxCorrected = LTOBD2PID_NOX_SENSOR_CORRECTED_A1
-//        let noxAlternative = LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7
-//        let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8
-//        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86
+        let intakeAirTempSensor = LTOBD2PID_INTAKE_AIR_TEMP_SENSOR_68.forMode1()
+        let noxCorrected = LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()
+        let noxAlternative = LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()
+        let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()
+        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
         let engineFuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
 //        let engineFuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D
 //        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E
         let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
         
         
-        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, mafRateSensor], completionHandler: {
+        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, mafRateSensor, intakeAirTempSensor], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 if self.startTime == nil {
@@ -241,7 +245,9 @@ class MyOBD: ObservableObject{
                 self.myNox = nox.formattedResponse
                 self.myFuelRate = fuelRate.formattedResponse
                 self.myMAFRate = mafRate.formattedResponse
+                
                 self.myMAFRateSensor = mafRateSensor.formattedResponse
+                self.myIntakeAirTempSensor = intakeAirTempSensor.formattedResponse
 //                self.myAirFuelEqvRatio2 = airFuelEqvRatio2.formattedResponse
 //                self.myAirFuelEqvRatio3 = airFuelEqvRatio3.formattedResponse
                 

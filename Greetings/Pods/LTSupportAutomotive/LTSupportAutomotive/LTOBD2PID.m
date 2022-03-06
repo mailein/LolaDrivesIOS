@@ -119,6 +119,31 @@
     return [NSString stringWithFormat:formatString, adapted];
 }
 
+-(NSString*)formatThreeByteDoubleValueWithString:(NSString*)formatString offset:(double)offset factor:(double)factor
+{
+    NSArray<NSNumber*>* responseFromAnyECU = [self anyResponseWithMinimumLength:3];
+    if ( !responseFromAnyECU )
+    {
+        return OBD2_NO_DATA;
+    }
+    uint A = responseFromAnyECU[0].unsignedIntValue;
+    uint B = responseFromAnyECU[1].unsignedIntValue;
+    uint C = responseFromAnyECU[2].unsignedIntValue;
+    
+    double sensorA = -1;
+    double sensorB = -1;
+    if ( (A>>0&1) == 1)
+    {
+        sensorA = (double) (offset + B * factor);//big-endian
+    }
+    if ( (A>>1&1) == 1)
+    {
+        sensorB = (double) (offset + C * factor);
+    }
+    
+    return [NSString stringWithFormat:formatString, sensorA, sensorB];
+}
+
 -(NSString*)formatFiveByteDoubleValueWithString:(NSString*)formatString offset:(double)offset factor:(double)factor
 {
     NSArray<NSNumber*>* responseFromAnyECU = [self anyResponseWithMinimumLength:5];
@@ -134,12 +159,12 @@
     
     double sensorA = -1;
     double sensorB = -1;
-    if ( (A>>0&1) == 1 && A>>(0+4) == 0)
+    if ( (A>>0&1) == 1)
     {
         sensorA = (double) (B * 256 + C);//big-endian
         sensorA = offset + sensorA * factor;
     }
-    if ( (A>>1&1) == 1 && A>>(1+4) == 0)
+    if ( (A>>1&1) == 1)
     {
         sensorB = (double) (D * 256 + E);
         sensorB = offset + sensorB * factor;
@@ -1746,7 +1771,52 @@
 
 @end
 
+@implementation LTOBD2PID_INTAKE_AIR_TEMP_SENSOR_68
+
+-(NSString*)formattedResponse
+{
+    return [self formatThreeByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"°C, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"°C" offset:-40 factor:1];
+}
+
+@end
+
 @implementation LTOBD2PID_NOX_SENSOR_83
+
+-(NSString*)formattedResponse
+{
+    return [self formatNineByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm"];
+}
+
+@end
+
+@implementation LTOBD2PID_PATICULATE_MATTER_SENSOR_86
+
+-(NSString*)formattedResponse
+{
+    return [self formatFiveByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"mg/m^3, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"mg/m^3" offset:0 factor:0.0125];
+}
+
+@end
+
+@implementation LTOBD2PID_NOX_SENSOR_CORRECTED_A1
+
+-(NSString*)formattedResponse
+{
+    return [self formatNineByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm"];
+}
+
+@end
+
+@implementation LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7
+
+-(NSString*)formattedResponse
+{
+    return [self formatNineByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm"];
+}
+
+@end
+
+@implementation LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8
 
 -(NSString*)formattedResponse
 {
