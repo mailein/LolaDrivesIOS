@@ -662,6 +662,18 @@ typedef enum : NSUInteger {
 
 @end
 
+@interface LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D : LTOBD2PID
+
++(instancetype)pid NS_UNAVAILABLE;
+
+@end
+
+@interface LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E : LTOBD2PID
+
++(instancetype)pid NS_UNAVAILABLE;
+
+@end
+
 @interface LTOBD2PID_NOX_SENSOR_CORRECTED_A1 : LTOBD2PID
 
 +(instancetype)pid NS_UNAVAILABLE;

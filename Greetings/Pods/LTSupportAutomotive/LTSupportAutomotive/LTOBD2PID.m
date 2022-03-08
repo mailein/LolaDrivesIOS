@@ -144,6 +144,30 @@
     return [NSString stringWithFormat:formatString, sensorA, sensorB];
 }
 
+-(NSString*)formatFourByteDoubleValueWithString:(NSString*)formatString offset:(double)offset factor:(double)factor
+{
+    NSArray<NSNumber*>* responseFromAnyECU = [self anyResponseWithMinimumLength:4];
+    if ( !responseFromAnyECU )
+    {
+        return OBD2_NO_DATA;
+    }
+    uint A = responseFromAnyECU[0].unsignedIntValue;
+    uint B = responseFromAnyECU[1].unsignedIntValue;
+    uint C = responseFromAnyECU[2].unsignedIntValue;
+    uint D = responseFromAnyECU[3].unsignedIntValue;
+    
+    double engineFuelRate = -1;
+    double vehicleFuelRate = -1;
+
+    engineFuelRate = (double) (A * 256 + B);//big-endian
+    engineFuelRate = offset + engineFuelRate * factor;
+
+    vehicleFuelRate = (double) (C * 256 + D);
+    vehicleFuelRate = offset + vehicleFuelRate * factor;
+
+    return [NSString stringWithFormat:formatString, engineFuelRate, vehicleFuelRate];
+}
+
 -(NSString*)formatFiveByteDoubleValueWithString:(NSString*)formatString offset:(double)offset factor:(double)factor
 {
     NSArray<NSNumber*>* responseFromAnyECU = [self anyResponseWithMinimumLength:5];
@@ -1766,7 +1790,7 @@
 
 -(NSString*)formattedResponse
 {
-    return [self formatFiveByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"grams/sec, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"grams/sec" offset:0 factor:0.03125];
+    return [self formatFiveByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"g/s, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"g/s" offset:0 factor:0.03125];
 }
 
 @end
@@ -1794,6 +1818,24 @@
 -(NSString*)formattedResponse
 {
     return [self formatFiveByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"mg/m^3, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"mg/m^3" offset:0 factor:0.0125];
+}
+
+@end
+
+@implementation LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D
+
+-(NSString*)formattedResponse
+{
+    return [self formatFourByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"g/s, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"g/s" offset:0 factor:0.02];
+}
+
+@end
+
+@implementation LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E
+
+-(NSString*)formattedResponse
+{
+    return [self formatTwoByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"kg/h" offset:0 factor:0.2];
 }
 
 @end

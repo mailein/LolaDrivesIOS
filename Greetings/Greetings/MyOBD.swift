@@ -205,7 +205,7 @@ class MyOBD: ObservableObject{
         let rpm = LTOBD2PID_ENGINE_RPM_0C.forMode1()
         let intakeTemp = LTOBD2PID_INTAKE_TEMP_0F.forMode1()
         let mafRateSensor = LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()
-        let oxygenSensor1 = LTOBD2PID_OXYGEN_SENSOR_INFO_1_SENSOR_0_14.forMode1()
+        let oxygenSensor1 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
         let commandedEgr = LTOBD2PID_COMMANDED_EGR_2C.forMode1()
         let fuelTankLevelInput = LTOBD2PID_FUEL_TANK_LEVEL_2F.forMode1()
         let catalystTemp11 = LTOBD2PID_CATALYST_TEMP_B1S1_3C.forMode1()
