@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RdeSettingsView: View{
-    
+    @EnvironmentObject var viewModel: ViewModel
     @State var sliderValue: Double = 83
     
     var body: some View{
@@ -30,8 +30,11 @@ struct RdeSettingsView: View{
                     .foregroundColor(.white)
                     .cornerRadius(10)
             })
+                .simultaneousGesture(TapGesture().onEnded{
+                    viewModel.model.isConnected = true
+                })
         }
-        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: false))
+        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: viewModel.model.isConnected))
         .padding(30)
     }
 }

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct RdeView: View {
+    @EnvironmentObject var viewModel: ViewModel
+    
     var totalTime : Int = 0
     var totalDistance : Int = 0
     var validRdeTrip : Bool = false
@@ -48,8 +50,11 @@ struct RdeView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
             })
+                .simultaneousGesture(TapGesture().onEnded{
+                    viewModel.model.isConnected = false
+                })
         }
-        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: false))
+        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: viewModel.model.isConnected))
         .foregroundColor(.gray)
         .font(.subheadline)
         .padding(30)
@@ -57,6 +62,8 @@ struct RdeView: View {
 }
 
 struct RdeLogView: View{
+    @EnvironmentObject var viewModel: ViewModel
+    
     var body: some View{
         TabView{
             RdeEventLogView()
@@ -64,7 +71,7 @@ struct RdeLogView: View{
                     Text("Event Log")
                 }
         }
-        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: false))
+        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: viewModel.model.isConnected))
     }
 }
 

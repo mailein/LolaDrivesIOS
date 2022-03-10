@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct NavBar: ViewModifier{
+    @EnvironmentObject var viewModel: ViewModel
+    
     func body(content: Content) -> some View {
         content
             .toolbar{
@@ -8,7 +10,7 @@ struct NavBar: ViewModifier{
                     HomeIconView()
                 }
                 ToolbarItem(placement: .navigationBarTrailing){
-                    ConnectedDisconnectedView(connected: false)
+                    ConnectedDisconnectedView(connected: viewModel.model.isConnected)
                 }
             }
     }

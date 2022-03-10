@@ -1,8 +1,24 @@
 import Foundation
 
 struct Model{
+    //OBD
+    let obd: MyOBD
+    
     //nav bar
-    var isConnected: Bool = false
+    private var _isConnected: Bool
+    var isConnected: Bool {
+        get {
+            return self._isConnected
+        }
+        set {
+            self._isConnected = newValue
+            if(newValue){
+                self.obd.viewDidLoad()
+            }else{
+                self.obd.disconnect()
+            }
+        }
+    }
     
     //RDE view
     var distanceSetting: Int = 84
@@ -21,6 +37,8 @@ struct Model{
     
     
     init() {
+        obd = MyOBD()
+        _isConnected = false
         profiles = [defaultProfile, allEnabledProfile]
         selectedProfile = defaultProfile
         defaultProfile.isSelected = true
