@@ -20,11 +20,36 @@ class MyOBD: ObservableObject{
     @Published var myFuelRate: String = ""
     @Published var myMAFRate: String = ""
     
+    @Published var myAirFuelEqvRatio: String = ""
+    @Published var myCoolantTemp: String = ""
+    @Published var myRPM: String = ""
+    @Published var myIntakeTemp: String = ""
     @Published var myMAFRateSensor: String = ""
+    @Published var myOxygenSensor1: String = ""
+    @Published var myCommandedEgr: String = ""
+    @Published var myFuelTankLevelInput: String = ""
+    @Published var myCatalystTemp11: String = ""
+    @Published var myCatalystTemp12: String = ""
+    @Published var myCatalystTemp21: String = ""
+    @Published var myCatalystTemp22: String = ""
+    @Published var myAmbientAirTemp: String = ""
+    @Published var myMaxValueFuelAirEqvRatio: String = ""
+    @Published var myMaxValueOxygenSensorVoltage: String = ""
+    @Published var myMaxValueOxygenSensorCurrent: String = ""
+    @Published var myMaxValueIntakeMAP: String = ""
+    @Published var myMaxAirFlowRate: String = ""
+    @Published var myFuelType: String = ""
+    @Published var myEngineOilTemp: String = ""
     @Published var myIntakeAirTempSensor: String = ""
+    @Published var myNoxCorrected: String = ""
+    @Published var myNoxAlternative: String = ""
+    @Published var myNoxCorrectedAlternative: String = ""
+    @Published var myPmSensor: String = ""
+    @Published var myEngineFuelRate: String = ""
+    @Published var myEngineFuelRateMulti: String = ""
+    @Published var myEngineExhaustFlowRate: String = ""
+    @Published var myEgrError: String = ""
     
-//    @Published var myAirFuelEqvRatio2: String = ""
-//    @Published var myAirFuelEqvRatio3: String = ""
     var startTime: Date? = nil
     var _locationHelper: LocationHelper?
     
@@ -226,12 +251,12 @@ class MyOBD: ObservableObject{
         let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()
         let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
         let engineFuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
-//        let engineFuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D
-//        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E
+        let engineFuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()
+        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
         let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
         
         
-        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, mafRateSensor, intakeAirTempSensor], completionHandler: {
+        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, ambientAirTemp, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, engineFuelRate, engineFuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 if self.startTime == nil {
@@ -246,10 +271,35 @@ class MyOBD: ObservableObject{
                 self.myFuelRate = fuelRate.formattedResponse
                 self.myMAFRate = mafRate.formattedResponse
                 
+                self.myAirFuelEqvRatio = airFuelEqvRatio.formattedResponse
+                self.myCoolantTemp = coolantTemp.formattedResponse
+                self.myRPM = rpm.formattedResponse
+                self.myIntakeTemp = intakeTemp.formattedResponse
                 self.myMAFRateSensor = mafRateSensor.formattedResponse
+                self.myOxygenSensor1 = oxygenSensor1.formattedResponse
+                self.myCommandedEgr = commandedEgr.formattedResponse
+                self.myFuelTankLevelInput = fuelTankLevelInput.formattedResponse
+                self.myCatalystTemp11 = catalystTemp11.formattedResponse
+                self.myCatalystTemp12 = catalystTemp12.formattedResponse
+                self.myCatalystTemp21 = catalystTemp21.formattedResponse
+                self.myCatalystTemp22 = catalystTemp22.formattedResponse
+                self.myAmbientAirTemp = ambientAirTemp.formattedResponse
+                self.myMaxValueFuelAirEqvRatio = maxValueFuelAirEqvRatio.formattedResponse
+                self.myMaxValueOxygenSensorVoltage = maxValueOxygenSensorVoltage.formattedResponse
+                self.myMaxValueOxygenSensorCurrent = maxValueOxygenSensorCurrent.formattedResponse
+                self.myMaxValueIntakeMAP = maxValueIntakeMAP.formattedResponse
+                self.myMaxAirFlowRate = maxAirFlowRate.formattedResponse
+                self.myFuelType = fuelType.formattedResponse
+                self.myEngineOilTemp = engineOilTemp.formattedResponse
                 self.myIntakeAirTempSensor = intakeAirTempSensor.formattedResponse
-//                self.myAirFuelEqvRatio2 = airFuelEqvRatio2.formattedResponse
-//                self.myAirFuelEqvRatio3 = airFuelEqvRatio3.formattedResponse
+                self.myNoxCorrected = noxCorrected.formattedResponse
+                self.myNoxAlternative = noxAlternative.formattedResponse
+                self.myNoxCorrectedAlternative = noxCorrectedAlternative.formattedResponse
+                self.myPmSensor = pmSensor.formattedResponse
+                self.myEngineFuelRate = engineFuelRate.formattedResponse
+                self.myEngineFuelRateMulti = engineFuelRateMulti.formattedResponse
+                self.myEngineExhaustFlowRate = engineExhaustFlowRate.formattedResponse
+                self.myEgrError = egrError.formattedResponse
                 
                 print("*********** speed in updateSensorData \(self.mySpeed)")
                 print("*********** altitude in updateSensorData \(self.myAltitude)")
@@ -257,9 +307,36 @@ class MyOBD: ObservableObject{
                 print("*********** nox in updateSensorData \(self.myNox)")
                 print("*********** fuelRate in updateSensorData \(self.myFuelRate)")
                 print("*********** mafRate in updateSensorData \(self.myMAFRate)")
-                print("*********** mafRateSensor in updateSensorData \(self.myMAFRateSensor)")
-//                print("*********** myAirFuelEqvRatio2 in updateSensorData \(self.myAirFuelEqvRatio2)")
-//                print("*********** myAirFuelEqvRatio3 in updateSensorData \(self.myAirFuelEqvRatio3)")
+                print("*********** myAirFuelEqvRatio in updateSensorData \(self.myAirFuelEqvRatio)")
+                print("*********** myCoolantTemp in updateSensorData \(self.myCoolantTemp)")
+                print("*********** myRPM in updateSensorData \(self.myRPM)")
+                print("*********** myIntakeTemp in updateSensorData \(self.myIntakeTemp)")
+                print("*********** myMAFRateSensor in updateSensorData \(self.myMAFRateSensor)")
+                print("*********** myOxygenSensor1 in updateSensorData \(self.myOxygenSensor1)")
+                print("*********** myCommandedEgr in updateSensorData \(self.myCommandedEgr)")
+                print("*********** myFuelTankLevelInput in updateSensorData \(self.myFuelTankLevelInput)")
+                print("*********** myCatalystTemp11 in updateSensorData \(self.myCatalystTemp11)")
+                print("*********** myCatalystTemp12 in updateSensorData \(self.myCatalystTemp12)")
+                print("*********** myCatalystTemp21 in updateSensorData \(self.myCatalystTemp21)")
+                print("*********** myCatalystTemp22 in updateSensorData \(self.myCatalystTemp22)")
+                print("*********** myAmbientAirTemp in updateSensorData \(self.myAmbientAirTemp)")
+                print("*********** myMaxValueFuelAirEqvRatio in updateSensorData \(self.myMaxValueFuelAirEqvRatio)")
+                print("*********** myMaxValueOxygenSensorVoltage in updateSensorData \(self.myMaxValueOxygenSensorVoltage)")
+                print("*********** myMaxValueOxygenSensorCurrent in updateSensorData \(self.myMaxValueOxygenSensorCurrent)")
+                print("*********** myMaxValueIntakeMAP in updateSensorData \(self.myMaxValueIntakeMAP)")
+                print("*********** myMaxAirFlowRate in updateSensorData \(self.myMaxAirFlowRate)")
+                print("*********** myFuelType in updateSensorData \(self.myFuelType)")
+                print("*********** myEngineOilTemp in updateSensorData \(self.myEngineOilTemp)")
+                print("*********** myIntakeAirTempSensor in updateSensorData \(self.myIntakeAirTempSensor)")
+                print("*********** myNoxCorrected in updateSensorData \(self.myNoxCorrected)")
+                print("*********** myNoxAlternative in updateSensorData \(self.myNoxAlternative)")
+                print("*********** myNoxCorrectedAlternative in updateSensorData \(self.myNoxCorrectedAlternative)")
+                print("*********** myPmSensor in updateSensorData \(self.myPmSensor)")
+                print("*********** myEngineFuelRate in updateSensorData \(self.myEngineFuelRate)")
+                print("*********** myEngineFuelRateMulti in updateSensorData \(self.myEngineFuelRateMulti)")
+                print("*********** myEngineExhaustFlowRate in updateSensorData \(self.myEngineExhaustFlowRate)")
+                print("*********** myEgrError in updateSensorData \(self.myEgrError )")
+                
                 
                 if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
                    && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
