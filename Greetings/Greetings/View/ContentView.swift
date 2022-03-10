@@ -1,37 +1,26 @@
-//
-//  ContentView.swift
-//  Greetings
-//
-//  Created by Mei Chen on 28.04.21.
-//
-
 import SwiftUI
-//import pcdfcore
 
 struct ContentView: View {
-    // UI
-    var menuItems: [MenuItem] = Menu.menuItems
+    let menuItems: [MenuItem] = Menu.menuItems
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
     
-    // bluetooth
-    @ObservedObject var locationHelper = LocationHelper()
-    @StateObject var obd = MyOBD()
-
+    @StateObject var viewModel = ViewModel()
+    
+//TODO: columns auto fit when phone is rotated
     var body: some View {
-        NavigationView{
+        NavigationView{//only need 1 NavigationView, every subview doesn't need it, or it will create a big space above the NavigationTitle in the subview.
             ScrollView{
                 LazyVGrid(columns: columns, spacing: 10){
                     ForEach(Menu.menuItems, id: \.id){ menuItem in
                         NavigationLink(destination: {
                             switch menuItem.title {
                             case "RDE":
-                                RdeSettingsView(obd: obd)
+                                RdeSettingsView()
                             case "Monitoring":
-                                MonitoringView(speed: obd.mySpeed, altitude: obd.myAltitude, temp: obd.myTemp,
-                                               nox: obd.myNox, fuelRate: obd.myFuelRate, MAFRate: obd.myMAFRate)
+                                MonitoringView()
                             case "Profiles":
                                 ProfilesView()
                             case "History":
@@ -41,7 +30,7 @@ struct ContentView: View {
                             case "Help":
                                 HelpView()
                             default:
-                                ContentView()
+                                HelpView()
                             }
                         }, label: {
                             VStack(spacing: 10){
@@ -58,19 +47,23 @@ struct ContentView: View {
                     }
                 }
             }
+            .navigationTitle("Menu")
             .LolaNavBarStyle()
-            .navigationBarTitle("Menu")
             .padding()
         }
-        .onAppear{
-            obd._locationHelper = locationHelper
-            locationHelper.checkIfLocationServicesIsEnabled()
-        }
-        .alert(isPresented: $locationHelper.showAlert) {
-            locationHelper.alert!
-        }
+        .environmentObject(viewModel)
     }
 }
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView(viewModel: ViewModel())
+.previewInterfaceOrientation(.portrait)
+//.previewInterfaceOrientation(.landscapeLeft)
+    }
+}
+
+
 
 //struct ContentView: View {
 //    var body: some View {
@@ -126,11 +119,3 @@ struct ContentView: View {
 //        .padding()
 //    }
 //}
-
-
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}

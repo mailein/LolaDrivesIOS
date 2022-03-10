@@ -1,12 +1,9 @@
 import SwiftUI
 
 struct RdeView: View {
-    var obd: MyOBD
-    
     var totalTime : Int = 0
     var totalDistance : Int = 0
     var validRdeTrip : Bool = false
-    
     var body: some View {
         VStack{
             HStack{
@@ -19,7 +16,6 @@ struct RdeView: View {
                     Text("Total Distance")
                 }
             }
-            
             Text("Valid RDE trip\(validRdeTrip ? "!" : "?")")
             
             Text("NOₓ")
@@ -57,7 +53,6 @@ struct RdeView: View {
         .foregroundColor(.gray)
         .font(.subheadline)
         .padding(30)
-        .onAppear(perform: obd.viewDidLoad)
     }
 }
 
@@ -112,5 +107,11 @@ struct CapsuleView: View{
             }
         }
 //        .border(Color.yellow)
+    }
+}
+
+struct RdeView_Previews: PreviewProvider {
+    static var previews: some View {
+        RdeView()
     }
 }
