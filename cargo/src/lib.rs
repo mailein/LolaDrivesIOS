@@ -1,179 +1,41 @@
 use core::f64;
 use std::os::raw::{c_char, c_uint};
-use std::ffi::{CString, CStr};
+use std::ffi::{CString};
 
-use core::time::Duration;
-use std::vec;
-use ordered_float::NotNan;
-use rtlola_frontend::mir::StreamReference;
-use rtlola_frontend::RtLolaMir;
-use rtlola_interpreter::{Config, EvalConfig, Monitor, TimeFormat, TimeRepresentation, Value};
-use rtlola_parser::ParserConfig;
+mod bridge;
 
-static mut MONITOR: Option<Monitor> = None;
-static mut IR: Option<RtLolaMir> = None;
-static RELEVANT_OUTPUTS: [&str; 19] = [
-    "d",
-    "d_u",
-    "d_r",
-    "d_m",
-    "t_u",
-    "t_r",
-    "t_m",
-    "u_avg_v",
-    "r_avg_v",
-    "m_avg_v",
-    "u_va_pct",
-    "r_va_pct",
-    "m_va_pct",
-    "u_rpa",
-    "r_rpa",
-    "m_rpa",
-    "nox_per_kilometer",
-    "is_valid_test",
-    "not_rde_test",
-];
-static mut RELEVANT_OUTPUT_IX: [usize; 19] =
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+static mut MONITOR: Option<bridge::KotlinMonitor> = None;
 
-static NUM_OUTPUTS: usize = 19;
-
+//Function to initialize the Monitor we will feed with events, with the RDE-Specification
 #[no_mangle]
-pub extern fn rust_greeting(to: *const c_char) -> *mut c_char {
-    let c_str = unsafe { CStr::from_ptr(to) };
-    let recipient = match c_str.to_str() {
-        Err(_) => "there",
-        Ok(string) => string,
-    };
+pub unsafe extern "C" fn rust_initmonitor(
+    j_recipient: *mut c_char,
+    relevant_outputs: *mut c_char
+) -> *mut c_char {
+    let m = bridge::init(j_recipient, relevant_outputs);
+    MONITOR = Some(m);
 
-    CString::new("Hello ".to_owned() + recipient).unwrap().into_raw()
+    CString::new("Worked ".to_owned()).unwrap().into_raw()
+}
+
+
+//Function which transmits the new Values of the current Period (1Hz) to the Monitor and returns the generated outputs to the App
+//6 Float64 Input Streams (Float64) and 1 Trigger
+#[no_mangle]
+pub unsafe extern "C" fn rust_sendevent(
+    inputs: *mut f64,
+    len_in: c_uint,
+    len_out: *mut c_uint
+) -> *mut f64 {
+    let monitor = MONITOR.as_mut().unwrap();
+    let res = bridge::receive_total_event(monitor, inputs, len_out);
+    res
 }
 
 #[no_mangle]
-pub extern fn rust_greeting_free(s: *mut c_char) {
+pub extern fn rust_string_free(s: *mut c_char) {
     unsafe {
         if s.is_null() { return }
         CString::from_raw(s)
     };
-}
-
-#[no_mangle]
-pub extern fn rust_add(a: i16, b:i16) -> i16 {
-    a+b
-}
-
-#[no_mangle]
-pub unsafe extern fn rust_initmonitor(s: *mut c_char)-> *mut c_char{
-    let spec_file = {
-        if s.is_null() { panic!() }
-        // CString::from_raw(s)
-        let c_str = { CStr::from_ptr(s) };
-        let recipient = match c_str.to_str() {
-            Err(_) => "there",
-            Ok(string) => string,
-        };
-        recipient
-    };
-
-    let cfg = ParserConfig::for_string(String::from(spec_file));
-    let mir = rtlola_frontend::parse(cfg).unwrap();
-    let indices: Vec<usize> = RELEVANT_OUTPUTS
-        .iter()
-        .map(|name| {
-            let r = mir
-                .outputs
-                .iter()
-                .find(|o| &o.name == *name)
-                .expect("ir does not contain required output stream")
-                .reference;
-            if let StreamReference::Out(r) = r {
-                r
-            } else {
-                panic!("output stream has input stream reference")
-            }
-        })
-        .collect();
-    for i in 0..RELEVANT_OUTPUT_IX.len() {
-        // should prob be a mem copy of sorts.
-        RELEVANT_OUTPUT_IX[i] = indices[i];
-    }
-    assert_eq!(NUM_OUTPUTS, RELEVANT_OUTPUTS.len());
-    IR = Some(mir.clone());
-    let ecfg = EvalConfig::api(TimeRepresentation::Relative(TimeFormat::HumanTime));
-    MONITOR = Some(Config::new_api(ecfg, mir).into_monitor().unwrap());
-
-    //Just to match the output-type, will remove this later
-    CString::new("Worked ".to_owned()).unwrap().into_raw()
-    //----
-}
-
-#[no_mangle]
-pub unsafe extern fn rust_sendevent(inputs: *mut f64, len_in: c_uint, len_out: *mut c_uint) -> *mut f64{
-    // //jdouble = f64 (seems to work)
-    // let num_values = IR.as_ref().unwrap().inputs.len() + 1;
-    let event = std::slice::from_raw_parts(inputs, len_in as usize).to_vec();
-    // event.copy_from_slice( std::slice::from_raw_parts_mut(inputs, num_values));
-    // println!("{:?}", event);
-
-    //Mei: should I and how to check if the copy above works?
-    // let copy_res = ???
-    // debug_assert!(copy_res.is_ok());
-    // if copy_res.is_err() {
-    //     let res = env.new_double_array(0).unwrap();
-    //     return res;
-    // }
-
-    let (time, input) = event.split_last().unwrap();
-    let input: Vec<Value> = input
-        .into_iter()
-        .map(|f| Value::Float(NotNan::new(*f).unwrap()))
-        .collect();
-    // println!("{:?}", input);
-    
-    let updates = MONITOR
-        .as_mut()
-        .unwrap()
-        .accept_event(input, Duration::new(time.floor() as u64, 0));
-
-    let num_updates = updates.timed.len();
-    *len_out = (num_updates * NUM_OUTPUTS) as c_uint;
-    let mut res = vec![0.0; num_updates * NUM_OUTPUTS];
-    let output_copy_res = updates
-        .timed
-        .iter()
-        .enumerate()
-        .map(|(ix, update)| {
-            //println!("RUST UPDATES----{:?}", (ix, update));
-            let (_, values) = update;
-            //println!("RUST VALUES----{:?}", values);
-            let output: Vec<f64> = values
-                .iter()
-                .filter_map(|(sr, v)| {
-                    if RELEVANT_OUTPUT_IX.contains(sr) {
-                        Some(v)
-                    } else {
-                        None
-                    }
-                })
-                .map(|v| {
-                    if let Value::Float(f) = v {
-                        f.into_inner() as f64
-                    } else {
-                        0.0 as f64
-                    }
-                })
-                .collect();
-            //println!("RUST OUTPUT----{:?}", output);
-            res[NUM_OUTPUTS * ix..NUM_OUTPUTS * (ix + 1)].copy_from_slice(&output);
-        })
-        .collect::<Vec<_>>();
-    // debug_assert!(output_copy_res.is_ok());
-    Box::into_raw(res.into_boxed_slice()) as *mut f64
-}
-
-#[no_mangle]
-pub unsafe extern fn rust_array_free(arr: *mut f64) {
-    drop({
-        Box::from_raw(arr)
-    });
 }
