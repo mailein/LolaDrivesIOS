@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RdeSettingsView: View{
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     @State var sliderValue: Double = 83
     
     var body: some View{
@@ -31,6 +32,7 @@ struct RdeSettingsView: View{
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
+                    obd.viewDidLoad()
                     viewModel.model.isConnected = true
                 })
         }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RdeView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     
     var totalTime : Int = 0
     var totalDistance : Int = 0
@@ -51,6 +52,7 @@ struct RdeView: View {
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
+                    obd.disconnect()
                     viewModel.model.isConnected = false
                 })
         }

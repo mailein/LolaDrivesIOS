@@ -3,6 +3,7 @@ import SwiftUI
 
 struct MonitoringView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     
     var body: some View {
         let selectedProfile = viewModel.getSelectedProfile()
@@ -11,10 +12,10 @@ struct MonitoringView: View {
                 Text(command.name)
                 Spacer()
                 VStack(alignment: .trailing){
-                    Text("value_palceholder")
-                    Text(command.unit)
-                        .italic()
-                        .fontWeight(.ultraLight)
+                    Text(obd.mySpeed)
+//                    Text(command.unit)
+//                        .italic()
+//                        .fontWeight(.ultraLight)
                 }
             }
         }
