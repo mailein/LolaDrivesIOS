@@ -99,7 +99,7 @@ class MyOBD: ObservableObject{
         outputValues = [Double](repeating: 0, count: 19)
     }
     
-    func viewDidLoad () -> () {
+    public func viewDidLoad () -> () {
         var ma : [CBUUID] = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
         _serviceUUIDs = ma
         
@@ -110,7 +110,7 @@ class MyOBD: ObservableObject{
         rustGreetings.initmonitor(s: fileContent)
     }
     
-    func connect () -> () {
+    private func connect () -> () {
         var ma : [LTOBD2Command] = [LTOBD2CommandELM327_IDENTIFY.command(),
                                 LTOBD2CommandELM327_IGNITION_STATUS.command(),
                                 LTOBD2CommandELM327_READ_VOLTAGE.command(),
@@ -212,12 +212,12 @@ class MyOBD: ObservableObject{
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
     }
     
-    func disconnect () -> () {
+    public func disconnect () -> () {
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
     }
     
-    func updateSensorData () -> () {
+    private func updateSensorData () -> () {
         print("************adapter nil? \(_obd2Adapter == nil)")
         let speed = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
         let temp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
@@ -264,6 +264,7 @@ class MyOBD: ObservableObject{
                 }
                 let duration = Date().timeIntervalSince(self.startTime!)
                 self.mySpeed = speed.formattedResponse
+                print("============== speed, cookedResponse: \(speed.cookedResponse), formattedResponse: \(speed.formattedResponse), commandString: \(speed.commandString), completionTime: \(speed.completionTime), failureResponse: \(speed.failureResponse), freezeFrame: \(speed.freezeFrame), gotAnswer: \(speed.gotAnswer), gotValidAnswer: \(speed.gotValidAnswer), isCAN: \(speed.isCAN), isRawCommand: \(speed.isRawCommand), purpose: \(speed.purpose), rawResponse: \(speed.rawResponse), selectedECU: \(speed.selectedECU)")
                 let altitude = self._locationHelper?.altitude
                 self.myAltitude = "\(altitude ?? 0) m"
                 self.myTemp = temp.formattedResponse

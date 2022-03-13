@@ -6,7 +6,7 @@ struct Model{
     
     //nav bar
     private var _isConnected: Bool
-    var isConnected: Bool {
+    var isConnected: Bool {//TODO: should not depend on Start/Stop button, but whether Bluetooth is connected
         get {
             return self._isConnected
         }
