@@ -19,7 +19,11 @@ struct ContentView: View {
                         NavigationLink(destination: {
                             switch menuItem.title {
                             case "RDE":
-                                RdeSettingsView()
+                                if !viewModel.model.started {
+                                    RdeSettingsView()
+                                }else{
+                                    RdeView()
+                                }
                             case "Monitoring":
                                 MonitoringView()
                             case "Profiles":

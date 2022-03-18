@@ -32,6 +32,7 @@ struct RdeSettingsView: View{
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
+                    viewModel.model.started = true
                     obd.viewDidLoad()
                     viewModel.model.isConnected = true
                 })

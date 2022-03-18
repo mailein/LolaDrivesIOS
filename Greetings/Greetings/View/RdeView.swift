@@ -73,7 +73,19 @@ struct RdeLogView: View{
                     Text("Event Log")
                 }
         }
+        .navigationBarItems(leading:
+            Button(action: {
+                viewModel.model.started = false
+            }) {
+                HStack(spacing: 0) {
+                    Image(systemName: "chevron.backward")
+                        .aspectRatio(contentMode: .fill)
+                    Text("Configuration")
+                }
+            }
+        )
         .navigationBarItems(trailing: ConnectedDisconnectedView(connected: viewModel.model.isConnected))
+        .navigationBarBackButtonHidden(true)
     }
 }
 

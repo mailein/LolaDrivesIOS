@@ -18,6 +18,7 @@ struct Model{
 //    }
     
     //RDE view
+    var started: Bool = false
     var distanceSetting: Int = 84
     //RDE details view
     var totalTime: Double = 0
