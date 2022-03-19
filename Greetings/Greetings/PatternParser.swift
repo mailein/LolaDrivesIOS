@@ -1,10 +1,3 @@
-//
-//  PcdfParser.swift
-//  Greetings
-//
-//  Created by Mei Chen on 09.08.21.
-//
-
 import Foundation
 import pcdfcore
 

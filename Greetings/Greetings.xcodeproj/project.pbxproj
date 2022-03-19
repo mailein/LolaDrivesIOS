@@ -26,6 +26,7 @@
 		96B71F28271D7C4F00AB2E8E /* 2021-09-13_12-04-29.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F25271D7C4F00AB2E8E /* 2021-09-13_12-04-29.ppcdf */; };
 		96B71F29271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F26271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf */; };
 		96B71F2A271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F27271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf */; };
+		96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F027E618E5004C4B7D /* RdeLogView.swift */; };
 		96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DA27DA72D600429CF1 /* Model.swift */; };
@@ -88,6 +89,7 @@
 		96B71F25271D7C4F00AB2E8E /* 2021-09-13_12-04-29.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-04-29.ppcdf"; sourceTree = "<group>"; };
 		96B71F26271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-12-53.ppcdf"; sourceTree = "<group>"; };
 		96B71F27271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_15-07-19.ppcdf"; sourceTree = "<group>"; };
+		96C6F5F027E618E5004C4B7D /* RdeLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeLogView.swift; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		96ECF8DE27DA731100429CF1 /* CommandItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandItem.swift; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 				96EFC14826FB69D500BE44A6 /* HistoryView.swift */,
 				96EFC15026FB6F4100BE44A6 /* PrivacyView.swift */,
 				96EFC14C26FB6E4A00BE44A6 /* HelpView.swift */,
+				96C6F5F027E618E5004C4B7D /* RdeLogView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				962B13D826D7E432001F8760 /* MyOBD.swift in Sources */,
 				96ECF8DD27DA72F200429CF1 /* Menu.swift in Sources */,
 				960DACA926396859005DEABB /* ContentView.swift in Sources */,
+				96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */,
 				96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */,
 				96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */,
 				96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */,

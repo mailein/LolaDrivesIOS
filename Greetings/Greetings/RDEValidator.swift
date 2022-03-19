@@ -1,10 +1,3 @@
-//
-//  RDEValidator.swift
-//  Greetings
-//
-//  Created by Mei Chen on 05.08.21.
-//
-
 import Foundation
 import pcdfcore
 //import Files

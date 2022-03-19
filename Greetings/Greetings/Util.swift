@@ -1,10 +1,3 @@
-//
-//  Util.swift
-//  Greetings
-//
-//  Created by Mei Chen on 19.08.21.
-//
-
 import Foundation
 
 func specFile(filename: String) -> String{

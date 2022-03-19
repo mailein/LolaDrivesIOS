@@ -1,10 +1,3 @@
-//
-//  RustGreetings.swift
-//  Greetings
-//
-//  Created by Mei Chen on 28.04.21.
-//
-
 import Foundation
 
 class RustGreetings {
