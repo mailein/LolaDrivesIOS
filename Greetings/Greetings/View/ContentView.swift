@@ -22,7 +22,7 @@ struct ContentView: View {
                                 if !viewModel.model.started {
                                     RdeSettingsView()
                                 }else{
-                                    RdeView()
+                                    RdeView(dynamics: $viewModel.model.dynamics)
                                 }
                             case "Monitoring":
                                 MonitoringView()

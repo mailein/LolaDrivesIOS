@@ -93,7 +93,7 @@ struct DynamicsRPABar{
 }
 
 enum Category: String{// no comma for enum case in Swift
-    case URBAN = "urban"
-    case RURAL = "rural"
-    case MOTORWAY = "motorway"
+    case URBAN = "Urban"
+    case RURAL = "Rural"
+    case MOTORWAY = "Motorway"
 }

@@ -22,7 +22,7 @@ struct RdeSettingsView: View{
                     .foregroundColor(.gray)
             })
             Spacer()
-            NavigationLink(destination: RdeView(), label: {
+            NavigationLink(destination: RdeView(dynamics: $viewModel.model.dynamics), label: {
                 Text("Start")
                     .bold()
                     .font(.title2)
@@ -38,7 +38,8 @@ struct RdeSettingsView: View{
                 })
         }
         .navigationBarItems(trailing: ConnectedDisconnectedView(connected: viewModel.model.isConnected))
-        .padding(30)
+        .navigationBarTitleDisplayMode(.inline)
+        .padding()
     }
 }
 
