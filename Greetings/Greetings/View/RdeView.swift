@@ -4,12 +4,10 @@ struct RdeView: View {
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var obd: MyOBD
     
-    @Binding var dynamics: Dynamics
-    
     var body: some View {
         ScrollView{
             VStack(spacing: 25){
-                TopIndicatorsSection(dynamics: $dynamics)
+                TopIndicatorsSection()
 //                    .border(Color.yellow)
                 
                 NOxSection()
@@ -31,20 +29,19 @@ struct RdeView: View {
     }
     
     struct TopIndicatorsSection: View{
+        @EnvironmentObject var viewModel: ViewModel
         @EnvironmentObject var obd: MyOBD
-        
-        @Binding var dynamics: Dynamics
         
         var body: some View{
             VStack{
                 HStack(spacing: 20){
                     VStack{
-                        Text("\(Int(dynamics.durationTotal))")
+                        Text("\(Int(viewModel.model.dynamics.durationTotal))")
                             .font(.largeTitle)
                         Text("Total Time")
                     }
                     VStack{
-                        Text("\(Int(dynamics.distanceTotal))")
+                        Text("\(Int(viewModel.model.dynamics.distanceTotal))")
                             .font(.largeTitle)
                         Text("Total Distance")
                     }

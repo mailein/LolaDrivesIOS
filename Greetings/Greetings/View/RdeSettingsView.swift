@@ -22,7 +22,7 @@ struct RdeSettingsView: View{
                     .foregroundColor(.gray)
             })
             Spacer()
-            NavigationLink(destination: RdeView(dynamics: $viewModel.model.dynamics), label: {
+            NavigationLink(destination: RdeView(), label: {
                 Text("Start")
                     .bold()
                     .font(.title2)
