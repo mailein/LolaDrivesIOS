@@ -22,7 +22,6 @@ struct Model{
     var distanceSetting: Int = 84
     //RDE details view
     var totalTime: Double = 0
-    var dynamics: Dynamics = Dynamics(durationTotal: 0, distanceTotal: 0)
     
     //profiles view
     let defaultProfile: Profile = Profile("default_profile", enabled: ["RPM", "SPEED"])

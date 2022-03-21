@@ -1,51 +1,17 @@
 import Foundation
 import SwiftUI
-
-struct Dynamics{
-    private(set) var durationTotal: Double
-    private(set) var distanceTotal: Double
-    var noxBar = NoxBar()
-    var distanceBarUrban: DistanceBar = DistanceBar(category: .URBAN)
-    var dynamicsRPABarUrban: DynamicsRPABar = DynamicsRPABar(category: .URBAN)
-    
-    mutating func setDuration (to newDuration: Double) {
-        self.durationTotal = newDuration
-    }
-    
-    mutating func setDistance (to newDistance: Double) {
-        self.distanceTotal = newDistance
-    }
-    
-    mutating func setNox (to newNox: Double) {
-        self.noxBar.setNoxAmount(to: newNox)
-    }
-    
-    //TODO: other func
-}
-
-struct NoxBar{
-    //literals
-    let barLow: Double = 0.12//g/km
-    let barHigh: Double = 0.168//g/km
-    let barMax: Double = 0.2//g/km
-    
-    var noxAmount: Double = 0 //mg/km
-    
-    mutating func setNoxAmount (to newNoxAmount: Double) {
-        self.noxAmount = newNoxAmount
-    }
-}
         
-struct DistanceBar{
+struct DistanceBar: View{
     //literals
     private let barLowUrban: Double = 0.29
-    private let barLowRuralMotorway: Double = 0.23
     private let barHighUrban: Double = 0.44
+    private let barLowRuralMotorway: Double = 0.23
     private let barHighRuralMotorway: Double = 0.43
+    private let barMax: Double = 0.5
     
     var category: Category
-    var distance: Double = 0//d-u/r/m
-    var duration: Double = 0//t-u/r/m
+    var distance: Double//d-u/r/m //obd.outputValues[1,2,3]
+    var totalDistance: Double//d //obd.outputValues[0]
     
     //computed properties
     var barLow: Double {
@@ -64,32 +30,87 @@ struct DistanceBar{
             }
         }
     }
-    var durationHour: Int {
-        get{
-            (Int)(duration / (60 * 60))
-        }
+    
+    var body: some View{
+        CapsuleView(barOffset: [barLow / barMax, barHigh / barMax], ballOffset: [totalDistance == 0 ? 0 : barMax * distance / totalDistance])
     }
-    var durationMinute: Int {
-        get{
-            (Int)((duration - floor(duration / (60 * 60)) * (60 * 60)) / 60)
-        }
+}
+
+struct DistanceDurationText: View {
+    let distance: Double//obd.outputValues[1,2,3]
+    let durationInSeconds: Double//t-u/r/m
+    let seconds: Int//obd.outputValues[4,5,6]
+    let minutes: Int
+    let hours: Int
+    
+    init (distance: Double, durationInSeconds: Double){
+        self.distance = distance
+        self.durationInSeconds = durationInSeconds
+        self.seconds = Int(durationInSeconds)
+        self.minutes = Int(seconds / 60)
+        self.hours = Int(seconds / 3600)
     }
-    var durationSecond: Int {
-        get{
-            (Int)(duration.truncatingRemainder(dividingBy: 60))
+    
+    var body: some View{
+        HStack{
+            Text("\(String(format: "%.2f", distance)) km")
+            Spacer()
+            Text("\(hours):\(minutes - hours * 60):\(seconds - hours * 3600 - minutes * 60)")
         }
     }
 }
 
-struct DynamicsRPABar{
+struct DynamicsBar: View{
     //literals
-    let barCenter: Double = 0.5
+    let barMiddle: Double = 0.5
+    let maxRpa = 0.3 // Realistic maximum RPA
+    let maxPct = 35.0
     
-    var category: Category
-    var barLow: Double = 0.25//RPA threashold
-    var barHigh: Double = 0.75//PCT95 threashold
-    var ballLow: Double = 0//RPA
-    var ballHigh: Double = 0.5//PCT95
+    var terrain: Category
+    let avg_v: Double //obd.outputValues[7,8,9]
+    let rpa: Double //obd.outputValues[13,14,15]
+    let pct: Double //obd.outputValues[10,11,12]
+    
+    // Calculate Horizontal Marker Positions
+    let rpaThreshold: Double
+    let rpaMarkerPercentage: Double
+    let ballRpa: Double
+    // Calculate Horizontal Marker Positions
+    let pctThreshold: Double
+    let pctMarkerPercentage: Double
+    let ballPct: Double
+    
+    init(terrain: Category, avg_v: Double, rpa: Double, pct: Double){
+        self.terrain = terrain
+        self.avg_v = avg_v
+        self.rpa = rpa
+        self.pct = pct
+        
+        switch terrain {
+        case .URBAN:
+            rpaThreshold = -0.0016 * avg_v + 0.1755
+            pctThreshold = 0.136 * avg_v + 14.44
+        case .RURAL:
+            rpaThreshold = -0.0016 * avg_v + 0.1755
+            pctThreshold = avg_v <= 74.6 ? 0.136 * avg_v + 14.44 : 0.0742 * avg_v + 18.966
+        case .MOTORWAY:
+            rpaThreshold = avg_v <= 94.05 ? -0.0016 * avg_v + 0.1755 : 0.025
+            pctThreshold = 0.0742 * avg_v + 18.966
+        }
+        rpaMarkerPercentage = rpaThreshold / maxRpa
+        ballRpa = barMiddle * rpa / maxRpa
+        pctMarkerPercentage = pctThreshold / maxPct
+        ballPct = barMiddle + barMiddle * pct / maxPct
+    }
+    
+    var body: some View{
+        HStack(alignment: .center){
+            Text("Dynamics")
+            
+            CapsuleView(barOffset: [rpaMarkerPercentage, barMiddle, pctMarkerPercentage], ballOffset: [ballRpa, ballPct])
+        }
+    }
+    
 }
 
 enum Category: String{// no comma for enum case in Swift

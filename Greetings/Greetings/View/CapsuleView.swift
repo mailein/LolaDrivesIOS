@@ -1,18 +1,16 @@
-//
-//  CapsuleView.swift
-//  Greetings
-//
-//  Created by Mei Chen on 20.03.22.
-//
-
 import SwiftUI
 
 struct CapsuleView: View{
-    var barOffset: [Double] = [0, 0.5, 1]
-    var ballOffset: [Double] = [0, 0.5, 1]
+    var barOffset: [Double]
+    var ballOffset: [Double]
     
-    var barWidth: CGFloat = 1
-    var ballHeight: CGFloat = 10
+    private var barWidth: CGFloat = 1
+    private var ballHeight: CGFloat = 10
+    
+    init(barOffset: [Double] = [0, 0.5, 1], ballOffset: [Double] = [0, 0.5, 1]){
+        self.barOffset = barOffset
+        self.ballOffset = ballOffset
+    }
     
     var body: some View{
         GeometryReader{ geometry in
