@@ -8,6 +8,7 @@ struct ContentView: View {
     ]
     
     @StateObject var viewModel = ViewModel()
+    @ObservedObject var locationHelper = LocationHelper()
     @StateObject var obd = MyOBD()
     
 //TODO: columns auto fit when phone is rotated
@@ -55,6 +56,13 @@ struct ContentView: View {
             .navigationTitle("Menu")
             .LolaNavBarStyle()
             .padding()
+        }
+        .onAppear{
+            obd._locationHelper = locationHelper
+            locationHelper.checkIfLocationServicesIsEnabled()
+        }
+        .alert(isPresented: $locationHelper.showAlert) {
+            locationHelper.alert!
         }
         .environmentObject(viewModel)
         .environmentObject(obd)
