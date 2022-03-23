@@ -7,10 +7,17 @@ struct RdeView: View {
     var body: some View {
         ScrollView{
             VStack(spacing: 25){
-                TopIndicatorsSection(t_u: obd.outputValues[4], t_r: obd.outputValues[5], t_m: obd.outputValues[6], totalDistance: obd.outputValues[0], isValidTest: obd.outputValues[17])
+                let tu = obd.outputValues.count >= 5 ? obd.outputValues[4] : 0
+                let tr = obd.outputValues.count >= 6 ? obd.outputValues[5] : 0
+                let tm = obd.outputValues.count >= 7 ? obd.outputValues[6] : 0
+                let distance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
+                let isValid = obd.outputValues.count >= 18 ? obd.outputValues[17] : 0
+                let nox = obd.outputValues.count >= 17 ? obd.outputValues[16] : 0
+                
+                TopIndicatorsSection(t_u: tu, t_r: tr, t_m: tm, totalDistance: distance, isValidTest: isValid)
 //                    .border(Color.yellow)
                 
-                NOxSection(noxAmount: obd.outputValues[16])
+                NOxSection(noxAmount: nox)
 //                    .border(Color.yellow)
                 
                 CategoryDistanceDynamicsSection(terrain: Category.URBAN)
@@ -88,17 +95,38 @@ struct RdeView: View {
                 
                 switch terrain {
                 case .URBAN:
-                    DistanceBar(category: .URBAN, distance: obd.outputValues[1], totalDistance: obd.outputValues[0])
-                    DistanceDurationText(distance: obd.outputValues[1], durationInSeconds: obd.outputValues[4])
-                    DynamicsBar(terrain: .URBAN, avg_v: obd.outputValues[7], rpa: obd.outputValues[13], pct: obd.outputValues[10])
+                    let distance = obd.outputValues.count >= 2 ? obd.outputValues[1] : 0
+                    let totalDistance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
+                    let duration = obd.outputValues.count >= 5 ? obd.outputValues[4] : 0
+                    let avgv = obd.outputValues.count >= 8 ? obd.outputValues[7] : 0
+                    let rpa = obd.outputValues.count >= 14 ? obd.outputValues[13] : 0
+                    let pct = obd.outputValues.count >= 11 ? obd.outputValues[10] : 0
+                    
+                    DistanceBar(category: .URBAN, distance: distance, totalDistance: totalDistance)
+                    DistanceDurationText(distance: distance, durationInSeconds: duration)
+                    DynamicsBar(terrain: .URBAN, avg_v: avgv, rpa: rpa, pct: pct)
                 case .RURAL:
-                    DistanceBar(category: .RURAL, distance: obd.outputValues[2], totalDistance: obd.outputValues[0])
-                    DistanceDurationText(distance: obd.outputValues[2], durationInSeconds: obd.outputValues[5])
-                    DynamicsBar(terrain: .RURAL, avg_v: obd.outputValues[8], rpa: obd.outputValues[14], pct: obd.outputValues[11])
+                    let distance = obd.outputValues.count >= 3 ? obd.outputValues[2] : 0
+                    let totalDistance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
+                    let duration = obd.outputValues.count >= 6 ? obd.outputValues[5] : 0
+                    let avgv = obd.outputValues.count >= 9 ? obd.outputValues[8] : 0
+                    let rpa = obd.outputValues.count >= 15 ? obd.outputValues[14] : 0
+                    let pct = obd.outputValues.count >= 12 ? obd.outputValues[11] : 0
+                    
+                    DistanceBar(category: .RURAL, distance: distance, totalDistance: totalDistance)
+                    DistanceDurationText(distance: distance, durationInSeconds: duration)
+                    DynamicsBar(terrain: .RURAL, avg_v: avgv, rpa: rpa, pct: pct)
                 case .MOTORWAY:
-                    DistanceBar(category: .MOTORWAY, distance: obd.outputValues[3], totalDistance: obd.outputValues[0])
-                    DistanceDurationText(distance: obd.outputValues[3], durationInSeconds: obd.outputValues[6])
-                    DynamicsBar(terrain: .MOTORWAY, avg_v: obd.outputValues[9], rpa: obd.outputValues[15], pct: obd.outputValues[12])
+                    let distance = obd.outputValues.count >= 4 ? obd.outputValues[3] : 0
+                    let totalDistance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
+                    let duration = obd.outputValues.count >= 7 ? obd.outputValues[6] : 0
+                    let avgv = obd.outputValues.count >= 10 ? obd.outputValues[9] : 0
+                    let rpa = obd.outputValues.count >= 16 ? obd.outputValues[15] : 0
+                    let pct = obd.outputValues.count >= 13 ? obd.outputValues[12] : 0
+                    
+                    DistanceBar(category: .MOTORWAY, distance: distance, totalDistance: totalDistance)
+                    DistanceDurationText(distance: distance, durationInSeconds: duration)
+                    DynamicsBar(terrain: .MOTORWAY, avg_v: avgv, rpa: rpa, pct: pct)
                 }
             }
         }
