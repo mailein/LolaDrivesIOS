@@ -37,14 +37,14 @@ struct DistanceBar: View{
 }
 
 struct DistanceDurationText: View {
-    let distance: Double//obd.outputValues[1,2,3]
+    let distanceInMeters: Double//obd.outputValues[1,2,3]
     let durationInSeconds: Double//t-u/r/m
     let seconds: Int//obd.outputValues[4,5,6]
     let minutes: Int
     let hours: Int
     
     init (distance: Double, durationInSeconds: Double){
-        self.distance = distance
+        self.distanceInMeters = distance
         self.durationInSeconds = durationInSeconds
         self.seconds = Int(durationInSeconds)
         self.minutes = Int(seconds / 60)
@@ -53,10 +53,40 @@ struct DistanceDurationText: View {
     
     var body: some View{
         HStack{
-            Text("\(String(format: "%.2f", distance)) km")
+            DistanceText(distanceInMeters: distanceInMeters)
             Spacer()
-            Text("\(hours):\(minutes - hours * 60):\(seconds - hours * 3600 - minutes * 60)")
+            DurationText(durationInSeconds: durationInSeconds)
         }
+    }
+}
+
+struct DistanceText: View{
+    let distanceInMeters: Double
+    
+    var body: some View{
+        if distanceInMeters < 1000 {
+            Text("\(Int(distanceInMeters)) m")
+        }else{
+            Text("\(String(format: "%.2f", distanceInMeters / 1000)) km")
+        }
+    }
+}
+
+struct DurationText: View{
+    let durationInSeconds: Double
+    let seconds: Int
+    let minutes: Int
+    let hours: Int
+    
+    init(durationInSeconds: Double){
+        self.durationInSeconds = durationInSeconds
+        self.seconds = Int(durationInSeconds)
+        self.minutes = Int(seconds / 60)
+        self.hours = Int(seconds / 3600)
+    }
+    
+    var body: some View{
+        Text("\(hours):\(minutes - hours * 60):\(seconds - hours * 3600 - minutes * 60)")
     }
 }
 

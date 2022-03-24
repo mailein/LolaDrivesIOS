@@ -35,22 +35,22 @@ struct RdeView: View {
     }
     
     struct TopIndicatorsSection: View{
-        var t_u: Double//obd.outputValues[4,5,6]
+        var t_u: Double//obd.outputValues[4,5,6] // in seconds
         var t_r: Double
         var t_m: Double
-        var totalDistance: Double//obd.outputValues[0]
+        var totalDistance: Double//obd.outputValues[0] // in meters
         var isValidTest: Double//obd.outputValues[17]
         
         var body: some View{
             VStack{
                 HStack(spacing: 20){
                     VStack{
-                        Text("\(Int(t_u + t_r + t_m))")
+                        DurationText(durationInSeconds: t_u + t_r + t_m)
                             .font(.largeTitle)
                         Text("Total Time")
                     }
                     VStack{
-                        Text("\(Int(totalDistance))")
+                        DistanceText(distanceInMeters: totalDistance)
                             .font(.largeTitle)
                         Text("Total Distance")
                     }
