@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct HelpView: View{
+    let url = Bundle.main.url(forResource: "help", withExtension: "html")
+    
     var body: some View{
-        Text("Help page, blabla")
+        UrlWebView(urlToDisplay: url!)
     }
 }
 

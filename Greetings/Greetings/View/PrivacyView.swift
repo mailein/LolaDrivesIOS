@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct PrivacyView: View {
+    let url = URL(string: "https://www.loladrives.app/privacy/")
+    
     var body: some View {
-        Text("Privacy page, blabla")
+        UrlWebView(urlToDisplay: url!)
     }
 }
 
