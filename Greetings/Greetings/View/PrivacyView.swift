@@ -1,10 +1,12 @@
 import SwiftUI
 
 struct PrivacyView: View {
-    let url = URL(string: "https://www.loladrives.app/privacy/")
+    let url = Bundle.main.url(forResource: "privacy", withExtension: "html")
     
     var body: some View {
-        UrlWebView(urlToDisplay: url!)
+        UrlWebView(url: url!)
+            .navigationTitle("Privacy")
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
 

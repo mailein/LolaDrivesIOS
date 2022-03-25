@@ -4,11 +4,18 @@ import WebKit
 struct UrlWebView: UIViewRepresentable {
     typealias UIViewType = WKWebView
     
-    var urlToDisplay: URL
+    let url: URL
+    let urlString: String?
+    
+    init(url: URL) {
+        self.url = url
+        self.urlString = try? String(contentsOf: url, encoding: String.Encoding.utf8)
+    }
     
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
-        webView.load(URLRequest(url: urlToDisplay))
+        
+        webView.loadHTMLString(urlString!, baseURL: url)
         return webView
     }
     

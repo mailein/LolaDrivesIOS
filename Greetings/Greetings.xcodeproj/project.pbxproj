@@ -29,8 +29,9 @@
 		96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F027E618E5004C4B7D /* RdeLogView.swift */; };
 		96C6F5F327E7727B004C4B7D /* CapsuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F227E7727B004C4B7D /* CapsuleView.swift */; };
 		96C6F5F527EE6EAE004C4B7D /* UrlWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F427EE6EAE004C4B7D /* UrlWebView.swift */; };
-		96C6F5FA27EE7A8A004C4B7D /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F5F827EE7A8A004C4B7D /* help.html */; };
-		96C6F5FB27EE7A8A004C4B7D /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F5F927EE7A8A004C4B7D /* style.css */; };
+		96C6F5FE27EE80BE004C4B7D /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F5FC27EE80BD004C4B7D /* style.css */; };
+		96C6F5FF27EE80BE004C4B7D /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F5FD27EE80BE004C4B7D /* help.html */; };
+		96C6F60127EE80E2004C4B7D /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F60027EE80E2004C4B7D /* privacy.html */; };
 		96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DA27DA72D600429CF1 /* Model.swift */; };
@@ -96,8 +97,9 @@
 		96C6F5F027E618E5004C4B7D /* RdeLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeLogView.swift; sourceTree = "<group>"; };
 		96C6F5F227E7727B004C4B7D /* CapsuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleView.swift; sourceTree = "<group>"; };
 		96C6F5F427EE6EAE004C4B7D /* UrlWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlWebView.swift; sourceTree = "<group>"; };
-		96C6F5F827EE7A8A004C4B7D /* help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = help.html; sourceTree = "<group>"; };
-		96C6F5F927EE7A8A004C4B7D /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		96C6F5FC27EE80BD004C4B7D /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		96C6F5FD27EE80BE004C4B7D /* help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = help.html; sourceTree = "<group>"; };
+		96C6F60027EE80E2004C4B7D /* privacy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = privacy.html; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		96ECF8DE27DA731100429CF1 /* CommandItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandItem.swift; sourceTree = "<group>"; };
@@ -226,8 +228,9 @@
 		96C6F5F727EE79F5004C4B7D /* www */ = {
 			isa = PBXGroup;
 			children = (
-				96C6F5F827EE7A8A004C4B7D /* help.html */,
-				96C6F5F927EE7A8A004C4B7D /* style.css */,
+				96C6F5FD27EE80BE004C4B7D /* help.html */,
+				96C6F60027EE80E2004C4B7D /* privacy.html */,
+				96C6F5FC27EE80BD004C4B7D /* style.css */,
 			);
 			path = www;
 			sourceTree = "<group>";
@@ -330,13 +333,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				96B71F2A271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf in Resources */,
-				96C6F5FB27EE7A8A004C4B7D /* style.css in Resources */,
-				96C6F5FA27EE7A8A004C4B7D /* help.html in Resources */,
+				96C6F5FF27EE80BE004C4B7D /* help.html in Resources */,
 				9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */,
+				96C6F60127EE80E2004C4B7D /* privacy.html in Resources */,
 				960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */,
 				96B71F20271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf in Resources */,
 				96B71F29271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf in Resources */,
 				96B71F28271D7C4F00AB2E8E /* 2021-09-13_12-04-29.ppcdf in Resources */,
+				96C6F5FE27EE80BE004C4B7D /* style.css in Resources */,
 				9651D72926CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */,
 				960DACAB2639685A005DEABB /* Assets.xcassets in Resources */,
 				96B71F22271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf in Resources */,
