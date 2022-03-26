@@ -77,7 +77,13 @@ struct MonitoringView: View {
                 }
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle("Monitoring")
+//        .navigationBarTitleDisplayMode(.inline)
+        .toolbar{
+            ToolbarItem(placement: .navigationBarTrailing){
+                ConnectedDisconnectedView(connected: viewModel.model.isConnected)
+            }
+        }
     }
 }
 

@@ -31,6 +31,7 @@ struct ProfileEditView: View{
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
             .padding()
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

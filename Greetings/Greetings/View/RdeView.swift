@@ -27,11 +27,15 @@ struct RdeView: View {
                 StopRdeNavLink()
             }
         }
-        .navigationBarItems(trailing: ConnectedDisconnectedView(connected: viewModel.model.isConnected))
+        .toolbar{
+            ToolbarItem(placement: .navigationBarTrailing){
+                ConnectedDisconnectedView(connected: viewModel.model.isConnected)
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
         .foregroundColor(.gray)
         .font(.subheadline)
-        .padding()
+        .padding([.bottom, .horizontal])
     }
     
     struct TopIndicatorsSection: View{

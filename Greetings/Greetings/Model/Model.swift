@@ -30,7 +30,8 @@ struct Model{
     var selectedProfile: Profile
     var lastSelectedProfile: Profile
     
-    //Monitoring view
+    //privacy view
+    var dataDonationEnabled: Bool = false
     
     
     init() {
