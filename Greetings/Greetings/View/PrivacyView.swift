@@ -10,17 +10,10 @@ struct PrivacyView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar{
                 ToolbarItem(placement: .bottomBar){
-                    HStack{
+                    Toggle(isOn: $viewModel.model.dataDonationEnabled){
                         Text("Enable data donations:")
-                        Spacer()
-                        Toggle(isOn: $viewModel.model.dataDonationEnabled){
-                            if viewModel.model.dataDonationEnabled {
-                                Image(systemName: "icloud.and.arrow.up")
-                            }else{
-                                Image(systemName: "exclamationmark.icloud")
-                            }
-                        }
                     }
+                    .toggleStyle(.switch)
                 }
             }
     }
