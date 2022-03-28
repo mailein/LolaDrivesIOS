@@ -54,27 +54,27 @@ class MyOBD: ObservableObject{
     var _locationHelper: LocationHelper?
     
     //RTLola outputs
-    var outputNames : [String] = [
-        "d",
-        "d_u",
-        "d_r",
-        "d_m",
-        "t_u",
-        "t_r",
-        "t_m",
-        "u_avg_v",
-        "r_avg_v",
-        "m_avg_v",
-        "u_va_pct",
-        "r_va_pct",
-        "m_va_pct",
-        "u_rpa",
-        "r_rpa",
-        "m_rpa",
-        "nox_per_kilometer",
-        "is_valid_test",
-        "not_rde_test"
-    ]
+//    var outputNames : [String] = [
+//        "d",
+//        "d_u",
+//        "d_r",
+//        "d_m",
+//        "t_u",
+//        "t_r",
+//        "t_m",
+//        "u_avg_v",
+//        "r_avg_v",
+//        "m_avg_v",
+//        "u_va_pct",
+//        "r_va_pct",
+//        "m_va_pct",
+//        "u_rpa",
+//        "r_rpa",
+//        "m_rpa",
+//        "nox_per_kilometer",
+//        "is_valid_test",
+//        "not_rde_test"
+//    ]
     var outputValues : [Double]
     
     //UI: markers and balls in dynamics progress bars

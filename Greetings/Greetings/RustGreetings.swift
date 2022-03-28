@@ -2,6 +2,7 @@ import Foundation
 
 class RustGreetings {
     let RELEVANT_OUTPUTS = [
+//        "duration",
             "d",
             "d_u",
             "d_r",

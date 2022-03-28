@@ -86,7 +86,7 @@ struct DurationText: View{
     }
     
     var body: some View{
-        Text("\(hours):\(minutes - hours * 60):\(seconds - hours * 3600 - minutes * 60)")
+        Text("\(hours):\(String(format: "%02d", minutes - hours * 60)):\(String(format: "%02d", seconds - hours * 3600 - minutes * 60))")
     }
 }
 
