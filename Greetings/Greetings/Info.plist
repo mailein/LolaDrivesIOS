@@ -7,7 +7,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs location to get the altitude.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Greetings, OBD</string>
+	<string>Connecting to OBD2 adapters</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

@@ -32,6 +32,16 @@
 		96C6F5FE27EE80BE004C4B7D /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F5FC27EE80BD004C4B7D /* style.css */; };
 		96C6F5FF27EE80BE004C4B7D /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F5FD27EE80BE004C4B7D /* help.html */; };
 		96C6F60127EE80E2004C4B7D /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F60027EE80E2004C4B7D /* privacy.html */; };
+		96C6F60A27F1CCF6004C4B7D /* acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F60827F1CCF6004C4B7D /* acknowledgements.html */; };
+		96C6F60B27F1CCF6004C4B7D /* impressum.html in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F60927F1CCF6004C4B7D /* impressum.html */; };
+		96C6F60D27F1CDDB004C4B7D /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */; };
+		96C6F60F27F1CF63004C4B7D /* BaseWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */; };
+		96C6F61127F1CFF8004C4B7D /* ImpressumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */; };
+		96C6F61727F1D538004C4B7D /* cispa_logo_en_rgb.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61227F1D538004C4B7D /* cispa_logo_en_rgb.png */; };
+		96C6F61827F1D538004C4B7D /* sic.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61327F1D538004C4B7D /* sic.png */; };
+		96C6F61927F1D538004C4B7D /* uds.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61427F1D538004C4B7D /* uds.png */; };
+		96C6F61A27F1D538004C4B7D /* erc.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61527F1D538004C4B7D /* erc.png */; };
+		96C6F61B27F1D538004C4B7D /* logo_cpec_final_rgb_v2.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */; };
 		96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DA27DA72D600429CF1 /* Model.swift */; };
@@ -100,6 +110,16 @@
 		96C6F5FC27EE80BD004C4B7D /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
 		96C6F5FD27EE80BE004C4B7D /* help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = help.html; sourceTree = "<group>"; };
 		96C6F60027EE80E2004C4B7D /* privacy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = privacy.html; sourceTree = "<group>"; };
+		96C6F60827F1CCF6004C4B7D /* acknowledgements.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = acknowledgements.html; sourceTree = "<group>"; };
+		96C6F60927F1CCF6004C4B7D /* impressum.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = impressum.html; sourceTree = "<group>"; };
+		96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementsView.swift; sourceTree = "<group>"; };
+		96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseWebView.swift; sourceTree = "<group>"; };
+		96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressumView.swift; sourceTree = "<group>"; };
+		96C6F61227F1D538004C4B7D /* cispa_logo_en_rgb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cispa_logo_en_rgb.png; sourceTree = "<group>"; };
+		96C6F61327F1D538004C4B7D /* sic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sic.png; sourceTree = "<group>"; };
+		96C6F61427F1D538004C4B7D /* uds.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uds.png; sourceTree = "<group>"; };
+		96C6F61527F1D538004C4B7D /* erc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erc.png; sourceTree = "<group>"; };
+		96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_cpec_final_rgb_v2.png; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		96ECF8DE27DA731100429CF1 /* CommandItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandItem.swift; sourceTree = "<group>"; };
@@ -230,7 +250,14 @@
 			children = (
 				96C6F5FD27EE80BE004C4B7D /* help.html */,
 				96C6F60027EE80E2004C4B7D /* privacy.html */,
+				96C6F60827F1CCF6004C4B7D /* acknowledgements.html */,
+				96C6F60927F1CCF6004C4B7D /* impressum.html */,
 				96C6F5FC27EE80BD004C4B7D /* style.css */,
+				96C6F61227F1D538004C4B7D /* cispa_logo_en_rgb.png */,
+				96C6F61527F1D538004C4B7D /* erc.png */,
+				96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */,
+				96C6F61327F1D538004C4B7D /* sic.png */,
+				96C6F61427F1D538004C4B7D /* uds.png */,
 			);
 			path = www;
 			sourceTree = "<group>";
@@ -259,6 +286,9 @@
 				96EFC14C26FB6E4A00BE44A6 /* HelpView.swift */,
 				96C6F5F227E7727B004C4B7D /* CapsuleView.swift */,
 				96C6F5F427EE6EAE004C4B7D /* UrlWebView.swift */,
+				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
+				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
+				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -335,13 +365,20 @@
 				96B71F2A271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf in Resources */,
 				96C6F5FF27EE80BE004C4B7D /* help.html in Resources */,
 				9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */,
+				96C6F60A27F1CCF6004C4B7D /* acknowledgements.html in Resources */,
+				96C6F61727F1D538004C4B7D /* cispa_logo_en_rgb.png in Resources */,
 				96C6F60127EE80E2004C4B7D /* privacy.html in Resources */,
+				96C6F61B27F1D538004C4B7D /* logo_cpec_final_rgb_v2.png in Resources */,
+				96C6F61927F1D538004C4B7D /* uds.png in Resources */,
 				960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */,
+				96C6F60B27F1CCF6004C4B7D /* impressum.html in Resources */,
 				96B71F20271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf in Resources */,
 				96B71F29271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf in Resources */,
 				96B71F28271D7C4F00AB2E8E /* 2021-09-13_12-04-29.ppcdf in Resources */,
 				96C6F5FE27EE80BE004C4B7D /* style.css in Resources */,
+				96C6F61A27F1D538004C4B7D /* erc.png in Resources */,
 				9651D72926CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */,
+				96C6F61827F1D538004C4B7D /* sic.png in Resources */,
 				960DACAB2639685A005DEABB /* Assets.xcassets in Resources */,
 				96B71F22271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf in Resources */,
 				96B71F24271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf in Resources */,
@@ -415,7 +452,9 @@
 				96C6F5F327E7727B004C4B7D /* CapsuleView.swift in Sources */,
 				962B13D826D7E432001F8760 /* MyOBD.swift in Sources */,
 				96ECF8DD27DA72F200429CF1 /* Menu.swift in Sources */,
+				96C6F61127F1CFF8004C4B7D /* ImpressumView.swift in Sources */,
 				960DACA926396859005DEABB /* ContentView.swift in Sources */,
+				96C6F60D27F1CDDB004C4B7D /* AcknowledgementsView.swift in Sources */,
 				96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */,
 				96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */,
 				96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */,
@@ -424,6 +463,7 @@
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
 				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,
 				96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */,
+				96C6F60F27F1CF63004C4B7D /* BaseWebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,6 +52,15 @@ struct ContentView: View {
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
+                HStack(spacing: 10){
+                    NavigationLink(destination: AcknowledgementsView(), label: {
+                        Text("Acknowledgements")
+                    })
+                    Text("|")
+                    NavigationLink(destination: ImpressumView(), label: {
+                        Text("Impressum")
+                    })
+                }
             }
             .navigationTitle("Menu")
             .LolaNavBarStyle()
