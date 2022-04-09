@@ -2,8 +2,10 @@ import Foundation
 import LTSupportAutomotive
 import CoreLocation
 import SwiftUI
+import pcdfcore
 
 class MyOBD: ObservableObject{
+    // OBD
     var _serviceUUIDs : [CBUUID]
     var _pids : [LTOBD2Command]
     var _transporter : LTBTLESerialTransporter
@@ -77,19 +79,8 @@ class MyOBD: ObservableObject{
 //    ]
     var outputValues : [Double]
     
-    //UI: markers and balls in dynamics progress bars
-    var dynamicMarkerLowUrban : Double = 0
-    var dynamicMarkerLowRural : Double = 0
-    var dynamicMarkerLowMotorway : Double = 0
-    var dynamicMarkerHighUrban : Double = 0
-    var dynamicMarkerHighRural : Double = 0
-    var dynamicMarkerHighMotorway : Double = 0
-    var circleUrbanLow : Double = 0
-    var circleRuralLow : Double = 0
-    var circleMotorwayLow : Double = 0
-    var circleUrbanHigh : Double = 0
-    var circleRuralHigh : Double = 0
-    var circleMotorwayHigh : Double = 0
+    //ppcdf
+    var events: [pcdfcore.PCDFEvent]
     
     init(){
         _serviceUUIDs = []
@@ -97,6 +88,7 @@ class MyOBD: ObservableObject{
         _transporter = LTBTLESerialTransporter()
         _locationHelper = nil
         outputValues = [Double](repeating: 0, count: 19)
+        events = []
     }
     
     public func viewDidLoad () -> () {
@@ -213,6 +205,10 @@ class MyOBD: ObservableObject{
     }
     
     public func disconnect () -> () {
+        let pcdfGen = PcdfGenerator()
+        if let data = pcdfGen.serialize(events: self.events){
+            pcdfGen.save(data: data, toFilename: "blablaGenPcdf")
+        }
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
     }
@@ -255,15 +251,26 @@ class MyOBD: ObservableObject{
         let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
         let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
         
-        
+        //TODO: send commands based on current profile
         _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, ambientAirTemp, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, engineFuelRate, engineFuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 if self.startTime == nil {
                     self.startTime = Date()
                 }
-                let duration = Date().timeIntervalSince(self.startTime!)
+                let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
                 self.mySpeed = speed.formattedResponse
+                
+                if speed.gotValidAnswer {
+                    let raw = speed.rawResponse[0]//header #bytes response
+                    let firstSpaceIndex = raw.firstIndex(of: " ")!
+                    let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
+                    let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
+                    let header = raw[..<firstSpaceIndex]
+                    let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
+                    self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration), bytes: response))
+                }
+                
                 print("============== speed, cookedResponse: \(speed.cookedResponse), formattedResponse: \(speed.formattedResponse), commandString: \(speed.commandString), completionTime: \(speed.completionTime), failureResponse: \(speed.failureResponse), freezeFrame: \(speed.freezeFrame), gotAnswer: \(speed.gotAnswer), gotValidAnswer: \(speed.gotValidAnswer), isCAN: \(speed.isCAN), isRawCommand: \(speed.isRawCommand), purpose: \(speed.purpose), rawResponse: \(speed.rawResponse), selectedECU: \(speed.selectedECU)")
                 let altitude = self._locationHelper?.altitude
                 self.myAltitude = "\(altitude ?? 0) m"
@@ -351,9 +358,6 @@ class MyOBD: ObservableObject{
                     
                     self.outputValues = self.rustGreetings.sendevent(inputs: &s, len_in: 7)
                     print("*********** rtlola outputs: \(self.outputValues)")
-                    if !self.outputValues.isEmpty {
-                        self.handleDynamics(u_avg_v: self.outputValues[7], r_avg_v: self.outputValues[8], m_avg_v: self.outputValues[9], u_rpa: self.outputValues[13], r_rpa: self.outputValues[14], m_rpa: self.outputValues[15], u_va_pct: self.outputValues[10], r_va_pct: self.outputValues[11], m_va_pct: self.outputValues[12])
-                    }
                 }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -361,109 +365,6 @@ class MyOBD: ObservableObject{
                 }
             }
         })
-    }
-    
-    private func handleDynamics(u_avg_v: Double,
-                                r_avg_v: Double,
-                                m_avg_v: Double,
-                                u_rpa: Double,
-                                r_rpa: Double,
-                                m_rpa: Double,
-                                u_va_pct: Double,
-                                r_va_pct: Double,
-                                m_va_pct: Double) {
-        // RPA Threshold-Markers
-        let offsetRpa = 0.35 // GuidelineDynamicsBarLow Percentage
-        let boundaryRpa = 0.605
-        let lengthRpa = boundaryRpa - offsetRpa
-
-        let maxRpa = 0.3 // Realistic maximum RPA
-
-        // Calculate Horizontal Marker Positions
-        let uRpaThreshold = -0.0016 * u_avg_v + 0.1755
-        let rRpaThreshold = -0.0016 * r_avg_v + 0.1755
-        var mRpaThreshold = 0.025
-        if (m_avg_v <= 94.05) { mRpaThreshold = -0.0016 * m_avg_v + 0.1755 }
-
-        let uRpaMarkerPercentage = uRpaThreshold / maxRpa
-        let rRpaMarkerPercentage = rRpaThreshold / maxRpa
-        let mRpaMarkerPercentage = mRpaThreshold / maxRpa
-
-//        fragment.guidelineDynamicMarkerLowUrban.setGuidelinePercent(((lengthRpa * uRpaMarkerPercentage) + offsetRpa).toFloat())
-//        fragment.guidelineDynamicMarkerLowRural.setGuidelinePercent(((lengthRpa * rRpaMarkerPercentage) + offsetRpa).toFloat())
-//        fragment.guidelineDynamicMarkerLowMotorway.setGuidelinePercent(((lengthRpa * mRpaMarkerPercentage) + offsetRpa).toFloat())
-        dynamicMarkerLowUrban = (lengthRpa * uRpaMarkerPercentage) + offsetRpa
-        dynamicMarkerLowRural = (lengthRpa * rRpaMarkerPercentage) + offsetRpa
-        dynamicMarkerLowMotorway = (lengthRpa * mRpaMarkerPercentage) + offsetRpa
-        
-        // PCT95 Threshold-Markers
-        let offsetPct = 0.62
-        let boundaryPct = 0.88
-        let lengthPct = boundaryPct - offsetPct
-
-        let maxPct = 35.0
-
-        // Calculate Horizontal Marker Positions
-        let uPctThreshold = 0.136 * u_avg_v + 14.44
-        var rPctThreshold =  0.0742 * r_avg_v + 18.966
-        if (r_avg_v <= 74.6) { rPctThreshold = 0.136 * r_avg_v + 14.44 }
-        let mPctThreshold = 0.0742 * m_avg_v + 18.966
-
-        let uPctMarkerPercentage = uPctThreshold / maxPct
-        let rPctMarkerPercentage = rPctThreshold / maxPct
-        let mPctMarkerPercentage = mPctThreshold / maxPct
-
-//        fragment.guidelineDynamicMarkerHighUrban.setGuidelinePercent(((lengthPct * uPctMarkerPercentage) + offsetPct).toFloat())
-//        fragment.guidelineDynamicMarkerHighRural.setGuidelinePercent(((lengthPct * rPctMarkerPercentage) + offsetPct).toFloat())
-//        fragment.guidelineDynamicMarkerHighMotorway.setGuidelinePercent(((lengthPct * mPctMarkerPercentage) + offsetPct).toFloat())
-        dynamicMarkerHighUrban = (lengthPct * uPctMarkerPercentage) + offsetPct
-        dynamicMarkerHighRural = (lengthPct * rPctMarkerPercentage) + offsetPct
-        dynamicMarkerHighMotorway = (lengthPct * mPctMarkerPercentage) + offsetPct
-        
-        
-        // Calculate RPA Ball Positions
-        let uRpaBallPercentage = u_rpa / maxRpa
-        let rRpaBallPercentage = r_rpa / maxRpa
-        let mRpaBallPercentage = m_rpa / maxRpa
-
-//        fragment.guidelineCircleUrbanLow.setGuidelinePercent(
-//            (lengthRpa * uRpaBallPercentage + offsetRpa).toFloat().coerceAtMost(boundaryRpa.toFloat())
-//        )
-//        fragment.guidelineCircleRuralLow.setGuidelinePercent(
-//            (lengthRpa * rRpaBallPercentage + offsetRpa).toFloat().coerceAtMost(boundaryRpa.toFloat())
-//        )
-//        fragment.guidelineCircleMotorwayLow.setGuidelinePercent(
-//            (lengthRpa * mRpaBallPercentage + offsetRpa).toFloat().coerceAtMost(boundaryRpa.toFloat())
-//        )
-        circleUrbanLow = lengthRpa * uRpaBallPercentage + offsetRpa
-        circleUrbanLow = circleUrbanLow > boundaryRpa ? boundaryRpa : circleUrbanLow
-        circleRuralLow = lengthRpa * rRpaBallPercentage + offsetRpa
-        circleRuralLow = circleRuralLow > boundaryRpa ? boundaryRpa : circleRuralLow
-        circleMotorwayLow = lengthRpa * mRpaBallPercentage + offsetRpa
-        circleMotorwayLow = circleMotorwayLow > boundaryRpa ? boundaryRpa : circleMotorwayLow
-        
-        // Calculate PCT Ball Positions
-        let uPctBallPercentage = u_va_pct / maxPct
-        let rPctBallPercentage = r_va_pct / maxPct
-        let mPctBallPercentage = m_va_pct / maxPct
-
-//        fragment.guidelineCircleUrbanHigh.setGuidelinePercent(
-//            (lengthPct * uPctBallPercentage + offsetPct).toFloat().coerceAtMost(boundaryPct.toFloat())
-//        )
-//        fragment.guidelineCircleRuralHigh.setGuidelinePercent(
-//            (lengthPct * rPctBallPercentage + offsetPct).toFloat().coerceAtMost(boundaryPct.toFloat())
-//        )
-//        fragment.guidelineCircleMotorwayHigh.setGuidelinePercent(
-//            (lengthPct * mPctBallPercentage + offsetPct).toFloat().coerceAtMost(boundaryPct.toFloat())
-//        )
-        circleUrbanHigh = lengthPct * uPctBallPercentage + offsetPct
-        circleUrbanHigh = circleUrbanLow > boundaryPct ? boundaryPct : circleUrbanLow
-        circleRuralHigh = lengthPct * rPctBallPercentage + offsetPct
-        circleRuralHigh = circleRuralLow > boundaryPct ? boundaryPct : circleRuralLow
-        circleMotorwayHigh = lengthPct * mPctBallPercentage + offsetPct
-        circleMotorwayHigh = circleMotorwayLow > boundaryPct ? boundaryPct : circleMotorwayLow
-        
-        print("*********** dynamics: \nlow: \(dynamicMarkerLowUrban),\(dynamicMarkerLowRural),\(dynamicMarkerLowMotorway)\nhigh:\(dynamicMarkerHighUrban),\(dynamicMarkerHighRural),\(dynamicMarkerHighMotorway)\ncircle low:\(circleUrbanLow),\(circleRuralLow),\(circleMotorwayLow)\ncircle high:\(circleUrbanHigh),\(circleRuralHigh),\(circleMotorwayHigh)")
     }
     
     @objc func onAdapterChangedState(){
