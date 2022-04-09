@@ -260,20 +260,13 @@ class MyOBD: ObservableObject{
                 }
                 let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
                 self.mySpeed = speed.formattedResponse
-                
-                if speed.gotValidAnswer {
-                    let raw = speed.rawResponse[0]//header #bytes response
-                    let firstSpaceIndex = raw.firstIndex(of: " ")!
-                    let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
-                    let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
-                    let header = raw[..<firstSpaceIndex]
-                    let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
-                    self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration), bytes: response))
-                }
+                self.addToEvents(command: speed, duration: duration)
                 
                 print("============== speed, cookedResponse: \(speed.cookedResponse), formattedResponse: \(speed.formattedResponse), commandString: \(speed.commandString), completionTime: \(speed.completionTime), failureResponse: \(speed.failureResponse), freezeFrame: \(speed.freezeFrame), gotAnswer: \(speed.gotAnswer), gotValidAnswer: \(speed.gotValidAnswer), isCAN: \(speed.isCAN), isRawCommand: \(speed.isRawCommand), purpose: \(speed.purpose), rawResponse: \(speed.rawResponse), selectedECU: \(speed.selectedECU)")
                 let altitude = self._locationHelper?.altitude
                 self.myAltitude = "\(altitude ?? 0) m"
+                self.addToEvents(duration: duration, altitude: altitude, longitude: self._locationHelper!.longitude, latitude: self._locationHelper?.latitude, gps_speed: self._locationHelper?.gps_speed)
+                
                 self.myTemp = temp.formattedResponse
                 self.myNox = nox.formattedResponse
                 self.myFuelRate = fuelRate.formattedResponse
@@ -365,6 +358,30 @@ class MyOBD: ObservableObject{
                 }
             }
         })
+    }
+    
+    //OBDEvent
+    private func addToEvents(command: LTOBD2Command, duration: TimeInterval) {
+        if command.gotValidAnswer {
+            let raw = command.rawResponse[0]//header #bytes response
+            let firstSpaceIndex = raw.firstIndex(of: " ")!
+            let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
+            let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
+            let header = raw[..<firstSpaceIndex]
+            let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
+            self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
+        }else{
+            self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))
+        }
+    }
+    
+    //GPSEvent
+    private func addToEvents(duration: TimeInterval, altitude: CLLocationDistance?, longitude: CLLocationDegrees?, latitude: CLLocationDegrees?, gps_speed: CLLocationSpeed?){
+        if altitude != nil, longitude != nil, latitude != nil, gps_speed != nil {
+            self.events.append(GPSEvent(source: "Phone-GPS", timestamp: Int64(duration * 1000000000), longitude: longitude!, latitude: latitude!, altitude: altitude!, speed: gps_speed as? KotlinDouble))//gps_speed: A negative value indicates an invalid speed. Because the actual speed can change many times between the delivery of location events, use this property for informational purposes only.
+        }else{
+            self.events.append(ErrorEvent(source: "GPS unavailable", timestamp: Int64(duration * 1000000000), message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(gps_speed)"))
+        }
     }
     
     @objc func onAdapterChangedState(){

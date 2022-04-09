@@ -17,6 +17,9 @@ final class LocationHelper: NSObject, ObservableObject, CLLocationManagerDelegat
     @Published var alert: Alert? = nil
     @Published var showAlert: Bool = false
     @Published var altitude: CLLocationDistance = 0
+    @Published var longitude: CLLocationDegrees = 0
+    @Published var latitude: CLLocationDegrees = 0
+    @Published var gps_speed: CLLocationSpeed = 0
     
     func checkIfLocationServicesIsEnabled()->() {
         if CLLocationManager.locationServicesEnabled() {
@@ -47,6 +50,9 @@ final class LocationHelper: NSObject, ObservableObject, CLLocationManagerDelegat
             showAlert = true
         case .authorizedAlways, .authorizedWhenInUse:
             altitude = locationManager.location!.altitude
+            longitude = locationManager.location!.coordinate.longitude
+            latitude = locationManager.location!.coordinate.latitude
+            gps_speed = locationManager.location!.speed
             print("assign altitude to \(altitude)")
             alert = nil
             showAlert = false
