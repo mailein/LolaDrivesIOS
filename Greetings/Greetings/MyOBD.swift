@@ -13,7 +13,7 @@ class MyOBD: ObservableObject{
     
     // LOLA
     let rustGreetings = RustGreetings()
-    let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")
+    let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")//even if it's in a folder, no need to add folder name
     
     @Published var mySpeed : String = ""
     @Published var myAltitude : String = ""
@@ -369,6 +369,7 @@ class MyOBD: ObservableObject{
             let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
             let header = raw[..<firstSpaceIndex]
             let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
+            
             self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
         }else{
             self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))

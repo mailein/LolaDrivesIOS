@@ -3,10 +3,12 @@ import pcdfcore
 
 struct PcdfGenerator{
     let jsonEncoder: JSONEncoder
+    let directory: URL//should this be saved to model? but this location is temporary, if all files are uploaded to some server 
     
     init(){
         jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = [.sortedKeys, .prettyPrinted]//maintain codingKeys order is unavailable, see https://bugs.swift.org/browse/SR-7992
+        directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
     func serialize(event: pcdfcore.PCDFEvent) -> Data? {
@@ -25,7 +27,8 @@ struct PcdfGenerator{
     }
     
     func save(data: Data, toFilename filename: String) {
-        let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("\(filename).txt")
+        let fileURL = directory.appendingPathComponent("\(filename).txt")
+        print("============== path \(fileURL)")
         do {
             try data.write(to: fileURL, options: [.atomicWrite])
         } catch let error as NSError {

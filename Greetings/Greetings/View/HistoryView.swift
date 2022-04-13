@@ -1,27 +1,77 @@
 import SwiftUI
 
 struct HistoryView: View {
+    let directory: URL
+    var files: [URL]
+    var latestFile: URL? = nil
+    
+    init(){
+        let pcdfGen = PcdfGenerator()
+        directory = pcdfGen.directory
+        do {
+            files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+        }catch{
+            files = []
+            print(error)
+        }
+        //TODO: get the latest file
+        if !files.isEmpty {
+            latestFile = files[0]
+        }
+    }
+    
     var body: some View {
         TabView{
-            EventLogTabView()
+            EventLogTabView(file: latestFile)
                 .tabItem{
                     Text("Event log")
                 }
-            SpeedProfileTabView()
+            RdeProfileTabView()
                 .tabItem{
-                    Text("Speed profile")
+                    Text("RDE profile")
                 }
         }
     }
 }
 
 struct EventLogTabView: View{
+    var file: URL?
+    var content: String = ""
+    var myStrings: [String] = []
+    
+    init(file: URL?){
+        self.file = file
+        if file != nil {
+            do {
+                content = try String(contentsOfFile: file!.path)
+                myStrings = content.components(separatedBy: .newlines)
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
     var body: some View{
-        Text("Event log")
+        if file == nil {
+            Text("Event log")
+        }else{
+            List{
+                ForEach(myStrings.indices, id: \.self){ index in
+                    Text(myStrings[index])
+                }
+            }
+        }
     }
 }
 
-struct SpeedProfileTabView: View{
+extension String: Identifiable {
+    public typealias ID = Int
+    public var id: Int {
+        return hash
+    }
+}
+
+struct RdeProfileTabView: View{
     var body: some View{
         Text("Speed profile")
     }
