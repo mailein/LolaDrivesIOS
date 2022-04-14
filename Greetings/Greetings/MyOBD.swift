@@ -34,7 +34,6 @@ class MyOBD: ObservableObject{
     @Published var myCatalystTemp12: String = ""
     @Published var myCatalystTemp21: String = ""
     @Published var myCatalystTemp22: String = ""
-    @Published var myAmbientAirTemp: String = ""
     @Published var myMaxValueFuelAirEqvRatio: String = ""
     @Published var myMaxValueOxygenSensorVoltage: String = ""
     @Published var myMaxValueOxygenSensorCurrent: String = ""
@@ -47,7 +46,6 @@ class MyOBD: ObservableObject{
     @Published var myNoxAlternative: String = ""
     @Published var myNoxCorrectedAlternative: String = ""
     @Published var myPmSensor: String = ""
-    @Published var myEngineFuelRate: String = ""
     @Published var myEngineFuelRateMulti: String = ""
     @Published var myEngineExhaustFlowRate: String = ""
     @Published var myEgrError: String = ""
@@ -197,8 +195,6 @@ class MyOBD: ObservableObject{
             self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
             self._obd2Adapter!.connect()
             print("adapter init and connected")
-            
-            self.updateSensorData()
                                 })
         
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
@@ -215,25 +211,21 @@ class MyOBD: ObservableObject{
     
     private func updateSensorData () -> () {
         print("************adapter nil? \(_obd2Adapter == nil)")
-        let speed = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
-        let temp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
-        let nox = LTOBD2PID_NOX_SENSOR_83.forMode1()
-        let fuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
-        let mafRate = LTOBD2PID_MAF_FLOW_10.forMode1()
-        
-        let airFuelEqvRatio = LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()
         let coolantTemp = LTOBD2PID_COOLANT_TEMP_05.forMode1()
         let rpm = LTOBD2PID_ENGINE_RPM_0C.forMode1()
+        let speed = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
         let intakeTemp = LTOBD2PID_INTAKE_TEMP_0F.forMode1()
-        let mafRateSensor = LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()
+        let mafRate = LTOBD2PID_MAF_FLOW_10.forMode1()
         let oxygenSensor1 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
         let commandedEgr = LTOBD2PID_COMMANDED_EGR_2C.forMode1()
+        let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
         let fuelTankLevelInput = LTOBD2PID_FUEL_TANK_LEVEL_2F.forMode1()
         let catalystTemp11 = LTOBD2PID_CATALYST_TEMP_B1S1_3C.forMode1()
         let catalystTemp12 = LTOBD2PID_CATALYST_TEMP_B1S2_3E.forMode1()
         let catalystTemp21 = LTOBD2PID_CATALYST_TEMP_B2S1_3D.forMode1()
         let catalystTemp22 = LTOBD2PID_CATALYST_TEMP_B2S2_3F.forMode1()
-        let ambientAirTemp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
+        let airFuelEqvRatio = LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()
+        let temp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
         let maxValueFuelAirEqvRatio = LTOBD2PID_MAX_VALUE_FUEL_AIR_EQUIVALENCE_RATIO_4F.forMode1()
         let maxValueOxygenSensorVoltage = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_VOLTAGE_4F.forMode1()
         let maxValueOxygenSensorCurrent = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_CURRENT_4F.forMode1()
@@ -241,18 +233,21 @@ class MyOBD: ObservableObject{
         let maxAirFlowRate = LTOBD2PID_MAX_VALUE_MAF_AIR_FLOW_RATE_50.forMode1()
         let fuelType = LTOBD2PID_FUEL_TYPE_51.forMode1()
         let engineOilTemp = LTOBD2PID_ENGINE_OIL_TEMP_5C.forMode1()
+        let fuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
+        let mafRateSensor = LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()
         let intakeAirTempSensor = LTOBD2PID_INTAKE_AIR_TEMP_SENSOR_68.forMode1()
+        let nox = LTOBD2PID_NOX_SENSOR_83.forMode1()
+        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
+        let fuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()
+        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
         let noxCorrected = LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()
         let noxAlternative = LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()
         let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()
-        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
-        let engineFuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
-        let engineFuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()
-        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
-        let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
+        
+        let supportedPid00 = LTOBD2PID_SUPPORTED_COMMANDS1_00.forMode1()
         
         //TODO: send commands based on current profile
-        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, ambientAirTemp, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, engineFuelRate, engineFuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
+        _obd2Adapter?.transmitMultipleCommands([supportedPid00, speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, fuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 if self.startTime == nil {
@@ -262,7 +257,10 @@ class MyOBD: ObservableObject{
                 self.mySpeed = speed.formattedResponse
                 self.addToEvents(command: speed, duration: duration)
                 
-                print("============== speed, cookedResponse: \(speed.cookedResponse), formattedResponse: \(speed.formattedResponse), commandString: \(speed.commandString), completionTime: \(speed.completionTime), failureResponse: \(speed.failureResponse), freezeFrame: \(speed.freezeFrame), gotAnswer: \(speed.gotAnswer), gotValidAnswer: \(speed.gotValidAnswer), isCAN: \(speed.isCAN), isRawCommand: \(speed.isRawCommand), purpose: \(speed.purpose), rawResponse: \(speed.rawResponse), selectedECU: \(speed.selectedECU)")
+                self.printCommandResponse(command: supportedPid00)
+                print("connectedECUs: \(supportedPid00.connectedECUs)")
+                self.printCommandResponse(command: speed)
+                
                 let altitude = self._locationHelper?.altitude
                 self.myAltitude = "\(altitude ?? 0) m"
                 self.addToEvents(duration: duration, altitude: altitude, longitude: self._locationHelper!.longitude, latitude: self._locationHelper?.latitude, gps_speed: self._locationHelper?.gps_speed)
@@ -284,7 +282,6 @@ class MyOBD: ObservableObject{
                 self.myCatalystTemp12 = catalystTemp12.formattedResponse
                 self.myCatalystTemp21 = catalystTemp21.formattedResponse
                 self.myCatalystTemp22 = catalystTemp22.formattedResponse
-                self.myAmbientAirTemp = ambientAirTemp.formattedResponse
                 self.myMaxValueFuelAirEqvRatio = maxValueFuelAirEqvRatio.formattedResponse
                 self.myMaxValueOxygenSensorVoltage = maxValueOxygenSensorVoltage.formattedResponse
                 self.myMaxValueOxygenSensorCurrent = maxValueOxygenSensorCurrent.formattedResponse
@@ -297,8 +294,7 @@ class MyOBD: ObservableObject{
                 self.myNoxAlternative = noxAlternative.formattedResponse
                 self.myNoxCorrectedAlternative = noxCorrectedAlternative.formattedResponse
                 self.myPmSensor = pmSensor.formattedResponse
-                self.myEngineFuelRate = engineFuelRate.formattedResponse
-                self.myEngineFuelRateMulti = engineFuelRateMulti.formattedResponse
+                self.myEngineFuelRateMulti = fuelRateMulti.formattedResponse
                 self.myEngineExhaustFlowRate = engineExhaustFlowRate.formattedResponse
                 self.myEgrError = egrError.formattedResponse
                 
@@ -320,7 +316,6 @@ class MyOBD: ObservableObject{
                 print("*********** myCatalystTemp12 in updateSensorData \(self.myCatalystTemp12)")
                 print("*********** myCatalystTemp21 in updateSensorData \(self.myCatalystTemp21)")
                 print("*********** myCatalystTemp22 in updateSensorData \(self.myCatalystTemp22)")
-                print("*********** myAmbientAirTemp in updateSensorData \(self.myAmbientAirTemp)")
                 print("*********** myMaxValueFuelAirEqvRatio in updateSensorData \(self.myMaxValueFuelAirEqvRatio)")
                 print("*********** myMaxValueOxygenSensorVoltage in updateSensorData \(self.myMaxValueOxygenSensorVoltage)")
                 print("*********** myMaxValueOxygenSensorCurrent in updateSensorData \(self.myMaxValueOxygenSensorCurrent)")
@@ -333,7 +328,6 @@ class MyOBD: ObservableObject{
                 print("*********** myNoxAlternative in updateSensorData \(self.myNoxAlternative)")
                 print("*********** myNoxCorrectedAlternative in updateSensorData \(self.myNoxCorrectedAlternative)")
                 print("*********** myPmSensor in updateSensorData \(self.myPmSensor)")
-                print("*********** myEngineFuelRate in updateSensorData \(self.myEngineFuelRate)")
                 print("*********** myEngineFuelRateMulti in updateSensorData \(self.myEngineFuelRateMulti)")
                 print("*********** myEngineExhaustFlowRate in updateSensorData \(self.myEngineExhaustFlowRate)")
                 print("*********** myEgrError in updateSensorData \(self.myEgrError )")
@@ -385,11 +379,14 @@ class MyOBD: ObservableObject{
         }
     }
     
+    private func printCommandResponse(command: LTOBD2PID){
+        print("============== speed, cookedResponse: \(command.cookedResponse), formattedResponse: \(command.formattedResponse), commandString: \(command.commandString), completionTime: \(command.completionTime), failureResponse: \(command.failureResponse), freezeFrame: \(command.freezeFrame), gotAnswer: \(command.gotAnswer), gotValidAnswer: \(command.gotValidAnswer), isCAN: \(command.isCAN), isRawCommand: \(command.isRawCommand), purpose: \(command.purpose), rawResponse: \(command.rawResponse), selectedECU: \(command.selectedECU)")
+    }
+    
     @objc func onAdapterChangedState(){
         DispatchQueue.main.async {
             switch self._obd2Adapter?.adapterState{
-                case OBD2AdapterStateDiscovering,
-            OBD2AdapterStateConnected:
+            case OBD2AdapterStateDiscovering, OBD2AdapterStateConnected:
                 self.updateSensorData()
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")

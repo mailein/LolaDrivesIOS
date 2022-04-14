@@ -42,7 +42,7 @@ struct MonitoringView: View {
                     case "44":
                         Text(obd.myAirFuelEqvRatio)
                     case "46":
-                        Text(obd.myAmbientAirTemp)
+                        Text(obd.myTemp)
                     case "4F":
                         Text("\(obd.myMaxValueFuelAirEqvRatio) | \(obd.myMaxValueOxygenSensorVoltage) | \(obd.myMaxValueOxygenSensorCurrent) | \(obd.myMaxValueIntakeMAP)")
                     case "50":
@@ -64,7 +64,7 @@ struct MonitoringView: View {
                     case "86":
                         Text(obd.myPmSensor)
                     case "5E":
-                        Text(obd.myEngineFuelRate)
+                        Text(obd.myFuelRate)
                     case "9D":
                         Text(obd.myEngineFuelRateMulti)
                     case "9E":
