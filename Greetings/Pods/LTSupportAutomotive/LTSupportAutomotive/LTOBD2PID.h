@@ -311,6 +311,9 @@ typedef enum : NSUInteger {
 
 @end
 
+@interface LTOBD2PID_SUPPORTED_COMMANDS1_20 : LTOBD2PID
+@end
+
 @interface LTOBD2PID_DISTANCE_WITH_MIL_21 : LTOBD2PID
 
 +(instancetype)pid NS_UNAVAILABLE;
@@ -444,6 +447,9 @@ typedef enum : NSUInteger {
 
 +(instancetype)pid NS_UNAVAILABLE;
 
+@end
+
+@interface LTOBD2PID_SUPPORTED_COMMANDS1_40 : LTOBD2PID
 @end
 
 @interface LTOBD2PID_CONTROL_MODULE_VOLTAGE_42 : LTOBD2PID
@@ -620,6 +626,9 @@ typedef enum : NSUInteger {
 
 @end
 
+@interface LTOBD2PID_SUPPORTED_COMMANDS1_60 : LTOBD2PID
+@end
+
 @interface LTOBD2PID_ENGINE_TORQUE_DEMANDED_61 : LTOBD2PID
 
 +(instancetype)pid NS_UNAVAILABLE;
@@ -650,6 +659,9 @@ typedef enum : NSUInteger {
 
 @end
 
+@interface LTOBD2PID_SUPPORTED_COMMANDS1_80 : LTOBD2PID
+@end
+
 @interface LTOBD2PID_NOX_SENSOR_83 : LTOBD2PID
 
 +(instancetype)pid NS_UNAVAILABLE;
@@ -674,6 +686,9 @@ typedef enum : NSUInteger {
 
 @end
 
+@interface LTOBD2PID_SUPPORTED_COMMANDS1_A0 : LTOBD2PID
+@end
+
 @interface LTOBD2PID_NOX_SENSOR_CORRECTED_A1 : LTOBD2PID
 
 +(instancetype)pid NS_UNAVAILABLE;
@@ -690,6 +705,9 @@ typedef enum : NSUInteger {
 
 +(instancetype)pid NS_UNAVAILABLE;
 
+@end
+
+@interface LTOBD2PID_SUPPORTED_COMMANDS1_C0 : LTOBD2PID
 @end
 
 #pragma mark -

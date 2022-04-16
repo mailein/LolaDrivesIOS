@@ -10,6 +10,7 @@ class MyOBD: ObservableObject{
     var _pids : [LTOBD2Command]
     var _transporter : LTBTLESerialTransporter
     var _obd2Adapter : LTOBD2Adapter?
+    var supportedPids: [Int] = [] //pid# in decimal
     
     // LOLA
     let rustGreetings = RustGreetings()
@@ -99,12 +100,13 @@ class MyOBD: ObservableObject{
         NotificationCenter.default.addObserver(self, selector: #selector(onAdapterChangedState), name: Notification.Name(LTOBD2AdapterDidUpdateState), object: nil)
         
         self.connect()
+        
         rustGreetings.initmonitor(s: fileContent)
     }
     
     private func connect () -> () {
         _transporter = LTBTLESerialTransporter.init(identifier: nil, serviceUUIDs: _serviceUUIDs)
-        //The closure is called after transporter has connected! So updateSensorData() should be called inside the closure after adapter connects
+        //The closure is called after transporter has connected! So updateSensorData() should be called inside the closure after adapter connects; emmmm, no need, because when the state changed to connected, updateSensorData() will be called
         _transporter.connect({(inputStream : InputStream?, outputStream : OutputStream?) -> () in
             if((inputStream == nil)){
                 print("Could not connect to OBD2 adapter")
@@ -126,6 +128,52 @@ class MyOBD: ObservableObject{
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
+    }
+    
+    private func updateSendorDataForSupportedPids() {
+        let pid00 = LTOBD2PID_SUPPORTED_COMMANDS1_00.forMode1()
+        let pid20 = LTOBD2PID_SUPPORTED_COMMANDS1_20.forMode1()
+        let pid40 = LTOBD2PID_SUPPORTED_COMMANDS1_40.forMode1()
+        let pid60 = LTOBD2PID_SUPPORTED_COMMANDS1_60.forMode1()
+        let pid80 = LTOBD2PID_SUPPORTED_COMMANDS1_80.forMode1()
+        let pidA0 = LTOBD2PID_SUPPORTED_COMMANDS1_A0.forMode1()
+        let pidC0 = LTOBD2PID_SUPPORTED_COMMANDS1_C0.forMode1()
+//        let pid900 = LTOBD2PID_VIN_CODE_0902.init()//LTOBD2PID_VIN_CODE_0902.init() causes the bluetooth to fail "The connection has timed out unexpectedly."
+
+        _obd2Adapter?.transmitMultipleCommands([pid00, pid20, pid40, pid60, pid80, pidA0, pidC0], completionHandler: {_ in
+            if !(pid00.gotValidAnswer && pid20.gotValidAnswer && pid40.gotValidAnswer && pid60.gotValidAnswer
+                 && pid80.gotValidAnswer && pidA0.gotValidAnswer && pidC0.gotValidAnswer) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.updateSendorDataForSupportedPids()
+                }
+            }else{
+                var bitmap: [Bool] = []
+                for pid in [pid00, pid20, pid40, pid60, pid80, pidA0, pidC0] {
+                    let cooked: [NSNumber] = pid.cookedResponse.values.first!
+                    for num in cooked {
+                        let b = self.decimal2Bitmap(num: num.intValue)
+                        bitmap.append(contentsOf: b)
+                    }
+                }
+                for (i, b) in bitmap.enumerated() {
+                    if b && (i+1) % 32 != 0{ //%32 to eliminated those pids checking for supported pids
+                        self.supportedPids.append(i + 1)//+1 because it starts from $01~$20
+                    }
+                }
+                print(self.supportedPids)
+            }
+        })
+    }
+    
+    private func decimal2Bitmap(num: Int) -> [Bool]{
+        let str = UInt8(num).binaryDescription
+        var ret = Array(repeating: false, count: 8)
+        for (i, s) in str.enumerated() {
+            if s == "1" {
+                ret[i] = true
+            }
+        }
+        return ret
     }
     
     private func updateSensorData () -> () {
@@ -269,7 +317,11 @@ class MyOBD: ObservableObject{
         DispatchQueue.main.async {
             switch self._obd2Adapter?.adapterState{
             case OBD2AdapterStateDiscovering, OBD2AdapterStateConnected:
-                self.updateSensorData()
+                if !self.supportedPidsChecked {
+                    self.updateSendorDataForSupportedPids()
+                }else{
+                    self.updateSensorData()
+                }
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
             }

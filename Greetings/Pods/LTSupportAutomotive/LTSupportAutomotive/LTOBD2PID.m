@@ -1355,6 +1355,9 @@
 
 @end
 
+@implementation LTOBD2PID_SUPPORTED_COMMANDS1_20 : LTOBD2PID
+@end
+
 @implementation LTOBD2PID_DISTANCE_WITH_MIL_21
 
 -(NSString*)formattedResponse
@@ -1528,6 +1531,9 @@
     return [self formatTwoByteDoubleValueWithString:@"%.2f" UTF8_NARROW_NOBREAK_SPACE @"°C" offset:-40 factor:1 / 10.0];
 }
 
+@end
+
+@implementation LTOBD2PID_SUPPORTED_COMMANDS1_40 : LTOBD2PID
 @end
 
 @implementation LTOBD2PID_MONITOR_STATUS_THIS_DRIVE_CYCLE_41
@@ -1759,6 +1765,9 @@
 
 @end
 
+@implementation LTOBD2PID_SUPPORTED_COMMANDS1_60 : LTOBD2PID
+@end
+
 @implementation LTOBD2PID_ENGINE_TORQUE_DEMANDED_61
 
 -(NSString*)formattedResponse
@@ -1804,6 +1813,9 @@
 
 @end
 
+@implementation LTOBD2PID_SUPPORTED_COMMANDS1_80 : LTOBD2PID
+@end
+
 @implementation LTOBD2PID_NOX_SENSOR_83
 
 -(NSString*)formattedResponse
@@ -1840,6 +1852,9 @@
 
 @end
 
+@implementation LTOBD2PID_SUPPORTED_COMMANDS1_A0 : LTOBD2PID
+@end
+
 @implementation LTOBD2PID_NOX_SENSOR_CORRECTED_A1
 
 -(NSString*)formattedResponse
@@ -1865,6 +1880,9 @@
     return [self formatNineByteDoubleValueWithString:@"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm, " @"%.0f" UTF8_NARROW_NOBREAK_SPACE @"ppm"];
 }
 
+@end
+
+@implementation LTOBD2PID_SUPPORTED_COMMANDS1_C0 : LTOBD2PID
 @end
 
 #pragma mark -
