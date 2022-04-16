@@ -6,8 +6,7 @@ struct HistoryView: View {
     var latestFile: URL? = nil
     
     init(){
-        let pcdfGen = PcdfGenerator()
-        directory = pcdfGen.directory
+        directory = URL(fileURLWithPath: "/")//TODO: use core data?
         do {
             files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         }catch{
