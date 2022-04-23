@@ -7,7 +7,7 @@ struct MonitoringView: View {
     
     var body: some View {
         let selectedProfile = viewModel.getSelectedProfile()
-        List(selectedProfile.commands.filter({$0.enabled}), id: \.self) { command in
+        List(selectedProfile.commands.filter({$0.enabled}), id: \.id) { command in
             HStack{
                 Text(command.name)
                 Spacer()

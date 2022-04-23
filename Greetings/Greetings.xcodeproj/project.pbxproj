@@ -19,6 +19,16 @@
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
 		969B982B28070FB9004A2123 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */; };
 		969B982F28071147004A2123 /* spec_header.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B982E28071147004A2123 /* spec_header.lola */; };
+		969B983C280EB0E0004A2123 /* spec_fuel_rate_input.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9832280EB0DF004A2123 /* spec_fuel_rate_input.lola */; };
+		969B983D280EB0E0004A2123 /* spec_maf_to_fuel_rate_diesel_fae.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9833280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel_fae.lola */; };
+		969B983E280EB0E0004A2123 /* spec_maf_to_fuel_rate_diesel.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9834280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel.lola */; };
+		969B983F280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9835280EB0DF004A2123 /* spec_maf_to_fuel_rate_gasoline.lola */; };
+		969B9840280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline_fae.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9836280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline_fae.lola */; };
+		969B9841280EB0E0004A2123 /* spec_fuelrate_to_emf_gasoline.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9837280EB0E0004A2123 /* spec_fuelrate_to_emf_gasoline.lola */; };
+		969B9842280EB0E0004A2123 /* spec_fuel_rate_to_co2_diesel.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9838280EB0E0004A2123 /* spec_fuel_rate_to_co2_diesel.lola */; };
+		969B9843280EB0E0004A2123 /* spec_fuel_rate_to_emf_diesel.spec in Resources */ = {isa = PBXBuildFile; fileRef = 969B9839280EB0E0004A2123 /* spec_fuel_rate_to_emf_diesel.spec */; };
+		969B9844280EB0E0004A2123 /* spec_body.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B983A280EB0E0004A2123 /* spec_body.lola */; };
+		969B9845280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */; };
 		96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADC26BC205900934FCA /* RDEValidator.swift */; };
 		96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DAE026C143C400934FCA /* PatternParser.swift */; };
 		96B71F20271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F1F271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf */; };
@@ -98,6 +108,16 @@
 		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
 		969B982E28071147004A2123 /* spec_header.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_header.lola; sourceTree = "<group>"; };
+		969B9832280EB0DF004A2123 /* spec_fuel_rate_input.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuel_rate_input.lola; sourceTree = "<group>"; };
+		969B9833280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel_fae.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_maf_to_fuel_rate_diesel_fae.lola; sourceTree = "<group>"; };
+		969B9834280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_maf_to_fuel_rate_diesel.lola; sourceTree = "<group>"; };
+		969B9835280EB0DF004A2123 /* spec_maf_to_fuel_rate_gasoline.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_maf_to_fuel_rate_gasoline.lola; sourceTree = "<group>"; };
+		969B9836280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline_fae.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_maf_to_fuel_rate_gasoline_fae.lola; sourceTree = "<group>"; };
+		969B9837280EB0E0004A2123 /* spec_fuelrate_to_emf_gasoline.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuelrate_to_emf_gasoline.lola; sourceTree = "<group>"; };
+		969B9838280EB0E0004A2123 /* spec_fuel_rate_to_co2_diesel.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuel_rate_to_co2_diesel.lola; sourceTree = "<group>"; };
+		969B9839280EB0E0004A2123 /* spec_fuel_rate_to_emf_diesel.spec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuel_rate_to_emf_diesel.spec; sourceTree = "<group>"; };
+		969B983A280EB0E0004A2123 /* spec_body.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_body.lola; sourceTree = "<group>"; };
+		969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuelrate_to_co2_gasoline.lola; sourceTree = "<group>"; };
 		96A0DADC26BC205900934FCA /* RDEValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDEValidator.swift; sourceTree = "<group>"; };
 		96A0DAE026C143C400934FCA /* PatternParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternParser.swift; sourceTree = "<group>"; };
 		96B71F1F271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_11-45-26.ppcdf"; sourceTree = "<group>"; };
@@ -238,6 +258,16 @@
 			children = (
 				9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */,
 				969B982E28071147004A2123 /* spec_header.lola */,
+				969B983A280EB0E0004A2123 /* spec_body.lola */,
+				969B9832280EB0DF004A2123 /* spec_fuel_rate_input.lola */,
+				969B9838280EB0E0004A2123 /* spec_fuel_rate_to_co2_diesel.lola */,
+				969B9839280EB0E0004A2123 /* spec_fuel_rate_to_emf_diesel.spec */,
+				969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */,
+				969B9837280EB0E0004A2123 /* spec_fuelrate_to_emf_gasoline.lola */,
+				969B9833280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel_fae.lola */,
+				969B9834280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel.lola */,
+				969B9836280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline_fae.lola */,
+				969B9835280EB0DF004A2123 /* spec_maf_to_fuel_rate_gasoline.lola */,
 			);
 			path = lola;
 			sourceTree = "<group>";
@@ -374,12 +404,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				96B71F2A271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf in Resources */,
+				969B983C280EB0E0004A2123 /* spec_fuel_rate_input.lola in Resources */,
+				969B9842280EB0E0004A2123 /* spec_fuel_rate_to_co2_diesel.lola in Resources */,
+				969B983D280EB0E0004A2123 /* spec_maf_to_fuel_rate_diesel_fae.lola in Resources */,
 				96C6F5FF27EE80BE004C4B7D /* help.html in Resources */,
 				9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */,
 				96C6F60A27F1CCF6004C4B7D /* acknowledgements.html in Resources */,
 				969B982F28071147004A2123 /* spec_header.lola in Resources */,
+				969B9844280EB0E0004A2123 /* spec_body.lola in Resources */,
 				96C6F61727F1D538004C4B7D /* cispa_logo_en_rgb.png in Resources */,
 				96C6F60127EE80E2004C4B7D /* privacy.html in Resources */,
+				969B9845280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola in Resources */,
 				96C6F61B27F1D538004C4B7D /* logo_cpec_final_rgb_v2.png in Resources */,
 				96C6F61927F1D538004C4B7D /* uds.png in Resources */,
 				960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */,
@@ -387,13 +422,18 @@
 				96C6F60B27F1CCF6004C4B7D /* impressum.html in Resources */,
 				96B71F20271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf in Resources */,
 				96B71F29271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf in Resources */,
+				969B983F280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline.lola in Resources */,
 				96B71F28271D7C4F00AB2E8E /* 2021-09-13_12-04-29.ppcdf in Resources */,
 				96C6F5FE27EE80BE004C4B7D /* style.css in Resources */,
 				96C6F61A27F1D538004C4B7D /* erc.png in Resources */,
 				96C6F61827F1D538004C4B7D /* sic.png in Resources */,
 				960DACAB2639685A005DEABB /* Assets.xcassets in Resources */,
 				96B71F22271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf in Resources */,
+				969B9843280EB0E0004A2123 /* spec_fuel_rate_to_emf_diesel.spec in Resources */,
+				969B983E280EB0E0004A2123 /* spec_maf_to_fuel_rate_diesel.lola in Resources */,
 				96B71F24271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf in Resources */,
+				969B9840280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline_fae.lola in Resources */,
+				969B9841280EB0E0004A2123 /* spec_fuelrate_to_emf_gasoline.lola in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

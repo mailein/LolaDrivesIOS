@@ -21,7 +21,7 @@ func specFile(filename: String) -> String{
         return try String(contentsOf: URL(fileURLWithPath: path!), encoding: .utf8)
     }
     catch {
-        return "error: read specFile"
+        return "error! Can't read specFile \(filename)"
     }
 }
 
