@@ -1,6 +1,9 @@
 import Foundation
 
 struct Model{
+    //obd
+    var obd: MyOBD?
+    
     //nav bar
     var isConnected: Bool
 //    var isConnected: Bool {//TODO: should not depend on Start/Stop button, but whether Bluetooth is connected
@@ -24,8 +27,8 @@ struct Model{
     var totalTime: Double = 0
     
     //profiles view
-    let defaultProfile: Profile = Profile("default_profile", enabled: ["RPM", "SPEED"])
-    let allEnabledProfile: Profile = Profile("all_supported", enabled: ProfileCommands.commands.map{$0.name})
+    let defaultProfile: Profile
+    let allEnabledProfile: Profile
     var profiles: [Profile]
     var selectedProfile: Profile
     var lastSelectedProfile: Profile
@@ -35,7 +38,19 @@ struct Model{
     
     
     init() {
+        obd = nil
+        
         isConnected = false
+        
+        let defaultCommands = ProfileCommands.commands //TODO: check, this is a copy, right???
+        defaultCommands.first(where: {$0.pid == "0D"})?.enabled.toggle()//speed
+        defaultCommands.first(where: {$0.pid == "0C"})?.enabled.toggle()//RPM
+        defaultProfile = Profile("default_profile", commands: defaultCommands)
+        
+        let allEnabledCommnds = ProfileCommands.commands
+        allEnabledCommnds.forEach{$0.enabled.toggle()}
+        allEnabledProfile = Profile("all_supported", commands: allEnabledCommnds)
+        
         profiles = [defaultProfile, allEnabledProfile]
         selectedProfile = defaultProfile
         defaultProfile.isSelected = true

@@ -2,17 +2,16 @@ import SwiftUI
 
 struct RdeView: View {
     @EnvironmentObject var viewModel: ViewModel
-    @EnvironmentObject var obd: MyOBD
     
     var body: some View {
         ScrollView{
             VStack(spacing: 25){
-                let tu = obd.outputValues.count >= 5 ? obd.outputValues[4] : 0
-                let tr = obd.outputValues.count >= 6 ? obd.outputValues[5] : 0
-                let tm = obd.outputValues.count >= 7 ? obd.outputValues[6] : 0
-                let distance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
-                let isValid = obd.outputValues.count >= 18 ? obd.outputValues[17] : 0
-                let nox = obd.outputValues.count >= 17 ? obd.outputValues[16] : 0
+                let tu = viewModel.getOBD()?.outputValues[4] ?? 0 //TODO: get by name instead of index
+                let tr = viewModel.getOBD()?.outputValues[5] ?? 0
+                let tm = viewModel.getOBD()?.outputValues[6] ?? 0
+                let distance = viewModel.getOBD()?.outputValues[0] ?? 0
+                let isValid = viewModel.getOBD()?.outputValues[17] ?? 0
+                let nox = viewModel.getOBD()?.outputValues[16] ?? 0
                 
                 TopIndicatorsSection(t_u: tu, t_r: tr, t_m: tm, totalDistance: distance, isValidTest: isValid)
 //                    .border(Color.yellow)
@@ -20,9 +19,9 @@ struct RdeView: View {
                 NOxSection(noxAmount: nox)
 //                    .border(Color.yellow)
                 
-                CategoryDistanceDynamicsSection(terrain: Category.URBAN)
-                CategoryDistanceDynamicsSection(terrain: Category.RURAL)
-                CategoryDistanceDynamicsSection(terrain: Category.MOTORWAY)
+                CategoryDistanceDynamicsSection(obd: viewModel.getOBD(), terrain: Category.URBAN)
+                CategoryDistanceDynamicsSection(obd: viewModel.getOBD(), terrain: Category.RURAL)
+                CategoryDistanceDynamicsSection(obd: viewModel.getOBD(), terrain: Category.MOTORWAY)
                 
                 StopRdeNavLink()
             }
@@ -87,8 +86,7 @@ struct RdeView: View {
     }
 
     struct CategoryDistanceDynamicsSection: View{
-        @EnvironmentObject var obd: MyOBD
-        
+        let obd: MyOBD?
         var terrain: Category
         
         var body: some View{
@@ -96,41 +94,42 @@ struct RdeView: View {
                 Text(terrain.rawValue)
                     .font(.title3)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
-                switch terrain {
-                case .URBAN:
-                    let distance = obd.outputValues.count >= 2 ? obd.outputValues[1] : 0
-                    let totalDistance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
-                    let duration = obd.outputValues.count >= 5 ? obd.outputValues[4] : 0
-                    let avgv = obd.outputValues.count >= 8 ? obd.outputValues[7] : 0
-                    let rpa = obd.outputValues.count >= 14 ? obd.outputValues[13] : 0
-                    let pct = obd.outputValues.count >= 11 ? obd.outputValues[10] : 0
-                    
-                    DistanceBar(category: .URBAN, distance: distance, totalDistance: totalDistance)
-                    DistanceDurationText(distance: distance, durationInSeconds: duration)
-                    DynamicsBar(terrain: .URBAN, avg_v: avgv, rpa: rpa, pct: pct)
-                case .RURAL:
-                    let distance = obd.outputValues.count >= 3 ? obd.outputValues[2] : 0
-                    let totalDistance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
-                    let duration = obd.outputValues.count >= 6 ? obd.outputValues[5] : 0
-                    let avgv = obd.outputValues.count >= 9 ? obd.outputValues[8] : 0
-                    let rpa = obd.outputValues.count >= 15 ? obd.outputValues[14] : 0
-                    let pct = obd.outputValues.count >= 12 ? obd.outputValues[11] : 0
-                    
-                    DistanceBar(category: .RURAL, distance: distance, totalDistance: totalDistance)
-                    DistanceDurationText(distance: distance, durationInSeconds: duration)
-                    DynamicsBar(terrain: .RURAL, avg_v: avgv, rpa: rpa, pct: pct)
-                case .MOTORWAY:
-                    let distance = obd.outputValues.count >= 4 ? obd.outputValues[3] : 0
-                    let totalDistance = obd.outputValues.count >= 1 ? obd.outputValues[0] : 0
-                    let duration = obd.outputValues.count >= 7 ? obd.outputValues[6] : 0
-                    let avgv = obd.outputValues.count >= 10 ? obd.outputValues[9] : 0
-                    let rpa = obd.outputValues.count >= 16 ? obd.outputValues[15] : 0
-                    let pct = obd.outputValues.count >= 13 ? obd.outputValues[12] : 0
-                    
-                    DistanceBar(category: .MOTORWAY, distance: distance, totalDistance: totalDistance)
-                    DistanceDurationText(distance: distance, durationInSeconds: duration)
-                    DynamicsBar(terrain: .MOTORWAY, avg_v: avgv, rpa: rpa, pct: pct)
+                if let obd = obd {
+                    switch terrain {
+                    case .URBAN:
+                        let distance = obd.outputValues[1] //TODO: get by name instead of index
+                        let totalDistance = obd.outputValues[0]
+                        let duration = obd.outputValues[4]
+                        let avgv = obd.outputValues[7]
+                        let rpa = obd.outputValues[13]
+                        let pct = obd.outputValues[10]
+                        
+                        DistanceBar(category: .URBAN, distance: distance, totalDistance: totalDistance)
+                        DistanceDurationText(distance: distance, durationInSeconds: duration)
+                        DynamicsBar(terrain: .URBAN, avg_v: avgv, rpa: rpa, pct: pct)
+                    case .RURAL:
+                        let distance = obd.outputValues[2]
+                        let totalDistance = obd.outputValues[0]
+                        let duration = obd.outputValues[5]
+                        let avgv = obd.outputValues[8]
+                        let rpa = obd.outputValues[14]
+                        let pct = obd.outputValues[11]
+                        
+                        DistanceBar(category: .RURAL, distance: distance, totalDistance: totalDistance)
+                        DistanceDurationText(distance: distance, durationInSeconds: duration)
+                        DynamicsBar(terrain: .RURAL, avg_v: avgv, rpa: rpa, pct: pct)
+                    case .MOTORWAY:
+                        let distance = obd.outputValues[3]
+                        let totalDistance = obd.outputValues[0]
+                        let duration = obd.outputValues[6]
+                        let avgv = obd.outputValues[9]
+                        let rpa = obd.outputValues[15]
+                        let pct = obd.outputValues[12]
+                        
+                        DistanceBar(category: .MOTORWAY, distance: distance, totalDistance: totalDistance)
+                        DistanceDurationText(distance: distance, durationInSeconds: duration)
+                        DynamicsBar(terrain: .MOTORWAY, avg_v: avgv, rpa: rpa, pct: pct)
+                    }
                 }
             }
         }
@@ -138,7 +137,6 @@ struct RdeView: View {
 
     struct StopRdeNavLink: View{
         @EnvironmentObject var viewModel: ViewModel
-        @EnvironmentObject var obd: MyOBD
         
         var body: some View{
             NavigationLink(destination: RdeLogView(), label: {
@@ -151,7 +149,7 @@ struct RdeView: View {
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
-                    obd.disconnect()
+                    viewModel.getOBD()?.disconnect()
                     viewModel.model.isConnected = false
                 })
         }

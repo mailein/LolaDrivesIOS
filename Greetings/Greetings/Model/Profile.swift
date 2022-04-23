@@ -4,22 +4,18 @@ class Profile: Identifiable, Hashable, ObservableObject{
     var id = UUID()
     @Published var name: String
     @Published var commands: [CommandItem] = []
-    var enabledCommandNames: [String]
     @Published var isSelected: Bool = false
     
-    init(_ name: String = "", enabled: [String]){
+    init(_ name: String = "", commands: [CommandItem]){
         self.name = name
-        self.enabledCommandNames = enabled
-        for command in ProfileCommands.commands {
+        self.commands = commands
+        for command in commands {
             //self.commands = ProfileCommands.commands or self.commands.append(command) won't work, must use deep copy
-            self.commands.append(CommandItem(pid: command.pid, name: command.name, unit: command.unit))
+            self.commands.append(CommandItem(pid: command.pid, name: command.name, unit: command.unit, obdCommands: command.obdCommands))
         }
+        let enabled = commands.filter{ $0.enabled }
         for enabledElem in enabled {
-            if self.commands.contains(where: {$0.name == enabledElem}) {
-                self.commands.first(where: {$0.name == enabledElem})?.enabled.toggle()
-            } else {
-                print("Error: try to enable command \(enabledElem) not found.")
-            }
+            self.commands.first(where: {$0.id == enabledElem.id})?.enabled.toggle()
         }
     }
     

@@ -66,7 +66,7 @@ class MyOBD: ObservableObject{
     @Published var myEgrError: String = ""
     
     var startTime: Date? = nil
-    var _locationHelper: LocationHelper?
+    @ObservedObject var locationHelper = LocationHelper()
     
     //RTLola outputs
 //    var outputNames : [String] = [
@@ -95,13 +95,16 @@ class MyOBD: ObservableObject{
     //ppcdf
     var events: [pcdfcore.PCDFEvent]
     
-    init(){
+    //UI
+    var isLiveMonitoring: Bool//if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
+    
+    init(isLiveMonitoring: Bool = false){
         _serviceUUIDs = []
         _pids = []
         _transporter = LTBTLESerialTransporter()
-        _locationHelper = nil
         outputValues = [Double](repeating: 0, count: 19)
         events = []
+        self.isLiveMonitoring = isLiveMonitoring
         
         //load spec file
         specBody = specFile(filename: "spec_body.lola")
@@ -130,7 +133,7 @@ class MyOBD: ObservableObject{
     private func connect () -> () {
         _transporter = LTBTLESerialTransporter.init(identifier: nil, serviceUUIDs: _serviceUUIDs)
         //The closure is called after transporter has connected! So updateSensorData() should be called inside the closure after adapter connects; emmmm, no need, because when the state changed to connected, updateSensorData() will be called
-        _transporter.connect({(inputStream : InputStream?, outputStream : OutputStream?) -> () in
+        _transporter.connect{(inputStream : InputStream?, outputStream : OutputStream?) -> () in
             if((inputStream == nil)){
                 print("Could not connect to OBD2 adapter")
                 return;
@@ -138,8 +141,7 @@ class MyOBD: ObservableObject{
             self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
             self._obd2Adapter!.connect()
             print("adapter init and connected")
-                                })
-        
+        }
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
     }
     
@@ -272,9 +274,9 @@ class MyOBD: ObservableObject{
                 self.addToEvents(command: speed, duration: duration)
                 self.printCommandResponse(command: speed)
 
-                let altitude = self._locationHelper?.altitude
+                let altitude = self.locationHelper.altitude
                 self.myAltitude = "\(altitude ?? 0) m"
-                self.addToEvents(duration: duration, altitude: altitude, longitude: self._locationHelper!.longitude, latitude: self._locationHelper?.latitude, gps_speed: self._locationHelper?.gps_speed)
+                self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, gps_speed: self.locationHelper.gps_speed)
 
                 self.myTemp = temp.formattedResponse
                 self.myNox = nox.formattedResponse
@@ -311,7 +313,7 @@ class MyOBD: ObservableObject{
                 if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
                    && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
                     var s = [speed.cookedResponse.values.first!.first!.doubleValue,
-                             altitude!,
+                             altitude,
                              temp.cookedResponse.values.first!.first!.doubleValue,
                              nox.cookedResponse.values.first!.first!.doubleValue,
                              fuelRate.cookedResponse.values.first!.first!.doubleValue,

@@ -3,7 +3,6 @@ import SwiftUI
 
 struct MonitoringView: View {
     @EnvironmentObject var viewModel: ViewModel
-    @EnvironmentObject var obd: MyOBD
     
     var body: some View {
         let selectedProfile = viewModel.getSelectedProfile()
@@ -14,63 +13,63 @@ struct MonitoringView: View {
                 VStack(alignment: .trailing){
                     switch command.pid {
                     case "05":
-                        Text(obd.myCoolantTemp)
+                        Text(viewModel.getOBD()?.myCoolantTemp ?? "No data")
                     case "0C":
-                        Text(obd.myRPM)
+                        Text(viewModel.getOBD()?.myRPM ?? "No data")
                     case "0D":
-                        Text(obd.mySpeed)
+                        Text(viewModel.getOBD()?.mySpeed ?? "No data")
                     case "0F":
-                        Text(obd.myIntakeTemp)
+                        Text(viewModel.getOBD()?.myIntakeTemp ?? "No data")
                     case "10":
-                        Text(obd.myMAFRate)
+                        Text(viewModel.getOBD()?.myMAFRate ?? "No data")
                     case "66":
-                        Text(obd.myMAFRateSensor)
+                        Text(viewModel.getOBD()?.myMAFRateSensor ?? "No data")
                     case "24":
-                        Text(obd.myOxygenSensor1)
+                        Text(viewModel.getOBD()?.myOxygenSensor1 ?? "No data")
                     case "2C":
-                        Text(obd.myCommandedEgr)
+                        Text(viewModel.getOBD()?.myCommandedEgr ?? "No data")
                     case "2F":
-                        Text(obd.myFuelTankLevelInput)
+                        Text(viewModel.getOBD()?.myFuelTankLevelInput ?? "No data")
                     case "3C":
-                        Text(obd.myCatalystTemp11)
+                        Text(viewModel.getOBD()?.myCatalystTemp11 ?? "No data")
                     case "3E":
-                        Text(obd.myCatalystTemp12)
+                        Text(viewModel.getOBD()?.myCatalystTemp12 ?? "No data")
                     case "3D":
-                        Text(obd.myCatalystTemp21)
+                        Text(viewModel.getOBD()?.myCatalystTemp21 ?? "No data")
                     case "3F":
-                        Text(obd.myCatalystTemp22)
+                        Text(viewModel.getOBD()?.myCatalystTemp22 ?? "No data")
                     case "44":
-                        Text(obd.myAirFuelEqvRatio)
+                        Text(viewModel.getOBD()?.myAirFuelEqvRatio ?? "No data")
                     case "46":
-                        Text(obd.myTemp)
+                        Text(viewModel.getOBD()?.myTemp ?? "No data")
                     case "4F":
-                        Text("\(obd.myMaxValueFuelAirEqvRatio) | \(obd.myMaxValueOxygenSensorVoltage) | \(obd.myMaxValueOxygenSensorCurrent) | \(obd.myMaxValueIntakeMAP)")
+                        Text("\(viewModel.getOBD()?.myMaxValueFuelAirEqvRatio ?? "No data") | \(viewModel.getOBD()?.myMaxValueOxygenSensorVoltage ?? "No data") | \(viewModel.getOBD()?.myMaxValueOxygenSensorCurrent ?? "No data") | \(viewModel.getOBD()?.myMaxValueIntakeMAP ?? "No data")")
                     case "50":
-                        Text(obd.myMaxAirFlowRate)
+                        Text(viewModel.getOBD()?.myMaxAirFlowRate ?? "No data")
                     case "51":
-                        Text(obd.myFuelType)
+                        Text(viewModel.getOBD()?.myFuelType ?? "No data")
                     case "5C":
-                        Text(obd.myEngineOilTemp)
+                        Text(viewModel.getOBD()?.myEngineOilTemp ?? "No data")
                     case "68":
-                        Text(obd.myIntakeAirTempSensor)
+                        Text(viewModel.getOBD()?.myIntakeAirTempSensor ?? "No data")
                     case "83":
-                        Text(obd.myNox)
+                        Text(viewModel.getOBD()?.myNox ?? "No data")
                     case "A1":
-                        Text(obd.myNoxCorrected)
+                        Text(viewModel.getOBD()?.myNoxCorrected ?? "No data")
                     case "A7":
-                        Text(obd.myNoxAlternative)
+                        Text(viewModel.getOBD()?.myNoxAlternative ?? "No data")
                     case "A8":
-                        Text(obd.myNoxCorrectedAlternative)
+                        Text(viewModel.getOBD()?.myNoxCorrectedAlternative ?? "No data")
                     case "86":
-                        Text(obd.myPmSensor)
+                        Text(viewModel.getOBD()?.myPmSensor ?? "No data")
                     case "5E":
-                        Text(obd.myFuelRate)
+                        Text(viewModel.getOBD()?.myFuelRate ?? "No data")
                     case "9D":
-                        Text(obd.myEngineFuelRateMulti)
+                        Text(viewModel.getOBD()?.myEngineFuelRateMulti ?? "No data")
                     case "9E":
-                        Text(obd.myEngineExhaustFlowRate)
+                        Text(viewModel.getOBD()?.myEngineExhaustFlowRate ?? "No data")
                     case "2D":
-                        Text(obd.myEgrError)
+                        Text(viewModel.getOBD()?.myEgrError ?? "No data")
                     default:
                         Text("")
                     }

@@ -27,5 +27,15 @@ class ViewModel: ObservableObject {
     func getSelectedProfile() -> Profile{
         return model.selectedProfile
     }
+    
+    func startOBD() {
+        let obd = MyOBD()
+        model.obd = obd
+        obd.viewDidLoad()
+    }
+    
+    func getOBD() -> MyOBD? {
+        return model.obd
+    }
 }
 

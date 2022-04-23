@@ -49,7 +49,8 @@ struct ProfilesView: View {
     }
     func NewButton()-> Button<Text> {
         Button("New"){
-            viewModel.addProfile(Profile("new profile", enabled: []))
+            let commands = ProfileCommands.commands
+            viewModel.addProfile(Profile("new profile", commands: commands))
         }
     }
     func delete(at offsets: IndexSet) {
