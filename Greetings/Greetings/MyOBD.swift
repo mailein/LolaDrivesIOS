@@ -14,6 +14,8 @@ class MyOBD: ObservableObject{
     var rdeProfile: [CommandItem] = [] // The sensor profile of the car which is determined.
     var fuelRateSupported: Bool = false
     var faeSupported: Bool = false
+    let supportedPidCommands: [LTOBD2PID] = ProfileCommands.supportedCommands.map{$0.obdCommands[0]}
+    let fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommands[0]
     
     // LOLA
     let rustGreetings = RustGreetings()
@@ -69,27 +71,6 @@ class MyOBD: ObservableObject{
     @ObservedObject var locationHelper = LocationHelper()
     
     //RTLola outputs
-//    var outputNames : [String] = [
-//        "d",
-//        "d_u",
-//        "d_r",
-//        "d_m",
-//        "t_u",
-//        "t_r",
-//        "t_m",
-//        "u_avg_v",
-//        "r_avg_v",
-//        "m_avg_v",
-//        "u_va_pct",
-//        "r_va_pct",
-//        "m_va_pct",
-//        "u_rpa",
-//        "r_rpa",
-//        "m_rpa",
-//        "nox_per_kilometer",
-//        "is_valid_test",
-//        "not_rde_test"
-//    ]
     var outputValues : [Double]
     
     //ppcdf
@@ -121,7 +102,7 @@ class MyOBD: ObservableObject{
     }
     
     public func viewDidLoad () -> () {
-        var ma : [CBUUID] = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
+        let ma : [CBUUID] = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
         _serviceUUIDs = ma
         
         //use notificationcenter, only call updateSensorData() when adapter status is Discovering / Connected
@@ -155,29 +136,14 @@ class MyOBD: ObservableObject{
         _transporter.disconnect()
     }
     
-    private func decimal2Bitmap(num: Int) -> [Bool]{
-        let str = UInt8(num).binaryDescription
-        var ret = Array(repeating: false, count: 8)
-        for (i, s) in str.enumerated() {
-            if s == "1" {
-                ret[i] = true
-            }
-        }
-        return ret
+    private func updateSensorDataForSupportedPids() {
+//        let pid900 = LTOBD2PID_VIN_CODE_0902.init()//LTOBD2PID_VIN_CODE_0902.init() causes the bluetooth to fail "The connection has timed out unexpectedly."
+        updateSensorDataForSupportedPid(commands: self.supportedPidCommands, index: 0)
     }
     
-    private func updateSensorDataForSupportedPids() {
-        let pid00 = LTOBD2PID_SUPPORTED_COMMANDS1_00.forMode1()
-        let pid20 = LTOBD2PID_SUPPORTED_COMMANDS1_20.forMode1()
-        let pid40 = LTOBD2PID_SUPPORTED_COMMANDS1_40.forMode1()
-        let pid60 = LTOBD2PID_SUPPORTED_COMMANDS1_60.forMode1()
-        let pid80 = LTOBD2PID_SUPPORTED_COMMANDS1_80.forMode1()
-        let pidA0 = LTOBD2PID_SUPPORTED_COMMANDS1_A0.forMode1()
-        let pidC0 = LTOBD2PID_SUPPORTED_COMMANDS1_C0.forMode1()
-        let fuelType = LTOBD2PID_FUEL_TYPE_51.forMode1()
-//        let pid900 = LTOBD2PID_VIN_CODE_0902.init()//LTOBD2PID_VIN_CODE_0902.init() causes the bluetooth to fail "The connection has timed out unexpectedly."
-
-        _obd2Adapter?.transmitMultipleCommands([pid00, pid20, pid40, pid60, pid80, pidA0, pidC0, fuelType], completionHandler: {_ in
+    private func updateSensorDataForSupportedPid(commands: [LTOBD2PID], index: Int) {
+        let pidCommand = commands[index]
+        self._obd2Adapter?.transmitCommand(pidCommand, responseHandler: {_ in
             DispatchQueue.main.async {
                 //get timestamp
                 if self.startTime == nil {
@@ -185,172 +151,63 @@ class MyOBD: ObservableObject{
                 }
                 let duration = Date().timeIntervalSince(self.startTime!)
                 
-                //TODO: check 0x20 after 0x00 responded, ...
-                if !(pid00.gotValidAnswer && pid20.gotValidAnswer && pid40.gotValidAnswer && pid60.gotValidAnswer
-                     && pid80.gotValidAnswer && pidA0.gotValidAnswer && pidC0.gotValidAnswer && fuelType.gotValidAnswer) {//TODO: check if fuelType is supported
+                if !(pidCommand.gotValidAnswer) {//TODO: check if fuelType is supported
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.updateSensorData()
+                        self.updateSensorDataForSupportedPid(commands: commands, index: index)
                     }
-                }else{
-                    //fuelType
-                    self.myFuelType = fuelType.formattedResponse
-                    
+                } else{
+                    //TODO: don't add duplicate for events and supportedPids
                     //generate SupportedPidsEvent
-                    for pidCommand in [pid00, pid20, pid40, pid60, pid80, pidA0, pidC0] {
-                        let startIndex = pidCommand.commandString.startIndex
-                        let index = pidCommand.commandString.index(pidCommand.commandString.startIndex, offsetBy: 2)
-                        self.addToEvents(command: pidCommand, duration: duration, isSupportedPidsCommand: true, mode: Int(pidCommand.commandString[startIndex..<index], radix: 16)!, pid: Int(pidCommand.commandString[index...], radix: 16)!)
-                    }
+                    let startIndex = pidCommand.commandString.startIndex
+                    let i = pidCommand.commandString.index(pidCommand.commandString.startIndex, offsetBy: 2)
+                    self.addToEvents(command: pidCommand, duration: duration, isSupportedPidsCommand: true, mode: Int(pidCommand.commandString[startIndex..<i], radix: 16)!, pid: Int(pidCommand.commandString[i...], radix: 16)!)
                     
                     //get supported pids
                     var bitmap: [Bool] = []
-                    for pidCommand in [pid00, pid20, pid40, pid60, pid80, pidA0, pidC0] {
-                        let cooked: [NSNumber] = pidCommand.cookedResponse.values.first!
-                        for num in cooked {
-                            let b = self.decimal2Bitmap(num: num.intValue)
-                            bitmap.append(contentsOf: b)
-                        }
+                    let cooked: [NSNumber] = pidCommand.cookedResponse.values.first!
+                    for num in cooked {
+                        let b = self.decimal2Bitmap(num: num.intValue)
+                        bitmap.append(contentsOf: b)
                     }
                     for (i, b) in bitmap.enumerated() {
-                        if b && (i+1) % 32 != 0{ //%32 to eliminated those pids checking for supported pids
-                            self.supportedPids.append(i + 1)//+1 because it starts from $01~$20
+                        if b && (i+1) % 32 != 0{ // %32 to eliminate pids of supported pids
+                            self.supportedPids.append(index * 32 + i + 1)//+1 because $01~$20 starts from 0
                         }
                     }
-                    print(self.supportedPids)
+                    print("support \(self.supportedPids)")
                     
-                    let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
-                    //TODO: if not supported, throw exception?
-                    
-                    let specFile = self.buildSpec()
-                    self.rustGreetings.initmonitor(s: specFile)
+                    if pidCommand.cookedResponse.values.first!.last!.intValue % 2 == 1 && index < 6{
+                        //D0 is odd number means the next supportedPid is supported.
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.updateSensorDataForSupportedPid(commands: commands, index: index + 1)
+                        }
+                    } else {
+                        //fuelType
+                        self._obd2Adapter?.transmitCommand(self.fuelType, responseHandler: {_ in
+                            DispatchQueue.main.async {
+                                //get timestamp
+                                if self.startTime == nil {
+                                    self.startTime = Date()
+                                }
+                                let duration = Date().timeIntervalSince(self.startTime!)
+                                self.addToEvents(command: self.fuelType, duration: duration)
+                                self.myFuelType = self.fuelType.formattedResponse
+                                
+                                let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
+                                //TODO: if not supported, throw exception?
+                                if supported {
+                                    let specFile = self.buildSpec()
+                                    self.rustGreetings.initmonitor(s: specFile)
+                                    self.updateSensorData()
+                                }else{
+                                    print("ERROR: Car is NOT compatible for RDE tests.")
+                                }
+                            }
+                        })
+                    }
                 }
             }
         })
-    }
-    
-    private func updateSensorData () -> () {
-        let coolantTemp = LTOBD2PID_COOLANT_TEMP_05.forMode1()
-        let rpm = LTOBD2PID_ENGINE_RPM_0C.forMode1()
-        let speed = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
-        let intakeTemp = LTOBD2PID_INTAKE_TEMP_0F.forMode1()
-        let mafRate = LTOBD2PID_MAF_FLOW_10.forMode1()
-        let oxygenSensor1 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
-        let commandedEgr = LTOBD2PID_COMMANDED_EGR_2C.forMode1()
-        let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
-        let fuelTankLevelInput = LTOBD2PID_FUEL_TANK_LEVEL_2F.forMode1()
-        let catalystTemp11 = LTOBD2PID_CATALYST_TEMP_B1S1_3C.forMode1()
-        let catalystTemp12 = LTOBD2PID_CATALYST_TEMP_B1S2_3E.forMode1()
-        let catalystTemp21 = LTOBD2PID_CATALYST_TEMP_B2S1_3D.forMode1()
-        let catalystTemp22 = LTOBD2PID_CATALYST_TEMP_B2S2_3F.forMode1()
-        let airFuelEqvRatio = LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()
-        let temp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
-        let maxValueFuelAirEqvRatio = LTOBD2PID_MAX_VALUE_FUEL_AIR_EQUIVALENCE_RATIO_4F.forMode1()
-        let maxValueOxygenSensorVoltage = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_VOLTAGE_4F.forMode1()
-        let maxValueOxygenSensorCurrent = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_CURRENT_4F.forMode1()
-        let maxValueIntakeMAP = LTOBD2PID_MAX_VALUE_INTAKE_MAP_4F.forMode1()
-        let maxAirFlowRate = LTOBD2PID_MAX_VALUE_MAF_AIR_FLOW_RATE_50.forMode1()
-        let fuelType = LTOBD2PID_FUEL_TYPE_51.forMode1()
-        let engineOilTemp = LTOBD2PID_ENGINE_OIL_TEMP_5C.forMode1()
-        let fuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
-        let mafRateSensor = LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()
-        let intakeAirTempSensor = LTOBD2PID_INTAKE_AIR_TEMP_SENSOR_68.forMode1()
-        let nox = LTOBD2PID_NOX_SENSOR_83.forMode1()
-        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
-        let fuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()
-        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
-        let noxCorrected = LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()
-        let noxAlternative = LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()
-        let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()
-        
-        //TODO: send commands based on current profile
-        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, fuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
-            (commands : [LTOBD2Command])->() in
-            DispatchQueue.main.async {
-                if self.startTime == nil {
-                    self.startTime = Date()
-                }
-                let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
-                self.mySpeed = speed.formattedResponse
-                self.addToEvents(command: speed, duration: duration)
-                self.printCommandResponse(command: speed)
-
-                let altitude = self.locationHelper.altitude
-                self.myAltitude = "\(altitude ?? 0) m"
-                self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, gps_speed: self.locationHelper.gps_speed)
-
-                self.myTemp = temp.formattedResponse
-                self.myNox = nox.formattedResponse
-                self.myFuelRate = fuelRate.formattedResponse
-                self.myMAFRate = mafRate.formattedResponse
-                self.myAirFuelEqvRatio = airFuelEqvRatio.formattedResponse
-                self.myCoolantTemp = coolantTemp.formattedResponse
-                self.myRPM = rpm.formattedResponse
-                self.myIntakeTemp = intakeTemp.formattedResponse
-                self.myMAFRateSensor = mafRateSensor.formattedResponse
-                self.myOxygenSensor1 = oxygenSensor1.formattedResponse
-                self.myCommandedEgr = commandedEgr.formattedResponse
-                self.myFuelTankLevelInput = fuelTankLevelInput.formattedResponse
-                self.myCatalystTemp11 = catalystTemp11.formattedResponse
-                self.myCatalystTemp12 = catalystTemp12.formattedResponse
-                self.myCatalystTemp21 = catalystTemp21.formattedResponse
-                self.myCatalystTemp22 = catalystTemp22.formattedResponse
-                self.myMaxValueFuelAirEqvRatio = maxValueFuelAirEqvRatio.formattedResponse
-                self.myMaxValueOxygenSensorVoltage = maxValueOxygenSensorVoltage.formattedResponse
-                self.myMaxValueOxygenSensorCurrent = maxValueOxygenSensorCurrent.formattedResponse
-                self.myMaxValueIntakeMAP = maxValueIntakeMAP.formattedResponse
-                self.myMaxAirFlowRate = maxAirFlowRate.formattedResponse
-                self.myFuelType = fuelType.formattedResponse
-                self.myEngineOilTemp = engineOilTemp.formattedResponse
-                self.myIntakeAirTempSensor = intakeAirTempSensor.formattedResponse
-                self.myNoxCorrected = noxCorrected.formattedResponse
-                self.myNoxAlternative = noxAlternative.formattedResponse
-                self.myNoxCorrectedAlternative = noxCorrectedAlternative.formattedResponse
-                self.myPmSensor = pmSensor.formattedResponse
-                self.myEngineFuelRateMulti = fuelRateMulti.formattedResponse
-                self.myEngineExhaustFlowRate = engineExhaustFlowRate.formattedResponse
-                self.myEgrError = egrError.formattedResponse
-
-                if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
-                   && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
-                    var s = [speed.cookedResponse.values.first!.first!.doubleValue,
-                             altitude,
-                             temp.cookedResponse.values.first!.first!.doubleValue,
-                             nox.cookedResponse.values.first!.first!.doubleValue,
-                             fuelRate.cookedResponse.values.first!.first!.doubleValue,
-                             mafRate.cookedResponse.values.first!.first!.doubleValue,
-                             duration]
-
-                    self.outputValues = self.rustGreetings.sendevent(inputs: &s, len_in: 7)
-                    print("*********** rtlola outputs: \(self.outputValues)")
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.updateSensorData()
-                }
-            }
-        })
-    }
-    
-    //OBDEvent
-    private func addToEvents(command: LTOBD2Command, duration: TimeInterval, isSupportedPidsCommand: Bool = false, mode: Int = 1, pid: Int = -1) {
-        if command.gotValidAnswer {
-            let raw = command.rawResponse[0]//header #bytes response
-            let firstSpaceIndex = raw.firstIndex(of: " ")!
-            let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
-            let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
-            let header = raw[..<firstSpaceIndex]
-            let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            if isSupportedPidsCommand {
-                let cooked: [NSNumber] = command.cookedResponse.values.first!
-                let supportedPids: [Int] = cooked.map({$0.intValue})
-                self.events.append(SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(pid), mode: Int32(mode), supportedPids: NSMutableArray.init(array: supportedPids)))
-            } else {
-                self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
-            }
-        }else{
-            self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))
-        }
     }
     
     private func checkSupportedPids(supportedPids: [Int], fuelType: String) -> Bool {
@@ -463,12 +320,151 @@ class MyOBD: ObservableObject{
         return s
     }
     
+    private func updateSensorData () {
+        let coolantTemp = LTOBD2PID_COOLANT_TEMP_05.forMode1()
+        let rpm = LTOBD2PID_ENGINE_RPM_0C.forMode1()
+        let speed = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
+        let intakeTemp = LTOBD2PID_INTAKE_TEMP_0F.forMode1()
+        let mafRate = LTOBD2PID_MAF_FLOW_10.forMode1()
+        let oxygenSensor1 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
+        let commandedEgr = LTOBD2PID_COMMANDED_EGR_2C.forMode1()
+        let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
+        let fuelTankLevelInput = LTOBD2PID_FUEL_TANK_LEVEL_2F.forMode1()
+        let catalystTemp11 = LTOBD2PID_CATALYST_TEMP_B1S1_3C.forMode1()
+        let catalystTemp12 = LTOBD2PID_CATALYST_TEMP_B1S2_3E.forMode1()
+        let catalystTemp21 = LTOBD2PID_CATALYST_TEMP_B2S1_3D.forMode1()
+        let catalystTemp22 = LTOBD2PID_CATALYST_TEMP_B2S2_3F.forMode1()
+        let airFuelEqvRatio = LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()
+        let temp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
+        let maxValueFuelAirEqvRatio = LTOBD2PID_MAX_VALUE_FUEL_AIR_EQUIVALENCE_RATIO_4F.forMode1()
+        let maxValueOxygenSensorVoltage = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_VOLTAGE_4F.forMode1()
+        let maxValueOxygenSensorCurrent = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_CURRENT_4F.forMode1()
+        let maxValueIntakeMAP = LTOBD2PID_MAX_VALUE_INTAKE_MAP_4F.forMode1()
+        let maxAirFlowRate = LTOBD2PID_MAX_VALUE_MAF_AIR_FLOW_RATE_50.forMode1()
+        let fuelType = LTOBD2PID_FUEL_TYPE_51.forMode1()
+        let engineOilTemp = LTOBD2PID_ENGINE_OIL_TEMP_5C.forMode1()
+        let fuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
+        let mafRateSensor = LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()
+        let intakeAirTempSensor = LTOBD2PID_INTAKE_AIR_TEMP_SENSOR_68.forMode1()
+        let nox = LTOBD2PID_NOX_SENSOR_83.forMode1()
+        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
+        let fuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()
+        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
+        let noxCorrected = LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()
+        let noxAlternative = LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()
+        let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()
+        
+        //TODO: send commands based on current profile
+        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, fuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
+            (commands : [LTOBD2Command])->() in
+            DispatchQueue.main.async {
+                if self.startTime == nil {
+                    self.startTime = Date()
+                }
+                let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
+                self.mySpeed = speed.formattedResponse
+                self.addToEvents(command: speed, duration: duration)
+                self.printCommandResponse(command: speed)
+
+                let altitude = self.locationHelper.altitude
+                self.myAltitude = "\(altitude ?? 0) m"
+                self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, gps_speed: self.locationHelper.gps_speed)
+
+                self.myTemp = temp.formattedResponse
+                self.myNox = nox.formattedResponse
+                self.myFuelRate = fuelRate.formattedResponse
+                self.myMAFRate = mafRate.formattedResponse
+                self.myAirFuelEqvRatio = airFuelEqvRatio.formattedResponse
+                self.myCoolantTemp = coolantTemp.formattedResponse
+                self.myRPM = rpm.formattedResponse
+                self.myIntakeTemp = intakeTemp.formattedResponse
+                self.myMAFRateSensor = mafRateSensor.formattedResponse
+                self.myOxygenSensor1 = oxygenSensor1.formattedResponse
+                self.myCommandedEgr = commandedEgr.formattedResponse
+                self.myFuelTankLevelInput = fuelTankLevelInput.formattedResponse
+                self.myCatalystTemp11 = catalystTemp11.formattedResponse
+                self.myCatalystTemp12 = catalystTemp12.formattedResponse
+                self.myCatalystTemp21 = catalystTemp21.formattedResponse
+                self.myCatalystTemp22 = catalystTemp22.formattedResponse
+                self.myMaxValueFuelAirEqvRatio = maxValueFuelAirEqvRatio.formattedResponse
+                self.myMaxValueOxygenSensorVoltage = maxValueOxygenSensorVoltage.formattedResponse
+                self.myMaxValueOxygenSensorCurrent = maxValueOxygenSensorCurrent.formattedResponse
+                self.myMaxValueIntakeMAP = maxValueIntakeMAP.formattedResponse
+                self.myMaxAirFlowRate = maxAirFlowRate.formattedResponse
+                self.myFuelType = fuelType.formattedResponse
+                self.myEngineOilTemp = engineOilTemp.formattedResponse
+                self.myIntakeAirTempSensor = intakeAirTempSensor.formattedResponse
+                self.myNoxCorrected = noxCorrected.formattedResponse
+                self.myNoxAlternative = noxAlternative.formattedResponse
+                self.myNoxCorrectedAlternative = noxCorrectedAlternative.formattedResponse
+                self.myPmSensor = pmSensor.formattedResponse
+                self.myEngineFuelRateMulti = fuelRateMulti.formattedResponse
+                self.myEngineExhaustFlowRate = engineExhaustFlowRate.formattedResponse
+                self.myEgrError = egrError.formattedResponse
+
+                if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
+                   && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
+                    var s = [speed.cookedResponse.values.first!.first!.doubleValue,
+                             altitude,
+                             temp.cookedResponse.values.first!.first!.doubleValue,
+                             nox.cookedResponse.values.first!.first!.doubleValue,
+                             fuelRate.cookedResponse.values.first!.first!.doubleValue,
+                             mafRate.cookedResponse.values.first!.first!.doubleValue,
+                             duration]
+
+                    self.outputValues = self.rustGreetings.sendevent(inputs: &s, len_in: 7)
+                    print("*********** rtlola outputs: \(self.outputValues)")
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.updateSensorData()
+                }
+            }
+        })
+    }
+    
     //GPSEvent
-    private func addToEvents(duration: TimeInterval, altitude: CLLocationDistance?, longitude: CLLocationDegrees?, latitude: CLLocationDegrees?, gps_speed: CLLocationSpeed?){
+    private func addToEvents(duration: TimeInterval,
+                             altitude: CLLocationDistance?,
+                             longitude: CLLocationDegrees?,
+                             latitude: CLLocationDegrees?,
+                             gps_speed: CLLocationSpeed?){
         if altitude != nil, longitude != nil, latitude != nil, gps_speed != nil {
-            self.events.append(GPSEvent(source: "Phone-GPS", timestamp: Int64(duration * 1000000000), longitude: longitude!, latitude: latitude!, altitude: altitude!, speed: gps_speed as? KotlinDouble))//gps_speed: A negative value indicates an invalid speed. Because the actual speed can change many times between the delivery of location events, use this property for informational purposes only.
+            self.events.append(GPSEvent(source: "Phone-GPS",
+                                        timestamp: Int64(duration * 1000000000),
+                                        longitude: longitude!, latitude: latitude!,
+                                        altitude: altitude!,
+                                        speed: gps_speed as? KotlinDouble))//gps_speed: A negative value indicates an invalid speed. Because the actual speed can change many times between the delivery of location events, use this property for informational purposes only.
         }else{
-            self.events.append(ErrorEvent(source: "GPS unavailable", timestamp: Int64(duration * 1000000000), message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(gps_speed)"))
+            self.events.append(ErrorEvent(source: "GPS unavailable",
+                                          timestamp: Int64(duration * 1000000000),
+                                          message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(gps_speed)"))
+        }
+    }
+    
+    //OBDEvent
+    private func addToEvents(command: LTOBD2Command,
+                             duration: TimeInterval,
+                             isSupportedPidsCommand: Bool = false,
+                             mode: Int = 1,
+                             pid: Int = -1) {
+        if command.gotValidAnswer {
+            let raw = command.rawResponse[0]//header #bytes response
+            let firstSpaceIndex = raw.firstIndex(of: " ")!
+            let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
+            let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
+            let header = raw[..<firstSpaceIndex]
+            let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if isSupportedPidsCommand {
+                let cooked: [NSNumber] = command.cookedResponse.values.first!
+                let supportedPids: [Int] = cooked.map({$0.intValue})
+                self.events.append(SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(pid), mode: Int32(mode), supportedPids: NSMutableArray.init(array: supportedPids)))
+            } else {
+                self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
+            }
+        }else{
+            self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))
         }
     }
     
@@ -476,11 +472,22 @@ class MyOBD: ObservableObject{
         print("============== \(command.description), cookedResponse: \(command.cookedResponse), formattedResponse: \(command.formattedResponse), commandString: \(command.commandString), completionTime: \(command.completionTime), failureResponse: \(command.failureResponse), freezeFrame: \(command.freezeFrame), gotAnswer: \(command.gotAnswer), gotValidAnswer: \(command.gotValidAnswer), isCAN: \(command.isCAN), isRawCommand: \(command.isRawCommand), purpose: \(command.purpose), rawResponse: \(command.rawResponse), selectedECU: \(command.selectedECU)")
     }
     
+    private func decimal2Bitmap(num: Int) -> [Bool]{
+        let str = UInt8(num).binaryDescription
+        var ret = Array(repeating: false, count: 8)
+        for (i, s) in str.enumerated() {
+            if s == "1" {
+                ret[i] = true
+            }
+        }
+        return ret
+    }
+    
     @objc func onAdapterChangedState(){
         DispatchQueue.main.async {
             switch self._obd2Adapter?.adapterState{
             case OBD2AdapterStateDiscovering, OBD2AdapterStateConnected:
-                self.updateSensorData()
+                self.updateSensorDataForSupportedPids()
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
             }

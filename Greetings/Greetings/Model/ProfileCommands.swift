@@ -33,4 +33,14 @@ enum ProfileCommands{
         CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommands: [LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()]),
         CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommands: [LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()])
     ]
+    
+    static let supportedCommands: [CommandItem] = [
+        CommandItem(pid: "00", name: "SUPPORTED COMMANDS1 00", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_00.forMode1()]),
+        CommandItem(pid: "20", name: "SUPPORTED COMMANDS1 20", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_20.forMode1()]),
+        CommandItem(pid: "40", name: "SUPPORTED COMMANDS1 40", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_40.forMode1()]),
+        CommandItem(pid: "60", name: "SUPPORTED COMMANDS1 60", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_60.forMode1()]),
+        CommandItem(pid: "80", name: "SUPPORTED COMMANDS1 80", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_80.forMode1()]),
+        CommandItem(pid: "A0", name: "SUPPORTED COMMANDS1 A0", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_A0.forMode1()]),
+        CommandItem(pid: "C0", name: "SUPPORTED COMMANDS1 C0", unit: "", obdCommands: [LTOBD2PID_SUPPORTED_COMMANDS1_C0.forMode1()]),
+    ]
 }

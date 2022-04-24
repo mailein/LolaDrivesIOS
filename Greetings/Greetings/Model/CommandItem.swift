@@ -3,8 +3,8 @@ import LTSupportAutomotive
 
 class CommandItem: Identifiable{
     let mode: Int
-    let pid: String
-    let id: Int
+    let pid: String // in hex
+    let id: Int // in decimal
     let name: String
     let unit: String
     let obdCommands: [LTOBD2PID]
@@ -18,5 +18,16 @@ class CommandItem: Identifiable{
         self.unit = unit
         self.obdCommands = obdCommands
         self.enabled = enabled
+    }
+}
+
+extension Array where Element: CommandItem {
+    func getByPid(pid: String) -> Element? {
+        let ret = self.filter { $0.pid == pid}
+        if ret.isEmpty {
+            return nil
+        } else {
+            return ret[0]
+        }
     }
 }
