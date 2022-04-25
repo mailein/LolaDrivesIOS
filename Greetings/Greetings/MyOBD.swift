@@ -151,12 +151,7 @@ class MyOBD: ObservableObject{
                 }
                 let duration = Date().timeIntervalSince(self.startTime!)
                 
-                if !(pidCommand.gotValidAnswer) {//TODO: check if fuelType is supported
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.updateSensorDataForSupportedPid(commands: commands, index: index)
-                    }
-                } else{
-                    //TODO: don't add duplicate for events and supportedPids
+                if (pidCommand.gotValidAnswer) {
                     //generate SupportedPidsEvent
                     let startIndex = pidCommand.commandString.startIndex
                     let i = pidCommand.commandString.index(pidCommand.commandString.startIndex, offsetBy: 2)
@@ -174,8 +169,9 @@ class MyOBD: ObservableObject{
                             self.supportedPids.append(index * 32 + i + 1)//+1 because $01~$20 starts from 0
                         }
                     }
-                    print("support \(self.supportedPids)")
+                    print("index: \(index), support \(self.supportedPids)")
                     
+                    // recursive to the next supportedPidCommand
                     if pidCommand.cookedResponse.values.first!.last!.intValue % 2 == 1 && index < 6{
                         //D0 is odd number means the next supportedPid is supported.
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
