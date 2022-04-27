@@ -7,16 +7,16 @@ class CommandItem: Identifiable{
     let id: Int // in decimal
     let name: String
     let unit: String
-    let obdCommands: [LTOBD2PID]
+    let obdCommand: LTOBD2PID
     var enabled: Bool
     
-    init (mode: Int = 1, pid: String, name: String, unit: String, obdCommands: [LTOBD2PID], enabled: Bool = false) {
+    init (mode: Int = 1, pid: String, name: String, unit: String, obdCommand: LTOBD2PID, enabled: Bool = false) {
         self.mode = mode
         self.pid = pid
-        self.id = Int(pid, radix: 16) ?? -1
+        self.id = Int(pid, radix: 16)! + unit.hashValue
         self.name = name
         self.unit = unit
-        self.obdCommands = obdCommands
+        self.obdCommand = obdCommand
         self.enabled = enabled
     }
 }

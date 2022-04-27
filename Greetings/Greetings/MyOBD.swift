@@ -14,8 +14,8 @@ class MyOBD: ObservableObject{
     var rdeProfile: [CommandItem] = [] // The sensor profile of the car which is determined.
     var fuelRateSupported: Bool = false
     var faeSupported: Bool = false
-    let supportedPidCommands: [LTOBD2PID] = ProfileCommands.supportedCommands.map{$0.obdCommands[0]}
-    let fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommands[0]
+    let supportedPidCommands: [LTOBD2PID] = ProfileCommands.supportedCommands.map{$0.obdCommand}
+    let fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
     
     // LOLA
     let rustGreetings = RustGreetings()
@@ -77,15 +77,17 @@ class MyOBD: ObservableObject{
     var events: [pcdfcore.PCDFEvent]
     
     //UI
-    var isLiveMonitoring: Bool//if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
+    var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
+    let selectedCommands: [CommandItem] //TODO: live monitoring, pass in arg
     
-    init(isLiveMonitoring: Bool = false){
+    init(isLiveMonitoring: Bool = false, selectedCommands: [CommandItem] = []){
         _serviceUUIDs = []
         _pids = []
         _transporter = LTBTLESerialTransporter()
         outputValues = [Double](repeating: 0, count: 19)
         events = []
         self.isLiveMonitoring = isLiveMonitoring
+        self.selectedCommands = selectedCommands
         
         //load spec file
         specBody = specFile(filename: "spec_body.lola")
@@ -216,7 +218,7 @@ class MyOBD: ObservableObject{
         
         // Velocity information to determine acceleration, distance travelled and to calculate the driving dynamics.
         if (supportedPids.contains(0x0D)) {
-            rdeProfile.append(CommandItem(pid: "0D", name: "SPEED", unit: "km/h", obdCommands: [LTOBD2PID_VEHICLE_SPEED_0D.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "0D", name: "SPEED", unit: "km/h", obdCommand: LTOBD2PID_VEHICLE_SPEED_0D.forMode1()))
         } else {
             print("Incompatible for RDE: Speed data not provided by the car.")
             return false
@@ -224,7 +226,7 @@ class MyOBD: ObservableObject{
 
         // Ambient air temperature for checking compliance with the environmental constraints.
         if (supportedPids.contains(0x46)) {
-            rdeProfile.append(CommandItem(pid: "46", name: "AMBIENT AIR TEMPERATURE", unit: "°C", obdCommands: [LTOBD2PID_AMBIENT_TEMP_46.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "46", name: "AMBIENT AIR TEMPERATURE", unit: "°C", obdCommand: LTOBD2PID_AMBIENT_TEMP_46.forMode1()))
         } else {
             print("Incompatible for RDE: Ambient air temperature not provided by the car.")
             return false
@@ -232,13 +234,13 @@ class MyOBD: ObservableObject{
 
         // NOx sensor(s) to check for violation of the EU regulations.
         if supportedPids.contains(0x83) {
-            rdeProfile.append(CommandItem(pid: "83", name: "NOX SENSOR", unit: "ppm", obdCommands: [LTOBD2PID_NOX_SENSOR_83.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "83", name: "NOX SENSOR", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_83.forMode1()))
         } else if supportedPids.contains(0xA1) {
-            rdeProfile.append(CommandItem(pid: "A1", name: "NOX SENSOR CORRECTED", unit: "ppm", obdCommands: [LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "A1", name: "NOX SENSOR CORRECTED", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()))
         } else if supportedPids.contains(0xA7) {
-            rdeProfile.append(CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommands: [LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()))
         } else if supportedPids.contains(0xA8) {
-            rdeProfile.append(CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommands: [LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()))
         } else {
             print("Incompatible for RDE: NOx sensor not provided by the car.")
             return false
@@ -247,10 +249,10 @@ class MyOBD: ObservableObject{
         // Fuelrate sensors for calculation of the exhaust mass flow. Can be replaced through MAF.
         // TODO: ask Maxi for the EMF PID
         if supportedPids.contains(0x5E) {
-            rdeProfile.append(CommandItem(pid: "5E", name: "ENGINE FUEL RATE", unit: "L/h", obdCommands: [LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "5E", name: "ENGINE FUEL RATE", unit: "L/h", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()))
             fuelRateSupported = true
         } else if supportedPids.contains(0x9D) {
-            rdeProfile.append(CommandItem(pid: "9D", name: "ENGINE FUEL RATE MULTI", unit: "g/s", obdCommands: [LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "9D", name: "ENGINE FUEL RATE MULTI", unit: "g/s", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()))
             fuelRateSupported = true
         } else {
             print("RDE: Fuel rate not provided by the car.")
@@ -259,9 +261,9 @@ class MyOBD: ObservableObject{
 
         // Mass air flow rate for the calcuation of the exhaust mass flow.
         if supportedPids.contains(0x10) {
-            rdeProfile.append(CommandItem(pid: "10", name: "MAF AIR FLOW RATE", unit: "g/s", obdCommands: [LTOBD2PID_MAF_FLOW_10.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "10", name: "MAF AIR FLOW RATE", unit: "g/s", obdCommand: LTOBD2PID_MAF_FLOW_10.forMode1()))
         } else if supportedPids.contains(0x66) {
-            rdeProfile.append(CommandItem(pid: "66", name: "MAF AIR FLOW RATE SENSOR", unit: "g/s", obdCommands: [LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "66", name: "MAF AIR FLOW RATE SENSOR", unit: "g/s", obdCommand: LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()))
         } else {
             print("Incompatible for RDE: Mass air flow not provided by the car.")
             return false
@@ -269,7 +271,7 @@ class MyOBD: ObservableObject{
 
         // Fuel air equivalence ratio for a more precise calculation of the fuel rate with MAF.
         if (supportedPids.contains(0x44) && !fuelRateSupported) {
-            rdeProfile.append(CommandItem(pid: "44", name: "FUEL AIR EQUIVALENCE RATIO", unit: "LAMBDA", obdCommands: [LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()]))
+            rdeProfile.append(CommandItem(pid: "44", name: "FUEL AIR EQUIVALENCE RATIO", unit: "LAMBDA", obdCommand: LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()))
             faeSupported = true
         } else {
             print("RDE: Fuel air equivalence ratio not provided by the car.")
@@ -317,98 +319,116 @@ class MyOBD: ObservableObject{
     }
     
     private func updateSensorData () {
-        let coolantTemp = LTOBD2PID_COOLANT_TEMP_05.forMode1()
-        let rpm = LTOBD2PID_ENGINE_RPM_0C.forMode1()
-        let speed = LTOBD2PID_VEHICLE_SPEED_0D.forMode1()
-        let intakeTemp = LTOBD2PID_INTAKE_TEMP_0F.forMode1()
-        let mafRate = LTOBD2PID_MAF_FLOW_10.forMode1()
-        let oxygenSensor1 = LTOBD2PID_OXYGEN_SENSOR_INFO_2_SENSOR_0_24.forMode1()
-        let commandedEgr = LTOBD2PID_COMMANDED_EGR_2C.forMode1()
-        let egrError = LTOBD2PID_EGR_ERROR_2D.forMode1()
-        let fuelTankLevelInput = LTOBD2PID_FUEL_TANK_LEVEL_2F.forMode1()
-        let catalystTemp11 = LTOBD2PID_CATALYST_TEMP_B1S1_3C.forMode1()
-        let catalystTemp12 = LTOBD2PID_CATALYST_TEMP_B1S2_3E.forMode1()
-        let catalystTemp21 = LTOBD2PID_CATALYST_TEMP_B2S1_3D.forMode1()
-        let catalystTemp22 = LTOBD2PID_CATALYST_TEMP_B2S2_3F.forMode1()
-        let airFuelEqvRatio = LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()
-        let temp = LTOBD2PID_AMBIENT_TEMP_46.forMode1()
-        let maxValueFuelAirEqvRatio = LTOBD2PID_MAX_VALUE_FUEL_AIR_EQUIVALENCE_RATIO_4F.forMode1()
-        let maxValueOxygenSensorVoltage = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_VOLTAGE_4F.forMode1()
-        let maxValueOxygenSensorCurrent = LTOBD2PID_MAX_VALUE_OXYGEN_SENSOR_CURRENT_4F.forMode1()
-        let maxValueIntakeMAP = LTOBD2PID_MAX_VALUE_INTAKE_MAP_4F.forMode1()
-        let maxAirFlowRate = LTOBD2PID_MAX_VALUE_MAF_AIR_FLOW_RATE_50.forMode1()
-        let fuelType = LTOBD2PID_FUEL_TYPE_51.forMode1()
-        let engineOilTemp = LTOBD2PID_ENGINE_OIL_TEMP_5C.forMode1()
-        let fuelRate = LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()
-        let mafRateSensor = LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()
-        let intakeAirTempSensor = LTOBD2PID_INTAKE_AIR_TEMP_SENSOR_68.forMode1()
-        let nox = LTOBD2PID_NOX_SENSOR_83.forMode1()
-        let pmSensor = LTOBD2PID_PATICULATE_MATTER_SENSOR_86.forMode1()
-        let fuelRateMulti = LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()
-        let engineExhaustFlowRate = LTOBD2PID_ENGINE_EXHAUST_FLOW_RATE_9E.forMode1()
-        let noxCorrected = LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()
-        let noxAlternative = LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()
-        let noxCorrectedAlternative = LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()
-        
-        //TODO: send commands based on current profile
-        _obd2Adapter?.transmitMultipleCommands([speed, temp, nox, fuelRate, mafRate, airFuelEqvRatio, coolantTemp, rpm, intakeTemp, mafRateSensor, oxygenSensor1, commandedEgr, fuelTankLevelInput, catalystTemp11, catalystTemp12, catalystTemp21, catalystTemp22, maxValueFuelAirEqvRatio, maxValueOxygenSensorVoltage, maxValueOxygenSensorCurrent, maxValueIntakeMAP, maxAirFlowRate, fuelType, engineOilTemp, intakeAirTempSensor, noxCorrected, noxAlternative, noxCorrectedAlternative, pmSensor, fuelRateMulti, engineExhaustFlowRate, egrError], completionHandler: {
+        var commandItems: [CommandItem] = self.rdeProfile
+        if self.isLiveMonitoring {
+            commandItems = selectedCommands //TODO: get selecteProfile from Model
+        }
+        _obd2Adapter?.transmitMultipleCommands(commandItems.map{$0.obdCommand}, completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
+                //timestamp
                 if self.startTime == nil {
                     self.startTime = Date()
                 }
                 let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
-                self.mySpeed = speed.formattedResponse
-                self.addToEvents(command: speed, duration: duration)
-                self.printCommandResponse(command: speed)
-
+                
+                //GPS
                 let altitude = self.locationHelper.altitude
-                self.myAltitude = "\(altitude ?? 0) m"
+                self.myAltitude = "\(altitude) m"
                 self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, gps_speed: self.locationHelper.gps_speed)
-
-                self.myTemp = temp.formattedResponse
-                self.myNox = nox.formattedResponse
-                self.myFuelRate = fuelRate.formattedResponse
-                self.myMAFRate = mafRate.formattedResponse
-                self.myAirFuelEqvRatio = airFuelEqvRatio.formattedResponse
-                self.myCoolantTemp = coolantTemp.formattedResponse
-                self.myRPM = rpm.formattedResponse
-                self.myIntakeTemp = intakeTemp.formattedResponse
-                self.myMAFRateSensor = mafRateSensor.formattedResponse
-                self.myOxygenSensor1 = oxygenSensor1.formattedResponse
-                self.myCommandedEgr = commandedEgr.formattedResponse
-                self.myFuelTankLevelInput = fuelTankLevelInput.formattedResponse
-                self.myCatalystTemp11 = catalystTemp11.formattedResponse
-                self.myCatalystTemp12 = catalystTemp12.formattedResponse
-                self.myCatalystTemp21 = catalystTemp21.formattedResponse
-                self.myCatalystTemp22 = catalystTemp22.formattedResponse
-                self.myMaxValueFuelAirEqvRatio = maxValueFuelAirEqvRatio.formattedResponse
-                self.myMaxValueOxygenSensorVoltage = maxValueOxygenSensorVoltage.formattedResponse
-                self.myMaxValueOxygenSensorCurrent = maxValueOxygenSensorCurrent.formattedResponse
-                self.myMaxValueIntakeMAP = maxValueIntakeMAP.formattedResponse
-                self.myMaxAirFlowRate = maxAirFlowRate.formattedResponse
-                self.myFuelType = fuelType.formattedResponse
-                self.myEngineOilTemp = engineOilTemp.formattedResponse
-                self.myIntakeAirTempSensor = intakeAirTempSensor.formattedResponse
-                self.myNoxCorrected = noxCorrected.formattedResponse
-                self.myNoxAlternative = noxAlternative.formattedResponse
-                self.myNoxCorrectedAlternative = noxCorrectedAlternative.formattedResponse
-                self.myPmSensor = pmSensor.formattedResponse
-                self.myEngineFuelRateMulti = fuelRateMulti.formattedResponse
-                self.myEngineExhaustFlowRate = engineExhaustFlowRate.formattedResponse
-                self.myEgrError = egrError.formattedResponse
-
-                if(speed.gotValidAnswer && altitude != nil && temp.gotValidAnswer && nox.gotValidAnswer
-                   && fuelRate.gotValidAnswer && mafRate.gotValidAnswer){
-                    var s = [speed.cookedResponse.values.first!.first!.doubleValue,
+                
+                commandItems.forEach { item in
+                    let obdCommand = item.obdCommand
+                    switch item.pid {
+                    case "05":
+                        self.myCoolantTemp = obdCommand.formattedResponse
+                    case "0C":
+                        self.myRPM = obdCommand.formattedResponse
+                    case "0D":
+                        self.mySpeed = obdCommand.formattedResponse
+                    case "0F":
+                        self.myIntakeTemp = obdCommand.formattedResponse
+                    case "10":
+                        self.myMAFRate = obdCommand.formattedResponse
+                    case "24":
+                        self.myOxygenSensor1 = obdCommand.formattedResponse
+                    case "2C":
+                        self.myCommandedEgr = obdCommand.formattedResponse
+                    case "2D":
+                        self.myEgrError = obdCommand.formattedResponse
+                    case "2F":
+                        self.myFuelTankLevelInput = obdCommand.formattedResponse
+                    case "3C":
+                        self.myCatalystTemp11 = obdCommand.formattedResponse
+                    case "3D":
+                        self.myCatalystTemp21 = obdCommand.formattedResponse
+                    case "3E":
+                        self.myCatalystTemp12 = obdCommand.formattedResponse
+                    case "3F":
+                        self.myCatalystTemp22 = obdCommand.formattedResponse
+                    case "44":
+                        self.myAirFuelEqvRatio = obdCommand.formattedResponse
+                    case "46":
+                        self.myTemp = obdCommand.formattedResponse
+                    case "4F":
+                        switch item.unit {
+                        case "LAMBDA":
+                            self.myMaxValueFuelAirEqvRatio = obdCommand.formattedResponse
+                        case "V":
+                            self.myMaxValueOxygenSensorVoltage = obdCommand.formattedResponse
+                        case "mA":
+                            self.myMaxValueOxygenSensorCurrent = obdCommand.formattedResponse
+                        case "kPa":
+                            self.myMaxValueIntakeMAP = obdCommand.formattedResponse
+                        default:
+                            print("pid 4F, no match unit")
+                        }
+                    case "50":
+                        self.myMaxAirFlowRate = obdCommand.formattedResponse
+                    case "51":
+                        self.myFuelType = obdCommand.formattedResponse
+                    case "5C":
+                        self.myEngineOilTemp = obdCommand.formattedResponse
+                    case "5E":
+                        self.myFuelRate = obdCommand.formattedResponse
+                    case "66":
+                        self.myMAFRateSensor = obdCommand.formattedResponse
+                    case "68":
+                        self.myIntakeAirTempSensor = obdCommand.formattedResponse
+                    case "83":
+                        self.myNox = obdCommand.formattedResponse
+                    case "86":
+                        self.myPmSensor = obdCommand.formattedResponse
+                    case "9D":
+                        self.myEngineFuelRateMulti = obdCommand.formattedResponse
+                    case "9E":
+                        self.myEngineExhaustFlowRate = obdCommand.formattedResponse
+                    case "A1":
+                        self.myNoxCorrected = obdCommand.formattedResponse
+                    case "A7":
+                        self.myNoxAlternative = obdCommand.formattedResponse
+                    case "A8":
+                        self.myNoxCorrectedAlternative = obdCommand.formattedResponse
+                    default:
+                        print("pid \(item.pid), no match case")
+                    }
+                    self.addToEvents(command: obdCommand, duration: duration)
+                    self.printCommandResponse(command: obdCommand)
+                }
+                
+                let inputCommands: [LTOBD2PID] = self.rdeProfile.map{ $0.obdCommand }
+                let gotValidAnswers: [LTOBD2PID] = inputCommands.filter{ $0.gotValidAnswer }
+                if inputCommands.count ==  gotValidAnswers.count {
+                    //TODO: which order??? where to insert altitude??? // maybe all ok //TODO: varying count
+                    var s = [inputCommands[0].cookedResponse.values.first!.first!.doubleValue,//speed
                              altitude,
-                             temp.cookedResponse.values.first!.first!.doubleValue,
-                             nox.cookedResponse.values.first!.first!.doubleValue,
-                             fuelRate.cookedResponse.values.first!.first!.doubleValue,
-                             mafRate.cookedResponse.values.first!.first!.doubleValue,
+                             inputCommands[1].cookedResponse.values.first!.first!.doubleValue,//temp
+                             inputCommands[2].cookedResponse.values.first!.first!.doubleValue,//nox
+                             inputCommands[3].cookedResponse.values.first!.first!.doubleValue,//fuelrate
+                             inputCommands[4].cookedResponse.values.first!.first!.doubleValue,//mafrate
                              duration]
 
-                    self.outputValues = self.rustGreetings.sendevent(inputs: &s, len_in: 7)
+                    self.outputValues = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
                     print("*********** rtlola outputs: \(self.outputValues)")
                 }
 

@@ -14,6 +14,7 @@ class ViewModel: ObservableObject {
     //MARK: - Intents
     func selectProfile(_ profile: Profile) {
         model.setSelectedProfile(to: profile)
+        //TODO: set selected profile in MyOBD
     }
     
     func deleteProfile(_ profile: Profile){

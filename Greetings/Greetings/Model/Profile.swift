@@ -11,7 +11,7 @@ class Profile: Identifiable, Hashable, ObservableObject{
         self.commands = commands
         for command in commands {
             //self.commands = ProfileCommands.commands or self.commands.append(command) won't work, must use deep copy
-            self.commands.append(CommandItem(pid: command.pid, name: command.name, unit: command.unit, obdCommands: command.obdCommands))
+            self.commands.append(CommandItem(pid: command.pid, name: command.name, unit: command.unit, obdCommand: command.obdCommand))
         }
         let enabled = commands.filter{ $0.enabled }
         for enabledElem in enabled {
