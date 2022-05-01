@@ -77,6 +77,7 @@ class MyOBD: ObservableObject{
     var events: [pcdfcore.PCDFEvent]
     
     //UI
+    var isConnected: Bool
     var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
     let selectedCommands: [CommandItem] //TODO: live monitoring, pass in arg
     
@@ -88,6 +89,7 @@ class MyOBD: ObservableObject{
         events = []
         self.isLiveMonitoring = isLiveMonitoring
         self.selectedCommands = selectedCommands
+        isConnected = false
         
         //load spec file
         specBody = specFile(filename: "spec_body.lola")
@@ -124,6 +126,13 @@ class MyOBD: ObservableObject{
             self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
             self._obd2Adapter!.connect()
             print("adapter init and connected")
+            self.isConnected = true
+            
+            //It seems the correct obd BLE can be automatically discovered and connected,
+            //so I only need to show green(connected) or red(disconnected).
+            //Unnecessary to show all possible adapters.
+            let allDevices = self._transporter.getAllDevices()
+            print("adapter: \(self._transporter.getAdapter()), all devices: \(allDevices)")
         }
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
     }
@@ -136,6 +145,7 @@ class MyOBD: ObservableObject{
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
+        self.isConnected = false
     }
     
     private func updateSensorDataForSupportedPids() {

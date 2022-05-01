@@ -23,7 +23,7 @@ struct RdeLogView: View{
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.model.isConnected)
+                ConnectedDisconnectedView(connected: viewModel.isConnected())
             }
         }
         .navigationBarBackButtonHidden(true)

@@ -4,22 +4,6 @@ struct Model{
     //obd
     var obd: MyOBD?
     
-    //nav bar
-    var isConnected: Bool
-//    var isConnected: Bool {//TODO: should not depend on Start/Stop button, but whether Bluetooth is connected
-//        get {
-//            return self._isConnected
-//        }
-//        set {
-//            self._isConnected = newValue
-//            if(newValue){
-//                self.obd.viewDidLoad()
-//            }else{
-//                self.obd.disconnect()
-//            }
-//        }
-//    }
-    
     //RDE view
     var started: Bool = false
     var distanceSetting: Int = 84
@@ -39,8 +23,6 @@ struct Model{
     
     init() {
         obd = nil
-        
-        isConnected = false
         
         let defaultCommands = ProfileCommands.commands //TODO: check, this is a copy, right???
         defaultCommands.first(where: {$0.pid == "0D"})?.enabled.toggle()//speed

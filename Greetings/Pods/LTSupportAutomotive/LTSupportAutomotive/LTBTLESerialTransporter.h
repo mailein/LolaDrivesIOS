@@ -23,6 +23,9 @@ typedef void(^LTBTLESerialTransporterConnectionBlock)(NSInputStream* _Nullable i
 -(void)startUpdatingSignalStrengthWithInterval:(NSTimeInterval)interval;
 -(void)stopUpdatingSignalStrength;
 
+-(CBPeripheral*) getAdapter;
+-(NSMutableArray<CBPeripheral*>*)getAllDevices;
+
 @end
 
 NS_ASSUME_NONNULL_END

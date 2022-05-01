@@ -80,7 +80,7 @@ struct MonitoringView: View {
 //        .navigationBarTitleDisplayMode(.inline)
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.model.isConnected)
+                ConnectedDisconnectedView(connected: viewModel.isConnected())
             }
         }
     }

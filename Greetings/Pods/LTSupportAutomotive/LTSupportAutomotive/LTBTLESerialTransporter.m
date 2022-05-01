@@ -325,4 +325,17 @@ NSString* const LTBTLESerialTransporterDidUpdateSignalStrength = @"LTBTLESerialT
     _connectionBlock = nil;
 }
 
+#pragma mark -
+#pragma mark custom
+
+-(CBPeripheral*) getAdapter
+{
+    return _adapter;
+}
+
+-(NSMutableArray<CBPeripheral*>*)getAllDevices
+{
+    return _possibleAdapters;
+}
+
 @end

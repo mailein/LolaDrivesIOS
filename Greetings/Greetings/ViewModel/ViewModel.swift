@@ -38,5 +38,9 @@ class ViewModel: ObservableObject {
     func getOBD() -> MyOBD? {
         return model.obd
     }
+    
+    func isConnected() -> Bool {
+        return model.obd?.isConnected ?? false
+    }
 }
 

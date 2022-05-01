@@ -46,12 +46,11 @@ struct RdeSettingsView: View{
                 .simultaneousGesture(TapGesture().onEnded{
                     viewModel.model.started = true
                     viewModel.startOBD()
-                    viewModel.model.isConnected = true
                 })
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.model.isConnected)
+                ConnectedDisconnectedView(connected: viewModel.isConnected())
             }
         }
         .navigationBarTitleDisplayMode(.inline)

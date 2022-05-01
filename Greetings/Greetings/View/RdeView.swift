@@ -28,7 +28,7 @@ struct RdeView: View {
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.model.isConnected)
+                ConnectedDisconnectedView(connected: viewModel.isConnected())
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -150,7 +150,6 @@ struct RdeView: View {
             })
                 .simultaneousGesture(TapGesture().onEnded{
                     viewModel.getOBD()?.disconnect()
-                    viewModel.model.isConnected = false
                 })
         }
     }
