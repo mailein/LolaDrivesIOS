@@ -78,18 +78,17 @@ class MyOBD: ObservableObject{
     
     //UI
     var isConnected: Bool
-    var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
-    let selectedCommands: [CommandItem] //TODO: live monitoring, pass in arg
+    //if non-empty, use selectedProfile, otherwise use rdeProfile from buildSpec()
+    var selectedCommands: [CommandItem]
     
-    init(isLiveMonitoring: Bool = false, selectedCommands: [CommandItem] = []){
+    init(){
         _serviceUUIDs = []
         _pids = []
         _transporter = LTBTLESerialTransporter()
         outputValues = [Double](repeating: 0, count: 19)
         events = []
-        self.isLiveMonitoring = isLiveMonitoring
-        self.selectedCommands = selectedCommands
         isConnected = false
+        selectedCommands = []
         
         //load spec file
         specBody = specFile(filename: "spec_body.lola")
@@ -330,7 +329,7 @@ class MyOBD: ObservableObject{
     
     private func updateSensorData () {
         var commandItems: [CommandItem] = self.rdeProfile
-        if self.isLiveMonitoring {
+        if !self.selectedCommands.isEmpty {
             commandItems = selectedCommands //TODO: get selecteProfile from Model
         }
         _obd2Adapter?.transmitMultipleCommands(commandItems.map{$0.obdCommand}, completionHandler: {

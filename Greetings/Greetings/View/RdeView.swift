@@ -6,12 +6,12 @@ struct RdeView: View {
     var body: some View {
         ScrollView{
             VStack(spacing: 25){
-                let tu = viewModel.getOBD()?.outputValues[4] ?? 0 //TODO: get by name instead of index
-                let tr = viewModel.getOBD()?.outputValues[5] ?? 0
-                let tm = viewModel.getOBD()?.outputValues[6] ?? 0
-                let distance = viewModel.getOBD()?.outputValues[0] ?? 0
-                let isValid = viewModel.getOBD()?.outputValues[17] ?? 0
-                let nox = viewModel.getOBD()?.outputValues[16] ?? 0
+                let tu = viewModel.getOBD().outputValues[4] ?? 0 //TODO: get by name instead of index
+                let tr = viewModel.getOBD().outputValues[5] ?? 0
+                let tm = viewModel.getOBD().outputValues[6] ?? 0
+                let distance = viewModel.getOBD().outputValues[0] ?? 0
+                let isValid = viewModel.getOBD().outputValues[17] ?? 0
+                let nox = viewModel.getOBD().outputValues[16] ?? 0
                 
                 TopIndicatorsSection(t_u: tu, t_r: tr, t_m: tm, totalDistance: distance, isValidTest: isValid)
 //                    .border(Color.yellow)
@@ -149,7 +149,7 @@ struct RdeView: View {
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
-                    viewModel.getOBD()?.disconnect()
+                    viewModel.stopOBD()
                 })
         }
     }

@@ -1,14 +1,14 @@
 import Foundation
 
 struct Model{
-    //obd
-    var obd: MyOBD?
-    
     //RDE view
     var started: Bool = false
     var distanceSetting: Int = 84
     //RDE details view
     var totalTime: Double = 0
+    
+    //Monitoring view
+    var startLiveMonitoring: Bool = true
     
     //profiles view
     let defaultProfile: Profile
@@ -22,8 +22,6 @@ struct Model{
     
     
     init() {
-        obd = nil
-        
         let defaultCommands = ProfileCommands.commands //TODO: check, this is a copy, right???
         defaultCommands.first(where: {$0.pid == "0D"})?.enabled.toggle()//speed
         defaultCommands.first(where: {$0.pid == "0C"})?.enabled.toggle()//RPM
@@ -79,6 +77,4 @@ struct Model{
             setSelectedProfile(to: profiles[0])
         }
     }
-    
-    //MARK: - monitor
 }
