@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RdeLogView: View{
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     
     var body: some View{
         TabView{
@@ -23,7 +24,7 @@ struct RdeLogView: View{
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.isConnected())
+                ConnectedDisconnectedView(connected: obd.isConnected)
             }
         }
         .navigationBarBackButtonHidden(true)

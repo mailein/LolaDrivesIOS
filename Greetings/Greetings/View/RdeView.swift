@@ -2,33 +2,36 @@ import SwiftUI
 
 struct RdeView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     
     var body: some View {
         ScrollView{
             VStack(spacing: 25){
-                let tu = viewModel.getOBD().outputValues[4] ?? 0 //TODO: get by name instead of index
-                let tr = viewModel.getOBD().outputValues[5] ?? 0
-                let tm = viewModel.getOBD().outputValues[6] ?? 0
-                let distance = viewModel.getOBD().outputValues[0] ?? 0
-                let isValid = viewModel.getOBD().outputValues[17] ?? 0
-                let nox = viewModel.getOBD().outputValues[16] ?? 0
-                
-                TopIndicatorsSection(t_u: tu, t_r: tr, t_m: tm, totalDistance: distance, isValidTest: isValid)
-//                    .border(Color.yellow)
-                
-                NOxSection(noxAmount: nox)
-//                    .border(Color.yellow)
-                
-                CategoryDistanceDynamicsSection(obd: viewModel.getOBD(), terrain: Category.URBAN)
-                CategoryDistanceDynamicsSection(obd: viewModel.getOBD(), terrain: Category.RURAL)
-                CategoryDistanceDynamicsSection(obd: viewModel.getOBD(), terrain: Category.MOTORWAY)
+                if !obd.outputValues.isEmpty {
+                    let tu = obd.outputValues[4] ?? 0 //TODO: get by name instead of index
+                    let tr = obd.outputValues[5] ?? 0
+                    let tm = obd.outputValues[6] ?? 0
+                    let distance = obd.outputValues[0] ?? 0
+                    let isValid = obd.outputValues[17] ?? 0
+                    let nox = obd.outputValues[16] ?? 0
+                    
+                    TopIndicatorsSection(t_u: tu, t_r: tr, t_m: tm, totalDistance: distance, isValidTest: isValid)
+                    //                    .border(Color.yellow)
+                    
+                    NOxSection(noxAmount: nox)
+                    //                    .border(Color.yellow)
+                    
+                    CategoryDistanceDynamicsSection(terrain: Category.URBAN)
+                    CategoryDistanceDynamicsSection(terrain: Category.RURAL)
+                    CategoryDistanceDynamicsSection(terrain: Category.MOTORWAY)
+                }
                 
                 StopRdeNavLink()
             }
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.isConnected())
+                ConnectedDisconnectedView(connected: obd.isConnected)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -86,7 +89,7 @@ struct RdeView: View {
     }
 
     struct CategoryDistanceDynamicsSection: View{
-        let obd: MyOBD?
+        @EnvironmentObject var obd: MyOBD
         var terrain: Category
         
         var body: some View{
@@ -94,7 +97,8 @@ struct RdeView: View {
                 Text(terrain.rawValue)
                     .font(.title3)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                if let obd = obd {
+                
+                if !obd.outputValues.isEmpty {
                     switch terrain {
                     case .URBAN:
                         let distance = obd.outputValues[1] //TODO: get by name instead of index
@@ -137,6 +141,7 @@ struct RdeView: View {
 
     struct StopRdeNavLink: View{
         @EnvironmentObject var viewModel: ViewModel
+        @EnvironmentObject var obd: MyOBD
         
         var body: some View{
             NavigationLink(destination: RdeLogView(), label: {
@@ -149,14 +154,8 @@ struct RdeView: View {
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
-                    viewModel.stopOBD()
+                    obd.disconnect()
                 })
         }
-    }
-}
-
-struct RdeView_Previews: PreviewProvider {
-    static var previews: some View {
-        RdeView()
     }
 }

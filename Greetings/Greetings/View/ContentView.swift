@@ -9,6 +9,7 @@ struct ContentView: View {
     
     @StateObject var viewModel = ViewModel()
     @ObservedObject var locationHelper = LocationHelper()
+    @StateObject var obd = MyOBD()
     
 //TODO: columns auto fit when phone is rotated
     var body: some View {
@@ -72,6 +73,7 @@ struct ContentView: View {
             locationHelper.alert!
         }
         .environmentObject(viewModel)
+        .environmentObject(obd)
     }
 }
 

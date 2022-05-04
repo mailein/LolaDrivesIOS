@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RdeSettingsView: View{
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     @State var sliderValue: Double = 83
     
     var body: some View{
@@ -45,12 +46,12 @@ struct RdeSettingsView: View{
             })
                 .simultaneousGesture(TapGesture().onEnded{
                     viewModel.model.started = true
-                    viewModel.startOBD()
+                    obd.viewDidLoad()
                 })
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.isConnected())
+                ConnectedDisconnectedView(connected: obd.isConnected)
             }
         }
         .navigationBarTitleDisplayMode(.inline)

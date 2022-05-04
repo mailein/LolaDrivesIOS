@@ -80,6 +80,7 @@ class MyOBD: ObservableObject{
     var isConnected: Bool
     //if non-empty, use selectedProfile, otherwise use rdeProfile from buildSpec()
     var selectedCommands: [CommandItem]
+    var connectedAdapterName: String = ""
     
     init(){
         _serviceUUIDs = []
@@ -130,6 +131,7 @@ class MyOBD: ObservableObject{
             //It seems the correct obd BLE can be automatically discovered and connected,
             //so I only need to show green(connected) or red(disconnected).
             //Unnecessary to show all possible adapters.
+            self.connectedAdapterName = self._transporter.getAdapter().name!
             let allDevices = self._transporter.getAllDevices()
             print("adapter: \(self._transporter.getAdapter()), all devices: \(allDevices)")
         }

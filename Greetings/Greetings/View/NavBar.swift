@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NavBar: ViewModifier{
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     
     func body(content: Content) -> some View {
         content
@@ -10,7 +11,7 @@ struct NavBar: ViewModifier{
                     HomeIconView()
                 }
                 ToolbarItem(placement: .navigationBarTrailing){
-                    ConnectedDisconnectedView(connected: viewModel.isConnected())
+                    ConnectedDisconnectedView(connected: obd.isConnected)
                 }
             }
     }
@@ -33,27 +34,36 @@ struct HomeIconView: View{
 }
 
 struct ConnectedDisconnectedView: View{
+    @EnvironmentObject var obd: MyOBD
     var connected: Bool
+    @State private var showPopover = false
     
     var body: some View{
-        if connected {
-            VStack(alignment: .center, spacing: 0){
-                Image("elm_logo_green")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30)
-                Text("connected")
+        Button(action: {
+            showPopover = true
+        }, label: {
+            if connected {
+                VStack(alignment: .center, spacing: 0){
+                    Image("elm_logo_green")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30)
+                    Text("connected")
+                }
+                .foregroundColor(.green)
+            }else{
+                VStack(alignment: .center, spacing: 0){
+                    Image("elm_logo_red")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30)
+                    Text("disconnected")
+                }
+                .foregroundColor(.red)
             }
-            .foregroundColor(.green)
-        }else{
-            VStack(alignment: .center, spacing: 0){
-                Image("elm_logo_red")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30)
-                Text("disconnected")
-            }
-            .foregroundColor(.red)
-        }
+        })
+        .popover(isPresented: $showPopover, content: {
+            Text(obd.connectedAdapterName)
+        })
     }
 }

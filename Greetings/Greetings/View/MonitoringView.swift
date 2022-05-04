@@ -3,10 +3,11 @@ import SwiftUI
 
 struct MonitoringView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     var isStartButton: Bool = true
     
     var body: some View {
-        let commands = viewModel.getCurrentCommands()
+        let commands = getCurrentCommands()
         VStack{
             ScrollView{
                 List(commands.filter({$0.enabled}), id: \.id) { command in
@@ -16,63 +17,63 @@ struct MonitoringView: View {
                         VStack(alignment: .trailing){
                             switch command.pid {
                             case "05":
-                                Text(viewModel.getOBD().myCoolantTemp)
+                                Text(obd.myCoolantTemp)
                             case "0C":
-                                Text(viewModel.getOBD().myRPM)
+                                Text(obd.myRPM)
                             case "0D":
-                                Text(viewModel.getOBD().mySpeed)
+                                Text(obd.mySpeed)
                             case "0F":
-                                Text(viewModel.getOBD().myIntakeTemp)
+                                Text(obd.myIntakeTemp)
                             case "10":
-                                Text(viewModel.getOBD().myMAFRate)
+                                Text(obd.myMAFRate)
                             case "66":
-                                Text(viewModel.getOBD().myMAFRateSensor)
+                                Text(obd.myMAFRateSensor)
                             case "24":
-                                Text(viewModel.getOBD().myOxygenSensor1)
+                                Text(obd.myOxygenSensor1)
                             case "2C":
-                                Text(viewModel.getOBD().myCommandedEgr)
+                                Text(obd.myCommandedEgr)
                             case "2F":
-                                Text(viewModel.getOBD().myFuelTankLevelInput)
+                                Text(obd.myFuelTankLevelInput)
                             case "3C":
-                                Text(viewModel.getOBD().myCatalystTemp11)
+                                Text(obd.myCatalystTemp11)
                             case "3E":
-                                Text(viewModel.getOBD().myCatalystTemp12)
+                                Text(obd.myCatalystTemp12)
                             case "3D":
-                                Text(viewModel.getOBD().myCatalystTemp21)
+                                Text(obd.myCatalystTemp21)
                             case "3F":
-                                Text(viewModel.getOBD().myCatalystTemp22)
+                                Text(obd.myCatalystTemp22)
                             case "44":
-                                Text(viewModel.getOBD().myAirFuelEqvRatio)
+                                Text(obd.myAirFuelEqvRatio)
                             case "46":
-                                Text(viewModel.getOBD().myTemp)
+                                Text(obd.myTemp)
                             case "4F":
-                                Text("\(viewModel.getOBD().myMaxValueFuelAirEqvRatio) | \(viewModel.getOBD().myMaxValueOxygenSensorVoltage) | \(viewModel.getOBD().myMaxValueOxygenSensorCurrent) | \(viewModel.getOBD().myMaxValueIntakeMAP)")
+                                Text("\(obd.myMaxValueFuelAirEqvRatio) | \(obd.myMaxValueOxygenSensorVoltage) | \(obd.myMaxValueOxygenSensorCurrent) | \(obd.myMaxValueIntakeMAP)")
                             case "50":
-                                Text(viewModel.getOBD().myMaxAirFlowRate)
+                                Text(obd.myMaxAirFlowRate)
                             case "51":
-                                Text(viewModel.getOBD().myFuelType)
+                                Text(obd.myFuelType)
                             case "5C":
-                                Text(viewModel.getOBD().myEngineOilTemp)
+                                Text(obd.myEngineOilTemp)
                             case "68":
-                                Text(viewModel.getOBD().myIntakeAirTempSensor)
+                                Text(obd.myIntakeAirTempSensor)
                             case "83":
-                                Text(viewModel.getOBD().myNox)
+                                Text(obd.myNox)
                             case "A1":
-                                Text(viewModel.getOBD().myNoxCorrected)
+                                Text(obd.myNoxCorrected)
                             case "A7":
-                                Text(viewModel.getOBD().myNoxAlternative)
+                                Text(obd.myNoxAlternative)
                             case "A8":
-                                Text(viewModel.getOBD().myNoxCorrectedAlternative)
+                                Text(obd.myNoxCorrectedAlternative)
                             case "86":
-                                Text(viewModel.getOBD().myPmSensor)
+                                Text(obd.myPmSensor)
                             case "5E":
-                                Text(viewModel.getOBD().myFuelRate)
+                                Text(obd.myFuelRate)
                             case "9D":
-                                Text(viewModel.getOBD().myEngineFuelRateMulti)
+                                Text(obd.myEngineFuelRateMulti)
                             case "9E":
-                                Text(viewModel.getOBD().myEngineExhaustFlowRate)
+                                Text(obd.myEngineExhaustFlowRate)
                             case "2D":
-                                Text(viewModel.getOBD().myEgrError)
+                                Text(obd.myEgrError)
                             default:
                                 Text("")
                             }
@@ -81,7 +82,7 @@ struct MonitoringView: View {
                 }
             }
             Button(action: {
-                viewModel.liveMonitoring()
+                liveMonitoring()
             }, label: {
                 if viewModel.isStartLiveMonitoring(){
                     Text("Start Live Monitoring")
@@ -94,9 +95,28 @@ struct MonitoringView: View {
 //        .navigationBarTitleDisplayMode(.inline)
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: viewModel.isConnected())
+                ConnectedDisconnectedView(connected: obd.isConnected)
             }
         }
+    }
+    
+    func getCurrentCommands() -> [CommandItem] {
+        if obd.selectedCommands.isEmpty{
+            return obd.rdeProfile
+        }else{
+            return obd.selectedCommands
+        }
+    }
+    
+    func liveMonitoring(){
+        if viewModel.isStartLiveMonitoring() {//start live monitoring
+            obd.selectedCommands = viewModel.getSelectedProfileCommands()
+            obd.viewDidLoad()
+        }else{//stop live monitoring
+            obd.disconnect()
+            obd.selectedCommands = []
+        }
+        viewModel.startLiveMonitoringToggle()
     }
 }
 
