@@ -32,40 +32,40 @@ class MyOBD: ObservableObject{
     private var specMAFToFuelRateGasolineFAE: String
     private var specMAFToFuelRateGasoline: String
     
-    @Published var mySpeed : String = ""
-    @Published var myAltitude : String = ""
-    @Published var myTemp : String = ""
-    @Published var myNox: String = ""
-    @Published var myFuelRate: String = ""
-    @Published var myMAFRate: String = ""
+    @Published var mySpeed : String = "No data"
+    @Published var myAltitude : String = "No data"
+    @Published var myTemp : String = "No data"
+    @Published var myNox: String = "No data"
+    @Published var myFuelRate: String = "No data"
+    @Published var myMAFRate: String = "No data"
     
-    @Published var myAirFuelEqvRatio: String = ""
-    @Published var myCoolantTemp: String = ""
-    @Published var myRPM: String = ""
-    @Published var myIntakeTemp: String = ""
-    @Published var myMAFRateSensor: String = ""
-    @Published var myOxygenSensor1: String = ""
-    @Published var myCommandedEgr: String = ""
-    @Published var myFuelTankLevelInput: String = ""
-    @Published var myCatalystTemp11: String = ""
-    @Published var myCatalystTemp12: String = ""
-    @Published var myCatalystTemp21: String = ""
-    @Published var myCatalystTemp22: String = ""
-    @Published var myMaxValueFuelAirEqvRatio: String = ""
-    @Published var myMaxValueOxygenSensorVoltage: String = ""
-    @Published var myMaxValueOxygenSensorCurrent: String = ""
-    @Published var myMaxValueIntakeMAP: String = ""
-    @Published var myMaxAirFlowRate: String = ""
-    @Published var myFuelType: String = ""
-    @Published var myEngineOilTemp: String = ""
-    @Published var myIntakeAirTempSensor: String = ""
-    @Published var myNoxCorrected: String = ""
-    @Published var myNoxAlternative: String = ""
-    @Published var myNoxCorrectedAlternative: String = ""
-    @Published var myPmSensor: String = ""
-    @Published var myEngineFuelRateMulti: String = ""
-    @Published var myEngineExhaustFlowRate: String = ""
-    @Published var myEgrError: String = ""
+    @Published var myAirFuelEqvRatio: String = "No data"
+    @Published var myCoolantTemp: String = "No data"
+    @Published var myRPM: String = "No data"
+    @Published var myIntakeTemp: String = "No data"
+    @Published var myMAFRateSensor: String = "No data"
+    @Published var myOxygenSensor1: String = "No data"
+    @Published var myCommandedEgr: String = "No data"
+    @Published var myFuelTankLevelInput: String = "No data"
+    @Published var myCatalystTemp11: String = "No data"
+    @Published var myCatalystTemp12: String = "No data"
+    @Published var myCatalystTemp21: String = "No data"
+    @Published var myCatalystTemp22: String = "No data"
+    @Published var myMaxValueFuelAirEqvRatio: String = "No data"
+    @Published var myMaxValueOxygenSensorVoltage: String = "No data"
+    @Published var myMaxValueOxygenSensorCurrent: String = "No data"
+    @Published var myMaxValueIntakeMAP: String = "No data"
+    @Published var myMaxAirFlowRate: String = "No data"
+    @Published var myFuelType: String = "No data"
+    @Published var myEngineOilTemp: String = "No data"
+    @Published var myIntakeAirTempSensor: String = "No data"
+    @Published var myNoxCorrected: String = "No data"
+    @Published var myNoxAlternative: String = "No data"
+    @Published var myNoxCorrectedAlternative: String = "No data"
+    @Published var myPmSensor: String = "No data"
+    @Published var myEngineFuelRateMulti: String = "No data"
+    @Published var myEngineExhaustFlowRate: String = "No data"
+    @Published var myEgrError: String = "No data"
     
     var startTime: Date? = nil
     @ObservedObject var locationHelper = LocationHelper()
@@ -334,7 +334,10 @@ class MyOBD: ObservableObject{
         if !self.selectedCommands.isEmpty {
             commandItems = selectedCommands
         }
-        _obd2Adapter?.transmitMultipleCommands(commandItems.map{$0.obdCommand}, completionHandler: {
+        _obd2Adapter?.transmitMultipleCommands(
+            commandItems
+            .filter{ supportedPids.contains(Int($0.pid, radix: 16)!) } //only send supported commands
+            .map{$0.obdCommand}, completionHandler: {
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 //timestamp
