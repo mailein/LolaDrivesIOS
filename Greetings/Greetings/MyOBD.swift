@@ -11,7 +11,7 @@ class MyOBD: ObservableObject{
     var _transporter : LTBTLESerialTransporter
     var _obd2Adapter : LTOBD2Adapter?
     var supportedPids: [Int] = [] //pid# in decimal
-    var rdeProfile: [CommandItem] = [] // The sensor profile of the car which is determined.
+    var rdeCommands: [CommandItem] = [] // The sensor profile of the car which is determined.
     var fuelRateSupported: Bool = false
     var faeSupported: Bool = false
     let supportedPidCommands: [LTOBD2PID] = ProfileCommands.supportedCommands.map{$0.obdCommand}
@@ -229,7 +229,7 @@ class MyOBD: ObservableObject{
         
         // Velocity information to determine acceleration, distance travelled and to calculate the driving dynamics.
         if (supportedPids.contains(0x0D)) {
-            rdeProfile.append(CommandItem(pid: "0D", name: "SPEED", unit: "km/h", obdCommand: LTOBD2PID_VEHICLE_SPEED_0D.forMode1()))
+            rdeCommands.append(CommandItem(pid: "0D", name: "SPEED", unit: "km/h", obdCommand: LTOBD2PID_VEHICLE_SPEED_0D.forMode1()))
         } else {
             print("Incompatible for RDE: Speed data not provided by the car.")
             return false
@@ -237,7 +237,7 @@ class MyOBD: ObservableObject{
 
         // Ambient air temperature for checking compliance with the environmental constraints.
         if (supportedPids.contains(0x46)) {
-            rdeProfile.append(CommandItem(pid: "46", name: "AMBIENT AIR TEMPERATURE", unit: "°C", obdCommand: LTOBD2PID_AMBIENT_TEMP_46.forMode1()))
+            rdeCommands.append(CommandItem(pid: "46", name: "AMBIENT AIR TEMPERATURE", unit: "°C", obdCommand: LTOBD2PID_AMBIENT_TEMP_46.forMode1()))
         } else {
             print("Incompatible for RDE: Ambient air temperature not provided by the car.")
             return false
@@ -245,13 +245,13 @@ class MyOBD: ObservableObject{
 
         // NOx sensor(s) to check for violation of the EU regulations.
         if supportedPids.contains(0x83) {
-            rdeProfile.append(CommandItem(pid: "83", name: "NOX SENSOR", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_83.forMode1()))
+            rdeCommands.append(CommandItem(pid: "83", name: "NOX SENSOR", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_83.forMode1()))
         } else if supportedPids.contains(0xA1) {
-            rdeProfile.append(CommandItem(pid: "A1", name: "NOX SENSOR CORRECTED", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()))
+            rdeCommands.append(CommandItem(pid: "A1", name: "NOX SENSOR CORRECTED", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()))
         } else if supportedPids.contains(0xA7) {
-            rdeProfile.append(CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()))
+            rdeCommands.append(CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()))
         } else if supportedPids.contains(0xA8) {
-            rdeProfile.append(CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()))
+            rdeCommands.append(CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()))
         } else {
             print("Incompatible for RDE: NOx sensor not provided by the car.")
             return false
@@ -260,10 +260,10 @@ class MyOBD: ObservableObject{
         // Fuelrate sensors for calculation of the exhaust mass flow. Can be replaced through MAF.
         // TODO: ask Maxi for the EMF PID
         if supportedPids.contains(0x5E) {
-            rdeProfile.append(CommandItem(pid: "5E", name: "ENGINE FUEL RATE", unit: "L/h", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()))
+            rdeCommands.append(CommandItem(pid: "5E", name: "ENGINE FUEL RATE", unit: "L/h", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()))
             fuelRateSupported = true
         } else if supportedPids.contains(0x9D) {
-            rdeProfile.append(CommandItem(pid: "9D", name: "ENGINE FUEL RATE MULTI", unit: "g/s", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()))
+            rdeCommands.append(CommandItem(pid: "9D", name: "ENGINE FUEL RATE MULTI", unit: "g/s", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()))
             fuelRateSupported = true
         } else {
             print("RDE: Fuel rate not provided by the car.")
@@ -272,9 +272,9 @@ class MyOBD: ObservableObject{
 
         // Mass air flow rate for the calcuation of the exhaust mass flow.
         if supportedPids.contains(0x10) {
-            rdeProfile.append(CommandItem(pid: "10", name: "MAF AIR FLOW RATE", unit: "g/s", obdCommand: LTOBD2PID_MAF_FLOW_10.forMode1()))
+            rdeCommands.append(CommandItem(pid: "10", name: "MAF AIR FLOW RATE", unit: "g/s", obdCommand: LTOBD2PID_MAF_FLOW_10.forMode1()))
         } else if supportedPids.contains(0x66) {
-            rdeProfile.append(CommandItem(pid: "66", name: "MAF AIR FLOW RATE SENSOR", unit: "g/s", obdCommand: LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()))
+            rdeCommands.append(CommandItem(pid: "66", name: "MAF AIR FLOW RATE SENSOR", unit: "g/s", obdCommand: LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()))
         } else {
             print("Incompatible for RDE: Mass air flow not provided by the car.")
             return false
@@ -282,7 +282,7 @@ class MyOBD: ObservableObject{
 
         // Fuel air equivalence ratio for a more precise calculation of the fuel rate with MAF.
         if (supportedPids.contains(0x44) && !fuelRateSupported) {
-            rdeProfile.append(CommandItem(pid: "44", name: "FUEL AIR EQUIVALENCE RATIO", unit: "LAMBDA", obdCommand: LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()))
+            rdeCommands.append(CommandItem(pid: "44", name: "FUEL AIR EQUIVALENCE RATIO", unit: "LAMBDA", obdCommand: LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()))
             faeSupported = true
         } else {
             print("RDE: Fuel air equivalence ratio not provided by the car.")
@@ -330,9 +330,9 @@ class MyOBD: ObservableObject{
     }
     
     private func updateSensorData () {
-        var commandItems: [CommandItem] = self.rdeProfile
+        var commandItems: [CommandItem] = self.rdeCommands
         if !self.selectedCommands.isEmpty {
-            commandItems = selectedCommands //TODO: get selecteProfile from Model
+            commandItems = selectedCommands
         }
         _obd2Adapter?.transmitMultipleCommands(commandItems.map{$0.obdCommand}, completionHandler: {
             (commands : [LTOBD2Command])->() in
@@ -427,7 +427,7 @@ class MyOBD: ObservableObject{
                     self.printCommandResponse(command: obdCommand)
                 }
                 
-                let inputCommands: [LTOBD2PID] = self.rdeProfile.map{ $0.obdCommand }
+                let inputCommands: [LTOBD2PID] = self.rdeCommands.map{ $0.obdCommand }
                 let gotValidAnswers: [LTOBD2PID] = inputCommands.filter{ $0.gotValidAnswer }
                 if inputCommands.count ==  gotValidAnswers.count {
                     //TODO: which order??? where to insert altitude??? // maybe all ok //TODO: varying count
@@ -439,8 +439,11 @@ class MyOBD: ObservableObject{
                              inputCommands[4].cookedResponse.values.first!.first!.doubleValue,//mafrate
                              duration]
 
-                    self.outputValues = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
-                    print("*********** rtlola outputs: \(self.outputValues)")
+                    let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
+                    if !output.isEmpty {//don't publish empty array, otherwise the rde view will display it
+                        self.outputValues = output
+                        print("*********** rtlola outputs: \(self.outputValues)")
+                    }
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

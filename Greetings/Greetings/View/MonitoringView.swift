@@ -102,7 +102,7 @@ struct MonitoringView: View {
     
     func getCurrentCommands() -> [CommandItem] {
         if obd.selectedCommands.isEmpty{
-            return obd.rdeProfile
+            return obd.rdeCommands
         }else{
             return obd.selectedCommands
         }
