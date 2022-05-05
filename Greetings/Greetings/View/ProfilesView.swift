@@ -3,6 +3,7 @@ import SwiftUI
 struct ProfilesView: View {
     @EnvironmentObject var viewModel: ViewModel
 //    @Binding var profiles: [Profile]//model
+    @State private var unableToSelect = false
     
     var body: some View {
         List {
@@ -15,14 +16,24 @@ struct ProfilesView: View {
                 }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false){
                         Button(role: .destructive){
-                            viewModel.deleteProfile(profile)
+                            if viewModel.isStartLiveMonitoring() {
+                                unableToSelect = false
+                                viewModel.deleteProfile(profile)
+                            }else{
+                                unableToSelect = true
+                            }
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: false){
                         Button{
-                            viewModel.selectProfile(profile)
+                            if viewModel.isStartLiveMonitoring() {
+                                unableToSelect = false
+                                viewModel.selectProfile(profile)
+                            }else{
+                                unableToSelect = true
+                            }
                         } label: {
                             //UI changes
                             if profile.isSelected {
@@ -33,8 +44,10 @@ struct ProfilesView: View {
                         }
                     }
             }
-            .onDelete(perform: delete)
+//            .onDelete(perform: delete)//unable to check isStartLiveMonitoring here
             .onMove(perform: reorder)
+            .alert("Unable to select / delete due to live monitoring", isPresented: $unableToSelect) { Button("OK", role: .cancel) {}
+            }
         }
         .toolbar{
             ToolbarItem(placement: .bottomBar){
