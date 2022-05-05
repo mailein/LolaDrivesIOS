@@ -8,7 +8,6 @@ class Profile: Identifiable, Hashable, ObservableObject{
     
     init(_ name: String = "", commands: [CommandItem]){
         self.name = name
-        self.commands = commands
         for command in commands {
             //self.commands = ProfileCommands.commands or self.commands.append(command) won't work, must use deep copy
             self.commands.append(CommandItem(pid: command.pid, name: command.name, unit: command.unit, obdCommand: command.obdCommand))

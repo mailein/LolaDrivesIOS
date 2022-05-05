@@ -14,7 +14,7 @@ struct RdeLogView: View{
         .toolbar{
             ToolbarItem(placement: .navigationBarLeading){
                 Button(action: {
-                    viewModel.model.started = false
+                    viewModel.exitRDE()
                 }) {
                     HStack(spacing: 0) {
                         Image(systemName: "chevron.backward")

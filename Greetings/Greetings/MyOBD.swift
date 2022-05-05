@@ -7,15 +7,15 @@ import pcdfcore
 class MyOBD: ObservableObject{
     // OBD
     var _serviceUUIDs : [CBUUID]
-    var _pids : [LTOBD2Command]
+//    var _pids : [LTOBD2Command]
     var _transporter : LTBTLESerialTransporter
     var _obd2Adapter : LTOBD2Adapter?
-    var supportedPids: [Int] = [] //pid# in decimal
-    var rdeCommands: [CommandItem] = [] // The sensor profile of the car which is determined.
-    var fuelRateSupported: Bool = false
-    var faeSupported: Bool = false
-    let supportedPidCommands: [LTOBD2PID] = ProfileCommands.supportedCommands.map{$0.obdCommand}
-    let fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
+    var supportedPids: [Int] //pid# in decimal
+    var rdeCommands: [CommandItem] // The sensor profile of the car which is determined.
+    var fuelRateSupported: Bool
+    var faeSupported: Bool
+    var supportedPidCommands: [LTOBD2PID]
+    var fuelType: LTOBD2PID
     
     // LOLA
     let rustGreetings = RustGreetings()
@@ -67,7 +67,7 @@ class MyOBD: ObservableObject{
     @Published var myEngineExhaustFlowRate: String = "No data"
     @Published var myEgrError: String = "No data"
     
-    var startTime: Date? = nil
+    var startTime: Date?
     @ObservedObject var locationHelper = LocationHelper()
     
     //RTLola outputs
@@ -80,16 +80,26 @@ class MyOBD: ObservableObject{
     var isConnected: Bool
     //if non-empty, use selectedProfile, otherwise use rdeProfile from buildSpec()
     var selectedCommands: [CommandItem]
-    var connectedAdapterName: String = ""
+    var connectedAdapterName: String
     
     init(){
         _serviceUUIDs = []
-        _pids = []
         _transporter = LTBTLESerialTransporter()
+        _obd2Adapter = nil
+        supportedPids = []
+        rdeCommands = []
+        fuelRateSupported = false
+        faeSupported = false
+        supportedPidCommands = ProfileCommands.supportedCommands.map{$0.obdCommand}
+        fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
+        
+        startTime = nil
+        
         outputValues = [Double](repeating: 0, count: 19)
         events = []
         isConnected = false
         selectedCommands = []
+        connectedAdapterName = ""
         
         //load spec file
         specBody = specFile(filename: "spec_body.lola")
@@ -146,7 +156,7 @@ class MyOBD: ObservableObject{
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
-        self.isConnected = false
+        isConnected = false
     }
     
     private func updateSensorDataForSupportedPids() {
@@ -229,7 +239,7 @@ class MyOBD: ObservableObject{
         
         // Velocity information to determine acceleration, distance travelled and to calculate the driving dynamics.
         if (supportedPids.contains(0x0D)) {
-            rdeCommands.append(CommandItem(pid: "0D", name: "SPEED", unit: "km/h", obdCommand: LTOBD2PID_VEHICLE_SPEED_0D.forMode1()))
+            rdeCommands.append(CommandItem(pid: "0D", name: "SPEED", unit: "km/h", obdCommand: LTOBD2PID_VEHICLE_SPEED_0D.forMode1(), enabled: true))
         } else {
             print("Incompatible for RDE: Speed data not provided by the car.")
             return false
@@ -237,7 +247,7 @@ class MyOBD: ObservableObject{
 
         // Ambient air temperature for checking compliance with the environmental constraints.
         if (supportedPids.contains(0x46)) {
-            rdeCommands.append(CommandItem(pid: "46", name: "AMBIENT AIR TEMPERATURE", unit: "°C", obdCommand: LTOBD2PID_AMBIENT_TEMP_46.forMode1()))
+            rdeCommands.append(CommandItem(pid: "46", name: "AMBIENT AIR TEMPERATURE", unit: "°C", obdCommand: LTOBD2PID_AMBIENT_TEMP_46.forMode1(), enabled: true))
         } else {
             print("Incompatible for RDE: Ambient air temperature not provided by the car.")
             return false
@@ -245,13 +255,13 @@ class MyOBD: ObservableObject{
 
         // NOx sensor(s) to check for violation of the EU regulations.
         if supportedPids.contains(0x83) {
-            rdeCommands.append(CommandItem(pid: "83", name: "NOX SENSOR", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_83.forMode1()))
+            rdeCommands.append(CommandItem(pid: "83", name: "NOX SENSOR", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_83.forMode1(), enabled: true))
         } else if supportedPids.contains(0xA1) {
-            rdeCommands.append(CommandItem(pid: "A1", name: "NOX SENSOR CORRECTED", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1()))
+            rdeCommands.append(CommandItem(pid: "A1", name: "NOX SENSOR CORRECTED", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_A1.forMode1(), enabled: true))
         } else if supportedPids.contains(0xA7) {
-            rdeCommands.append(CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1()))
+            rdeCommands.append(CommandItem(pid: "A7", name: "NOX SENSOR ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_ALTERNATIVE_A7.forMode1(), enabled: true))
         } else if supportedPids.contains(0xA8) {
-            rdeCommands.append(CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1()))
+            rdeCommands.append(CommandItem(pid: "A8", name: "NOX SENSOR CORRECTED ALTERNATIVE", unit: "ppm", obdCommand: LTOBD2PID_NOX_SENSOR_CORRECTED_ALTERNATIVE_A8.forMode1(), enabled: true))
         } else {
             print("Incompatible for RDE: NOx sensor not provided by the car.")
             return false
@@ -260,10 +270,10 @@ class MyOBD: ObservableObject{
         // Fuelrate sensors for calculation of the exhaust mass flow. Can be replaced through MAF.
         // TODO: ask Maxi for the EMF PID
         if supportedPids.contains(0x5E) {
-            rdeCommands.append(CommandItem(pid: "5E", name: "ENGINE FUEL RATE", unit: "L/h", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1()))
+            rdeCommands.append(CommandItem(pid: "5E", name: "ENGINE FUEL RATE", unit: "L/h", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_5E.forMode1(), enabled: true))
             fuelRateSupported = true
         } else if supportedPids.contains(0x9D) {
-            rdeCommands.append(CommandItem(pid: "9D", name: "ENGINE FUEL RATE MULTI", unit: "g/s", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1()))
+            rdeCommands.append(CommandItem(pid: "9D", name: "ENGINE FUEL RATE MULTI", unit: "g/s", obdCommand: LTOBD2PID_ENGINE_FUEL_RATE_MULTI_9D.forMode1(), enabled: true))
             fuelRateSupported = true
         } else {
             print("RDE: Fuel rate not provided by the car.")
@@ -272,9 +282,9 @@ class MyOBD: ObservableObject{
 
         // Mass air flow rate for the calcuation of the exhaust mass flow.
         if supportedPids.contains(0x10) {
-            rdeCommands.append(CommandItem(pid: "10", name: "MAF AIR FLOW RATE", unit: "g/s", obdCommand: LTOBD2PID_MAF_FLOW_10.forMode1()))
+            rdeCommands.append(CommandItem(pid: "10", name: "MAF AIR FLOW RATE", unit: "g/s", obdCommand: LTOBD2PID_MAF_FLOW_10.forMode1(), enabled: true))
         } else if supportedPids.contains(0x66) {
-            rdeCommands.append(CommandItem(pid: "66", name: "MAF AIR FLOW RATE SENSOR", unit: "g/s", obdCommand: LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1()))
+            rdeCommands.append(CommandItem(pid: "66", name: "MAF AIR FLOW RATE SENSOR", unit: "g/s", obdCommand: LTOBD2PID_MASS_AIR_FLOW_SNESOR_66.forMode1(), enabled: true))
         } else {
             print("Incompatible for RDE: Mass air flow not provided by the car.")
             return false
@@ -282,7 +292,7 @@ class MyOBD: ObservableObject{
 
         // Fuel air equivalence ratio for a more precise calculation of the fuel rate with MAF.
         if (supportedPids.contains(0x44) && !fuelRateSupported) {
-            rdeCommands.append(CommandItem(pid: "44", name: "FUEL AIR EQUIVALENCE RATIO", unit: "LAMBDA", obdCommand: LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1()))
+            rdeCommands.append(CommandItem(pid: "44", name: "FUEL AIR EQUIVALENCE RATIO", unit: "LAMBDA", obdCommand: LTOBD2PID_AIR_FUEL_EQUIV_RATIO_44.forMode1(), enabled: true))
             faeSupported = true
         } else {
             print("RDE: Fuel air equivalence ratio not provided by the car.")

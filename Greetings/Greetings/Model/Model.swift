@@ -3,6 +3,7 @@ import Foundation
 struct Model{
     //RDE view
     var started: Bool = false
+    var isRDEMonitoring: Bool = false
     var distanceSetting: Int = 84
     //RDE details view
     var totalTime: Double = 0
@@ -20,16 +21,13 @@ struct Model{
     //privacy view
     var dataDonationEnabled: Bool = false
     
-    
     init() {
-        let defaultCommands = ProfileCommands.commands //TODO: check, this is a copy, right???
-        defaultCommands.first(where: {$0.pid == "0D"})?.enabled.toggle()//speed
-        defaultCommands.first(where: {$0.pid == "0C"})?.enabled.toggle()//RPM
-        defaultProfile = Profile("default_profile", commands: defaultCommands)
+        defaultProfile = Profile("default_profile", commands: ProfileCommands.commands)
+        defaultProfile.commands.first(where: {$0.pid == "0D"})?.enabled.toggle()//speed
+        defaultProfile.commands.first(where: {$0.pid == "0C"})?.enabled.toggle()//RPM
         
-        let allEnabledCommnds = ProfileCommands.commands
-        allEnabledCommnds.forEach{$0.enabled.toggle()}
-        allEnabledProfile = Profile("all_supported", commands: allEnabledCommnds)
+        allEnabledProfile = Profile("all_supported", commands: ProfileCommands.commands)
+        allEnabledProfile.commands.forEach{$0.enabled.toggle()}
         
         profiles = [defaultProfile, allEnabledProfile]
         selectedProfile = defaultProfile
@@ -38,9 +36,19 @@ struct Model{
     }
     
     //func to update the properties
-    //MARK: RDE
+    //MARK: - RDE
     mutating func setDistanceSetting (to newDistanceSetting: Int) {
         self.distanceSetting = newDistanceSetting
+    }
+    
+    mutating func startRDE() {
+        isRDEMonitoring = true
+        started = true
+    }
+    
+    mutating func exitRDE() {
+        isRDEMonitoring = false
+        started = false
     }
     
     //MARK: - Profiles

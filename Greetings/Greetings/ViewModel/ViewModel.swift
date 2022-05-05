@@ -33,6 +33,15 @@ class ViewModel: ObservableObject {
         return model.selectedProfile.commands
     }
     
+    //MARK: - rde view
+    func startRDE() {
+        model.startRDE()
+    }
+        
+    func exitRDE() {
+        model.exitRDE()
+    }
+    
     //MARK: - monitoring view
     func isStartLiveMonitoring() -> Bool {
         return model.startLiveMonitoring
@@ -41,7 +50,5 @@ class ViewModel: ObservableObject {
     func startLiveMonitoringToggle(){
         model.startLiveMonitoring.toggle()
     }
-    
-    
 }
 
