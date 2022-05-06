@@ -71,7 +71,7 @@ class MyOBD: ObservableObject{
     @ObservedObject var locationHelper = LocationHelper()
     
     //RTLola outputs
-    var outputValues : [Double]
+    var outputValues : [String: Double]
     
     //ppcdf
     var events: [pcdfcore.PCDFEvent]
@@ -95,7 +95,7 @@ class MyOBD: ObservableObject{
         
         startTime = nil
         
-        outputValues = [Double](repeating: 0, count: 19)
+        outputValues = [String: Double]()
         events = []
         isConnected = false
         selectedCommands = []
@@ -170,7 +170,7 @@ class MyOBD: ObservableObject{
         
         startTime = nil
         
-        outputValues = [Double](repeating: 0, count: 19)
+        outputValues = [String: Double]()
         events = []
         isConnected = false
         selectedCommands = []

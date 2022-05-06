@@ -47,11 +47,16 @@ class RustGreetings {
         let array: UnsafeMutablePointer<Double>
     }
     
-    func sendevent(inputs: (inout [Double]), len_in: UInt32) -> [Double]{
+    func sendevent(inputs: (inout [Double]), len_in: UInt32) -> [String: Double]{
         var len: UInt32 = 0
         let result = rust_sendevent(&inputs, len_in, &len)
         let swift_result: [Double] = Array(UnsafeBufferPointer(start: result, count: Int(len)))
 //        rust_array_free(result)
-        return swift_result
+        if swift_result.isEmpty {
+            return [String: Double]()
+        } else {
+            let dict = Dictionary(uniqueKeysWithValues: zip(RELEVANT_OUTPUTS, swift_result))
+            return dict
+        }
     }
 }

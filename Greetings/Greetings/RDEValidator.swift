@@ -160,7 +160,7 @@ class RDEValidator {
             if (!lolaResult.isEmpty) {
 //                outputChannel.offer(lolaResult)//todo
             }
-            return lolaResult
+            return Array(lolaResult.values)
         }
         return []
     }

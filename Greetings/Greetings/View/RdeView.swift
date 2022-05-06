@@ -7,12 +7,12 @@ struct RdeView: View {
     var body: some View {
         ScrollView{
             VStack(spacing: 25){
-                let tu: Double = obd.outputValues.isEmpty ? 0 : obd.outputValues[4] //TODO: get by name instead of index
-                let tr: Double = obd.outputValues.isEmpty ? 0 : obd.outputValues[5]
-                let tm: Double = obd.outputValues.isEmpty ? 0 : obd.outputValues[6]
-                let distance: Double = obd.outputValues.isEmpty ? 0 : obd.outputValues[0]
-                let isValid: Double = obd.outputValues.isEmpty ? 0 : obd.outputValues[17]
-                let nox: Double = obd.outputValues.isEmpty ? 0 : obd.outputValues[16]
+                let tu: Double = !obd.outputValues.keys.contains("t_u") ? 0 : obd.outputValues["t_u"]!
+                let tr: Double = !obd.outputValues.keys.contains("t_r") ? 0 : obd.outputValues["t_r"]!
+                let tm: Double = !obd.outputValues.keys.contains("t_m") ? 0 : obd.outputValues["t_m"]!
+                let distance: Double = !obd.outputValues.keys.contains("d") ? 0 : obd.outputValues["d"]!
+                let isValid: Double = !obd.outputValues.keys.contains("is_valid_test") ? 0 : obd.outputValues["is_valid_test"]!
+                let nox: Double = !obd.outputValues.keys.contains("nox_per_kilometer") ? 0 : obd.outputValues["nox_per_kilometer"]!
                 
                 TopIndicatorsSection(t_u: tu, t_r: tr, t_m: tm, totalDistance: distance, isValidTest: isValid)
                 //                    .border(Color.yellow)
@@ -98,34 +98,34 @@ struct RdeView: View {
                 
                 switch terrain {
                 case .URBAN:
-                    let distance = obd.outputValues.isEmpty ? 0 : obd.outputValues[1] //TODO: get by name instead of index
-                    let totalDistance = obd.outputValues.isEmpty ? 0 : obd.outputValues[0]
-                    let duration = obd.outputValues.isEmpty ? 0 : obd.outputValues[4]
-                    let avgv = obd.outputValues.isEmpty ? 0 : obd.outputValues[7]
-                    let rpa = obd.outputValues.isEmpty ? 0 : obd.outputValues[13]
-                    let pct = obd.outputValues.isEmpty ? 0 : obd.outputValues[10]
+                    let distance = !obd.outputValues.keys.contains("d_u") ? 0 : obd.outputValues["d_u"]!
+                    let totalDistance = !obd.outputValues.keys.contains("d") ? 0 : obd.outputValues["d"]!
+                    let duration = !obd.outputValues.keys.contains("t_u") ? 0 : obd.outputValues["t_u"]!
+                    let avgv = !obd.outputValues.keys.contains("u_avg_v") ? 0 : obd.outputValues["u_avg_v"]!
+                    let rpa = !obd.outputValues.keys.contains("u_rpa") ? 0 : obd.outputValues["u_rpa"]!
+                    let pct = !obd.outputValues.keys.contains("u_va_pct") ? 0 : obd.outputValues["u_va_pct"]!
                     
                     DistanceBar(category: .URBAN, distance: distance, totalDistance: totalDistance)
                     DistanceDurationText(distance: distance, durationInSeconds: duration)
                     DynamicsBar(terrain: .URBAN, avg_v: avgv, rpa: rpa, pct: pct)
                 case .RURAL:
-                    let distance = obd.outputValues.isEmpty ? 0 : obd.outputValues[2]
-                    let totalDistance = obd.outputValues.isEmpty ? 0 : obd.outputValues[0]
-                    let duration = obd.outputValues.isEmpty ? 0 : obd.outputValues[5]
-                    let avgv = obd.outputValues.isEmpty ? 0 : obd.outputValues[8]
-                    let rpa = obd.outputValues.isEmpty ? 0 : obd.outputValues[14]
-                    let pct = obd.outputValues.isEmpty ? 0 : obd.outputValues[11]
+                    let distance = !obd.outputValues.keys.contains("d_r") ? 0 : obd.outputValues["d_r"]!
+                    let totalDistance = !obd.outputValues.keys.contains("d") ? 0 : obd.outputValues["d"]!
+                    let duration = !obd.outputValues.keys.contains("t_r") ? 0 : obd.outputValues["t_r"]!
+                    let avgv = !obd.outputValues.keys.contains("r_avg_v") ? 0 : obd.outputValues["r_avg_v"]!
+                    let rpa = !obd.outputValues.keys.contains("r_rpa") ? 0 : obd.outputValues["r_rpa"]!
+                    let pct = !obd.outputValues.keys.contains("r_va_pct") ? 0 : obd.outputValues["r_va_pct"]!
                     
                     DistanceBar(category: .RURAL, distance: distance, totalDistance: totalDistance)
                     DistanceDurationText(distance: distance, durationInSeconds: duration)
                     DynamicsBar(terrain: .RURAL, avg_v: avgv, rpa: rpa, pct: pct)
                 case .MOTORWAY:
-                    let distance = obd.outputValues.isEmpty ? 0 : obd.outputValues[3]
-                    let totalDistance = obd.outputValues.isEmpty ? 0 : obd.outputValues[0]
-                    let duration = obd.outputValues.isEmpty ? 0 : obd.outputValues[6]
-                    let avgv = obd.outputValues.isEmpty ? 0 : obd.outputValues[9]
-                    let rpa = obd.outputValues.isEmpty ? 0 : obd.outputValues[15]
-                    let pct = obd.outputValues.isEmpty ? 0 : obd.outputValues[12]
+                    let distance = !obd.outputValues.keys.contains("d_m") ? 0 : obd.outputValues["d_m"]!
+                    let totalDistance = !obd.outputValues.keys.contains("d") ? 0 : obd.outputValues["d"]!
+                    let duration = !obd.outputValues.keys.contains("t_m") ? 0 : obd.outputValues["t_m"]!
+                    let avgv = !obd.outputValues.keys.contains("m_avg_v") ? 0 : obd.outputValues["m_avg_v"]!
+                    let rpa = !obd.outputValues.keys.contains("m_rpa") ? 0 : obd.outputValues["m_rpa"]!
+                    let pct = !obd.outputValues.keys.contains("m_va_pct") ? 0 : obd.outputValues["m_va_pct"]!
                     
                     DistanceBar(category: .MOTORWAY, distance: distance, totalDistance: totalDistance)
                     DistanceDurationText(distance: distance, durationInSeconds: duration)
