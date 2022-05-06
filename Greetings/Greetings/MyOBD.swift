@@ -116,12 +116,12 @@ class MyOBD: ObservableObject{
     }
     
     public func viewDidLoad () -> () {
-        let ma : [CBUUID] = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
-        _serviceUUIDs = ma
-        
-        //use notificationcenter, only call updateSensorData() when adapter status is Discovering / Connected
-        NotificationCenter.default.addObserver(self, selector: #selector(onAdapterChangedState), name: Notification.Name(LTOBD2AdapterDidUpdateState), object: nil)
-        
+        if _obd2Adapter == nil { //the first time to run rde test / live monitoring
+            _serviceUUIDs = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
+            
+            //use notificationcenter, only call updateSensorData() when adapter status is Discovering / Connected
+            NotificationCenter.default.addObserver(self, selector: #selector(onAdapterChangedState), name: Notification.Name(LTOBD2AdapterDidUpdateState), object: nil)
+        }
         self.connect()
     }
     
@@ -156,7 +156,25 @@ class MyOBD: ObservableObject{
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
+//        isConnected = false
+        
+        _serviceUUIDs = []
+        _transporter = LTBTLESerialTransporter()
+//        _obd2Adapter = nil
+        supportedPids = []
+        rdeCommands = []
+        fuelRateSupported = false
+        faeSupported = false
+        supportedPidCommands = ProfileCommands.supportedCommands.map{$0.obdCommand}
+        fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
+        
+        startTime = nil
+        
+        outputValues = [Double](repeating: 0, count: 19)
+        events = []
         isConnected = false
+        selectedCommands = []
+        connectedAdapterName = ""
     }
     
     private func updateSensorDataForSupportedPids() {
@@ -173,7 +191,6 @@ class MyOBD: ObservableObject{
                     self.startTime = Date()
                 }
                 let duration = Date().timeIntervalSince(self.startTime!)
-                
                 if (pidCommand.gotValidAnswer) {
                     //generate SupportedPidsEvent
                     let startIndex = pidCommand.commandString.startIndex
@@ -529,7 +546,8 @@ class MyOBD: ObservableObject{
     @objc func onAdapterChangedState(){
         DispatchQueue.main.async {
             switch self._obd2Adapter?.adapterState{
-            case OBD2AdapterStateDiscovering, OBD2AdapterStateConnected:
+            case OBD2AdapterStateConnected://OBD2AdapterStateDiscovering,
+                print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
                 self.updateSensorDataForSupportedPids()
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
