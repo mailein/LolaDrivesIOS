@@ -46,7 +46,18 @@ struct MonitoringView: View {
                         case "46":
                             Text(obd.myTemp)
                         case "4F":
-                            Text("\(obd.myMaxValueFuelAirEqvRatio) c \(obd.myMaxValueOxygenSensorVoltage) | \(obd.myMaxValueOxygenSensorCurrent) | \(obd.myMaxValueIntakeMAP)")
+                            switch command.unit {
+                            case "LAMBDA":
+                                Text(obd.myMaxValueFuelAirEqvRatio)
+                            case "V":
+                                Text(obd.myMaxValueOxygenSensorVoltage)
+                            case "mA":
+                                Text(obd.myMaxValueOxygenSensorCurrent)
+                            case "kPa":
+                                Text(obd.myMaxValueIntakeMAP)
+                            default:
+                                Text("")
+                            }
                         case "50":
                             Text(obd.myMaxAirFlowRate)
                         case "51":
