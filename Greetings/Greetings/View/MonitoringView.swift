@@ -95,8 +95,10 @@ struct MonitoringView: View {
             }, label: {
                 if viewModel.isStartLiveMonitoring(){
                     Text("Start Live Monitoring")
+                        .padding()
                 }else{
                     Text("Stop Live Monitoring")
+                        .padding()
                 }
             })
             .disabled(viewModel.model.isRDEMonitoring)

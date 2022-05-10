@@ -89,6 +89,9 @@ class MyOBD: ObservableObject{
         _obd2Adapter = nil
         supportedPids = []
         rdeCommands = []
+        for c in ProfileCommands.commands {
+            rdeCommands.append(CommandItem(pid: c.pid, name: c.name, unit: c.unit, obdCommand: c.obdCommand))
+        }
         fuelRateSupported = false
         faeSupported = false
         supportedPidCommands = ProfileCommands.supportedCommands.map{$0.obdCommand}
