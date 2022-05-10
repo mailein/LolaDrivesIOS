@@ -7,7 +7,7 @@ struct MonitoringView: View {
     var isStartButton: Bool = true
     
     var body: some View {
-        let commands = getCurrentCommands().filter({$0.enabled})
+        let commands = getCurrentCommands()
         VStack{
             List(commands, id: \.id) { command in
                 HStack{
@@ -111,20 +111,19 @@ struct MonitoringView: View {
     }
     
     func getCurrentCommands() -> [CommandItem] {
-        if obd.selectedCommands.isEmpty{
+        if !obd.isLiveMonitoring{
             return obd.rdeCommands
         }else{
-            return obd.selectedCommands
+            return obd.getSelectedCommands().filter({$0.enabled})
         }
     }
     
     func liveMonitoring(){
         if viewModel.isStartLiveMonitoring() {//start live monitoring
-            obd.selectedCommands = viewModel.getSelectedProfileCommands()
+            obd.setSelectedCommands(to: viewModel.getSelectedProfileCommands())
             obd.viewDidLoad()
         }else{//stop live monitoring
             obd.disconnect()
-            obd.selectedCommands = []
         }
         viewModel.startLiveMonitoringToggle()
     }

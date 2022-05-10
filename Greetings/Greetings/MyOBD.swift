@@ -38,7 +38,7 @@ class MyOBD: ObservableObject{
     @Published var myNox: String = "No data"
     @Published var myFuelRate: String = "No data"
     @Published var myMAFRate: String = "No data"
-    
+
     @Published var myAirFuelEqvRatio: String = "No data"
     @Published var myCoolantTemp: String = "No data"
     @Published var myRPM: String = "No data"
@@ -79,7 +79,8 @@ class MyOBD: ObservableObject{
     //UI
     var isConnected: Bool
     //if non-empty, use selectedProfile, otherwise use rdeProfile from buildSpec()
-    var selectedCommands: [CommandItem]
+    var isLiveMonitoring: Bool
+    private var selectedCommands: [CommandItem]
     var connectedAdapterName: String
     
     init(){
@@ -98,7 +99,11 @@ class MyOBD: ObservableObject{
         outputValues = [String: Double]()
         events = []
         isConnected = false
+        isLiveMonitoring = false
         selectedCommands = []
+        for c in ProfileCommands.commands {
+            selectedCommands.append(CommandItem(pid: c.pid, name: c.name, unit: c.unit, obdCommand: c.obdCommand))
+        }
         connectedAdapterName = ""
         
         //load spec file
@@ -162,7 +167,7 @@ class MyOBD: ObservableObject{
         _transporter = LTBTLESerialTransporter()
 //        _obd2Adapter = nil
         supportedPids = []
-        rdeCommands = []
+        initCommands(commands: &rdeCommands)
         fuelRateSupported = false
         faeSupported = false
         supportedPidCommands = ProfileCommands.supportedCommands.map{$0.obdCommand}
@@ -173,8 +178,44 @@ class MyOBD: ObservableObject{
         outputValues = [String: Double]()
         events = []
         isConnected = false
-        selectedCommands = []
+        isLiveMonitoring = false
+        initCommands(commands: &selectedCommands)
         connectedAdapterName = ""
+        
+        mySpeed = "No data"
+        myAltitude = "No data"
+        myTemp = "No data"
+        myNox = "No data"
+        myFuelRate = "No data"
+        myMAFRate = "No data"
+        
+        myAirFuelEqvRatio = "No data"
+        myCoolantTemp = "No data"
+        myRPM = "No data"
+        myIntakeTemp = "No data"
+        myMAFRateSensor = "No data"
+        myOxygenSensor1 = "No data"
+        myCommandedEgr = "No data"
+        myFuelTankLevelInput = "No data"
+        myCatalystTemp11 = "No data"
+        myCatalystTemp12 = "No data"
+        myCatalystTemp21 = "No data"
+        myCatalystTemp22 = "No data"
+        myMaxValueFuelAirEqvRatio = "No data"
+        myMaxValueOxygenSensorVoltage = "No data"
+        myMaxValueOxygenSensorCurrent = "No data"
+        myMaxValueIntakeMAP = "No data"
+        myMaxAirFlowRate = "No data"
+        myFuelType = "No data"
+        myEngineOilTemp = "No data"
+        myIntakeAirTempSensor = "No data"
+        myNoxCorrected = "No data"
+        myNoxAlternative = "No data"
+        myNoxCorrectedAlternative = "No data"
+        myPmSensor = "No data"
+        myEngineFuelRateMulti = "No data"
+        myEngineExhaustFlowRate = "No data"
+        myEgrError = "No data"
     }
     
     private func updateSensorDataForSupportedPids() {
@@ -247,6 +288,7 @@ class MyOBD: ObservableObject{
     }
     
     private func checkSupportedPids(supportedPids: [Int], fuelType: String) -> Bool {
+        rdeCommands = []
         // If the car is not a diesel or gasoline, the RDE test is not possible since there are no corresponding
         // specifications.
         if (fuelType != "Diesel" && fuelType != "Gasoline") {
@@ -358,7 +400,7 @@ class MyOBD: ObservableObject{
     
     private func updateSensorData () {
         var commandItems: [CommandItem] = self.rdeCommands
-        if !self.selectedCommands.isEmpty {
+        if self.isLiveMonitoring {
             commandItems = selectedCommands
         }
         _obd2Adapter?.transmitMultipleCommands(
@@ -541,6 +583,22 @@ class MyOBD: ObservableObject{
             }
         }
         return ret
+    }
+    
+    public func getSelectedCommands() -> [CommandItem] {
+        return self.selectedCommands
+    }
+    
+    public func setSelectedCommands(to selected: [CommandItem]){
+        self.selectedCommands = selected
+        self.isLiveMonitoring = true
+    }
+    
+    private func initCommands( commands: inout [CommandItem]) {
+        commands = []
+        for c in ProfileCommands.commands {
+            commands.append(CommandItem(pid: c.pid, name: c.name, unit: c.unit, obdCommand: c.obdCommand))
+        }
     }
     
     @objc func onAdapterChangedState(){
