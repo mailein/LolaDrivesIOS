@@ -77,16 +77,17 @@ class MyOBD: ObservableObject{
     var events: [pcdfcore.PCDFEvent]
     
     //UI
-    var isConnected: Bool
-    //if non-empty, use selectedProfile, otherwise use rdeProfile from buildSpec()
-    var isLiveMonitoring: Bool
+    var isConnected: Bool // maybe later isConnected will be different than isOngoing, if we keep the bluetooth connected all the time
+    var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
+    var isOngoing: Bool
     private var selectedCommands: [CommandItem]
     var connectedAdapterName: String
     
     init(){
+        _obd2Adapter = nil
+        
         _serviceUUIDs = []
         _transporter = LTBTLESerialTransporter()
-        _obd2Adapter = nil
         supportedPids = []
         rdeCommands = []
         for c in ProfileCommands.commands {
@@ -103,6 +104,7 @@ class MyOBD: ObservableObject{
         events = []
         isConnected = false
         isLiveMonitoring = false
+        isOngoing = false
         selectedCommands = []
         for c in ProfileCommands.commands {
             selectedCommands.append(CommandItem(pid: c.pid, name: c.name, unit: c.unit, obdCommand: c.obdCommand))
@@ -123,7 +125,9 @@ class MyOBD: ObservableObject{
         specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
     }
     
-    public func viewDidLoad () -> () {
+    public func viewDidLoad (isLiveMonitoring isLive: Bool, selectedCommands selected: [CommandItem]) -> () {
+        resetState(isLive: isLive, selected: selected) // reset at the beginning, so that the state is freezed at the end
+        isOngoing = true
         if _obd2Adapter == nil { //the first time to run rde test / live monitoring
             _serviceUUIDs = [CBUUID.init(string: "FFF0"), CBUUID.init(string: "FFE0"), CBUUID.init(string: "BEEF"), CBUUID.init(string: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2")]
             
@@ -164,61 +168,8 @@ class MyOBD: ObservableObject{
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
-//        isConnected = false
-        
-        _serviceUUIDs = []
-        _transporter = LTBTLESerialTransporter()
-//        _obd2Adapter = nil
-        supportedPids = []
-        initCommands(commands: &rdeCommands)
-        fuelRateSupported = false
-        faeSupported = false
-        supportedPidCommands = ProfileCommands.supportedCommands.map{$0.obdCommand}
-        fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
-        
-        startTime = nil
-        
-        outputValues = [String: Double]()
-        events = []
         isConnected = false
-        isLiveMonitoring = false
-        initCommands(commands: &selectedCommands)
-        connectedAdapterName = ""
-        
-        mySpeed = "No data"
-        myAltitude = "No data"
-        myTemp = "No data"
-        myNox = "No data"
-        myFuelRate = "No data"
-        myMAFRate = "No data"
-        
-        myAirFuelEqvRatio = "No data"
-        myCoolantTemp = "No data"
-        myRPM = "No data"
-        myIntakeTemp = "No data"
-        myMAFRateSensor = "No data"
-        myOxygenSensor1 = "No data"
-        myCommandedEgr = "No data"
-        myFuelTankLevelInput = "No data"
-        myCatalystTemp11 = "No data"
-        myCatalystTemp12 = "No data"
-        myCatalystTemp21 = "No data"
-        myCatalystTemp22 = "No data"
-        myMaxValueFuelAirEqvRatio = "No data"
-        myMaxValueOxygenSensorVoltage = "No data"
-        myMaxValueOxygenSensorCurrent = "No data"
-        myMaxValueIntakeMAP = "No data"
-        myMaxAirFlowRate = "No data"
-        myFuelType = "No data"
-        myEngineOilTemp = "No data"
-        myIntakeAirTempSensor = "No data"
-        myNoxCorrected = "No data"
-        myNoxAlternative = "No data"
-        myNoxCorrectedAlternative = "No data"
-        myPmSensor = "No data"
-        myEngineFuelRateMulti = "No data"
-        myEngineExhaustFlowRate = "No data"
-        myEgrError = "No data"
+        isOngoing = false
     }
     
     private func updateSensorDataForSupportedPids() {
@@ -592,16 +543,72 @@ class MyOBD: ObservableObject{
         return self.selectedCommands
     }
     
-    public func setSelectedCommands(to selected: [CommandItem]){
-        self.selectedCommands = selected
-        self.isLiveMonitoring = true
-    }
-    
     private func initCommands( commands: inout [CommandItem]) {
         commands = []
         for c in ProfileCommands.commands {
             commands.append(CommandItem(pid: c.pid, name: c.name, unit: c.unit, obdCommand: c.obdCommand))
         }
+    }
+    
+    private func resetState(isLive: Bool, selected: [CommandItem]){
+        _serviceUUIDs = []
+        _transporter = LTBTLESerialTransporter()
+//        _obd2Adapter = nil
+        supportedPids = []
+        initCommands(commands: &rdeCommands)
+        fuelRateSupported = false
+        faeSupported = false
+        supportedPidCommands = ProfileCommands.supportedCommands.map{$0.obdCommand}
+        fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
+        
+        startTime = nil
+        
+        outputValues = [String: Double]()
+        events = []
+//        isConnected = false
+        isLiveMonitoring = isLive
+        isOngoing = false
+        if isLive{
+            selectedCommands = selected
+        }else{
+            initCommands(commands: &selectedCommands)
+        }
+        connectedAdapterName = ""
+        
+        mySpeed = "No data"
+        myAltitude = "No data"
+        myTemp = "No data"
+        myNox = "No data"
+        myFuelRate = "No data"
+        myMAFRate = "No data"
+        
+        myAirFuelEqvRatio = "No data"
+        myCoolantTemp = "No data"
+        myRPM = "No data"
+        myIntakeTemp = "No data"
+        myMAFRateSensor = "No data"
+        myOxygenSensor1 = "No data"
+        myCommandedEgr = "No data"
+        myFuelTankLevelInput = "No data"
+        myCatalystTemp11 = "No data"
+        myCatalystTemp12 = "No data"
+        myCatalystTemp21 = "No data"
+        myCatalystTemp22 = "No data"
+        myMaxValueFuelAirEqvRatio = "No data"
+        myMaxValueOxygenSensorVoltage = "No data"
+        myMaxValueOxygenSensorCurrent = "No data"
+        myMaxValueIntakeMAP = "No data"
+        myMaxAirFlowRate = "No data"
+        myFuelType = "No data"
+        myEngineOilTemp = "No data"
+        myIntakeAirTempSensor = "No data"
+        myNoxCorrected = "No data"
+        myNoxAlternative = "No data"
+        myNoxCorrectedAlternative = "No data"
+        myPmSensor = "No data"
+        myEngineFuelRateMulti = "No data"
+        myEngineExhaustFlowRate = "No data"
+        myEgrError = "No data"
     }
     
     @objc func onAdapterChangedState(){

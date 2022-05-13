@@ -46,7 +46,7 @@ struct RdeSettingsView: View{
             })
                 .simultaneousGesture(TapGesture().onEnded{
                     viewModel.startRDE()
-                    obd.viewDidLoad()
+                    obd.viewDidLoad(isLiveMonitoring: false, selectedCommands: [])
                 })
         }
         .toolbar{

@@ -4,7 +4,6 @@ import SwiftUI
 struct MonitoringView: View {
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var obd: MyOBD
-    var isStartButton: Bool = true
     
     var body: some View {
         let commands = getCurrentCommands()
@@ -110,6 +109,12 @@ struct MonitoringView: View {
                 ConnectedDisconnectedView(connected: obd.isConnected)
             }
         }
+        .onAppear{
+            //rule out current ongoing live monitoring or ongoing rde monitoring
+            if viewModel.isStartLiveMonitoring() && !obd.isOngoing {
+                liveMonitoring()
+            }
+        }
     }
     
     func getCurrentCommands() -> [CommandItem] {
@@ -122,8 +127,7 @@ struct MonitoringView: View {
     
     func liveMonitoring(){
         if viewModel.isStartLiveMonitoring() {//start live monitoring
-            obd.setSelectedCommands(to: viewModel.getSelectedProfileCommands())
-            obd.viewDidLoad()
+            obd.viewDidLoad(isLiveMonitoring: true, selectedCommands: viewModel.getSelectedProfileCommands())
         }else{//stop live monitoring
             obd.disconnect()
         }
