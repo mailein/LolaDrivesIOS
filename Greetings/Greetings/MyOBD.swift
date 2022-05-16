@@ -161,10 +161,7 @@ class MyOBD: ObservableObject{
     }
     
     public func disconnect () -> () {
-        for event in events {
-            let json = event.serialize()
-            
-        }
+        writeEventsToFile()
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
@@ -510,8 +507,8 @@ class MyOBD: ObservableObject{
             let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
             let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
             let header = raw[..<firstSpaceIndex]
-            let response = raw[secondSpaceIndex...].trimmingCharacters(in: .whitespacesAndNewlines)
-            
+            let response = raw[secondSpaceIndex...].replacingOccurrences(of: " ", with: "")
+            print("add to event: \(raw), \(header), \(response)")
             if isSupportedPidsCommand {
                 let cooked: [NSNumber] = command.cookedResponse.values.first!
                 let supportedPids: [Int] = cooked.map({$0.intValue})
@@ -609,6 +606,24 @@ class MyOBD: ObservableObject{
         myEngineFuelRateMulti = "No data"
         myEngineExhaustFlowRate = "No data"
         myEgrError = "No data"
+    }
+    
+    private func writeEventsToFile() {
+//        for event in events {
+//            let json = event.serialize()
+//        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .short
+        let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
+        EventStore.save(to: fileName, events: self.events){ result in
+            if case .success(let count) = result {
+                print("successfully saved \(count) events to ppcdf file \(fileName)")
+            }
+            if case .failure(let error) = result {
+                fatalError(error.localizedDescription)
+            }
+        }
     }
     
     @objc func onAdapterChangedState(){
