@@ -160,8 +160,10 @@ class MyOBD: ObservableObject{
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
     }
     
-    public func disconnect () -> () {
-        writeEventsToFile()
+    public func disconnect (completion: @escaping (Result<URL, Error>)->Void) {
+        writeEventsToFile(){result in
+            completion(result)
+        }
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
@@ -608,7 +610,7 @@ class MyOBD: ObservableObject{
         myEgrError = "No data"
     }
     
-    private func writeEventsToFile() {
+    private func writeEventsToFile(completion: @escaping (Result<URL, Error>)->Void){
 //        for event in events {
 //            let json = event.serialize()
 //        }
@@ -616,14 +618,33 @@ class MyOBD: ObservableObject{
         dateFormatter.timeStyle = .short
         dateFormatter.dateStyle = .short
         let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
-        EventStore.save(to: fileName, events: self.events){ result in
-            if case .success(let count) = result {
-                print("successfully saved \(count) events to ppcdf file \(fileName)")
+        do {
+            let fileURL = try EventStore.fileURL(fileName: fileName)
+            EventStore.save(to: fileName, events: self.events){ result in
+                if case .success(let count) = result {
+                    print("successfully saved \(count) events to ppcdf file \(fileName)")
+                    completion(.success(fileURL))
+                }
+                if case .failure(let error) = result {
+                    completion(.failure(error))
+                    fatalError(error.localizedDescription)//TODO: error handling
+                }
             }
-            if case .failure(let error) = result {
-                fatalError(error.localizedDescription)
-            }
+        } catch {
+            completion(.failure(error))
         }
+        
+//        //debug
+//        EventStore.load(fileName: fileName) { result in
+//            if case .failure(let error) = result {
+//                fatalError(error.localizedDescription)
+//            }
+//            if case .success(let events) = result {
+//                for event in events {
+//                    print("event loaded from file: \(event)")
+//                }
+//            }
+//        }
     }
     
     @objc func onAdapterChangedState(){

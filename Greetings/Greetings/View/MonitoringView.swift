@@ -129,7 +129,14 @@ struct MonitoringView: View {
         if viewModel.isStartLiveMonitoring() {//start live monitoring
             obd.viewDidLoad(isLiveMonitoring: true, selectedCommands: viewModel.getSelectedProfileCommands())
         }else{//stop live monitoring
-            obd.disconnect()
+            obd.disconnect(){result in
+                if case .success(let fileURL) = result {
+                    viewModel.addPpcdfFile(fileURL)
+                }
+                if case .failure(let error) = result {
+                    print("Fail to generate a ppcdf file. \(error.localizedDescription)")
+                }
+            }
         }
         viewModel.startLiveMonitoringToggle()
     }

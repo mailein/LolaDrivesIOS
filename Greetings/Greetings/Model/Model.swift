@@ -18,6 +18,9 @@ struct Model{
     var selectedProfile: Profile
     var lastSelectedProfile: Profile
     
+    //history view
+    var ppcdfFilesURL: [URL]
+    
     //privacy view
     var dataDonationEnabled: Bool = false
     
@@ -33,6 +36,8 @@ struct Model{
         selectedProfile = defaultProfile
         defaultProfile.isSelected = true
         lastSelectedProfile = defaultProfile
+        
+        ppcdfFilesURL = [URL]()
     }
     
     //func to update the properties
@@ -84,5 +89,9 @@ struct Model{
         if profile.id == self.selectedProfile.id && !profiles.isEmpty {
             setSelectedProfile(to: profiles[0])
         }
+    }
+    
+    mutating func addPpcdfFile(_ fileURL: URL) {
+        self.ppcdfFilesURL.append(fileURL)
     }
 }

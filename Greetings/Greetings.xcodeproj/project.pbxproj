@@ -38,6 +38,7 @@
 		96B71F29271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F26271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf */; };
 		96B71F2A271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F27271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf */; };
 		96C43B932831AACE00F45FC4 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C43B922831AACE00F45FC4 /* EventStore.swift */; };
+		96C43B95283563CB00F45FC4 /* HistoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C43B94283563CB00F45FC4 /* HistoryDetailView.swift */; };
 		96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F027E618E5004C4B7D /* RdeLogView.swift */; };
 		96C6F5F327E7727B004C4B7D /* CapsuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F227E7727B004C4B7D /* CapsuleView.swift */; };
 		96C6F5F527EE6EAE004C4B7D /* UrlWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6F5F427EE6EAE004C4B7D /* UrlWebView.swift */; };
@@ -128,6 +129,7 @@
 		96B71F26271D7C4F00AB2E8E /* 2021-09-13_12-12-53.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-12-53.ppcdf"; sourceTree = "<group>"; };
 		96B71F27271D7C4F00AB2E8E /* 2021-09-13_15-07-19.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_15-07-19.ppcdf"; sourceTree = "<group>"; };
 		96C43B922831AACE00F45FC4 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
+		96C43B94283563CB00F45FC4 /* HistoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailView.swift; sourceTree = "<group>"; };
 		96C6F5F027E618E5004C4B7D /* RdeLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeLogView.swift; sourceTree = "<group>"; };
 		96C6F5F227E7727B004C4B7D /* CapsuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleView.swift; sourceTree = "<group>"; };
 		96C6F5F427EE6EAE004C4B7D /* UrlWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlWebView.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
 				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
 				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
+				96C43B94283563CB00F45FC4 /* HistoryDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -507,6 +510,7 @@
 				96C6F5F327E7727B004C4B7D /* CapsuleView.swift in Sources */,
 				962B13D826D7E432001F8760 /* MyOBD.swift in Sources */,
 				96ECF8DD27DA72F200429CF1 /* Menu.swift in Sources */,
+				96C43B95283563CB00F45FC4 /* HistoryDetailView.swift in Sources */,
 				96C6F61127F1CFF8004C4B7D /* ImpressumView.swift in Sources */,
 				960DACA926396859005DEABB /* ContentView.swift in Sources */,
 				96C6F60D27F1CDDB004C4B7D /* AcknowledgementsView.swift in Sources */,
