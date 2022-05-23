@@ -161,7 +161,7 @@ class MyOBD: ObservableObject{
     }
     
     public func disconnect (completion: @escaping (Result<URL, Error>)->Void) {
-        writeEventsToFile(){result in
+        writeEventsToFile(){result in//TODO: write early
             completion(result)
         }
         
@@ -502,12 +502,12 @@ class MyOBD: ObservableObject{
                              duration: TimeInterval,
                              isSupportedPidsCommand: Bool = false) {
         if command.gotValidAnswer {
-            let header = command.cookedResponse.keys.first
+            let header = command.cookedResponse.first!.key
             let commandString = command.commandString
-            let responseArray = command.cookedResponse.values.first
+            let responseArray = command.cookedResponse.first!.value
             let range = commandString.startIndex..<commandString.index(after: commandString.startIndex)
             var response = commandString.replacingCharacters(in: range, with: "4")
-            responseArray?.forEach{ r in
+            responseArray.forEach{ r in
                 let hexStr = String(Int(truncating: r), radix: 16, uppercase: true)
                 print("decimal: \(r), hex: \(hexStr)")
                 response.append(hexStr.count == 1 ? "0\(hexStr)" : hexStr)//decimal -> hex
@@ -516,12 +516,12 @@ class MyOBD: ObservableObject{
             if isSupportedPidsCommand {
                 let cooked: [NSNumber] = command.cookedResponse.values.first!
                 let supportedPids: [Int] = cooked.map({$0.intValue})
-                self.events.append(SupportedPidsEvent(source: "ECU-\(String(describing: header))", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(command.commandString.suffix(2)) ?? -1, mode: Int32(command.commandString.prefix(2)) ?? 1, supportedPids: NSMutableArray.init(array: supportedPids)))
+                self.events.append(SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(command.commandString.suffix(2)) ?? -1, mode: Int32(command.commandString.prefix(2)) ?? 1, supportedPids: NSMutableArray.init(array: supportedPids)))
             } else {
                 //TODO: need to put all info into one pcdfevent or pcdfpattern, or switch case from LTOBD2Command to OBDEvent.toIntermediate()
-                let intermediate = OBDEvent(source: "ECU-\(String(describing: header))", timestamp: Int64(duration * 1000000000), bytes: response).toIntermediate()
+                let intermediate = OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response).toIntermediate()
                 self.events.append(intermediate)//duration is in seconds, timestamp is in nanoseconds
-//                print(intermediate.toString())//TODO: error: Value of type 'OBDIntermediateEvent' has no member 'toString'
+//                print("tostring: \(intermediate.description())")//TODO: error: Value of type 'OBDIntermediateEvent' has no member 'toString'
             }
         }else{
             self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))

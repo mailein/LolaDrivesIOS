@@ -21,10 +21,16 @@ class EventStore: ObservableObject {
 //                let file = try? FileHandle(forReadingFrom: fileURL)
             var events = [PCDFEvent]()
             
-            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
+            let fileRead = try? FileHandle(forReadingFrom: fileURL)
+            let dataRead = try fileRead?.readToEnd()
+            let contentStr = String(decoding: dataRead!, as: UTF8.self)
+            print(contentStr)
+//            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
+            try fileRead?.close()
+            
             let texts = contentStr.split(separator: "\n")
             for text in texts {
-                let event = PCDFEvent.Companion().fromString(string: String(text))
+                let event = PCDFEvent.Companion().fromString(string: String(text))//TODO: check gps event
                 events.append(event)
             }
             
@@ -52,7 +58,7 @@ class EventStore: ObservableObject {
             for event in events {
                 if let event = event as? OBDEvent {
                     //TODO: construct the pattern with all info available now in the event
-                    data = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,
+                    data = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,//TODO: background thread write string
                                                                             timestamp: event.timestamp,
                                                                             bytes: event.bytes).getPattern()) + "\n"
                 } else {
@@ -65,9 +71,10 @@ class EventStore: ObservableObject {
             try file?.close()
             
             //debug
-//                let fileRead = try? FileHandle(forReadingFrom: outfile)
-//                let dataRead = try fileRead?.readToEnd()
-//                print(String(decoding: dataRead!, as: UTF8.self))
+//            let fileRead = try? FileHandle(forReadingFrom: outfile)
+//            let dataRead = try fileRead?.readToEnd()
+//            print(String(decoding: dataRead!, as: UTF8.self))
+//            try fileRead?.close()
             
             completion(.success(events.count))
         }catch{

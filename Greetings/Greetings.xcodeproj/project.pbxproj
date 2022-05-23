@@ -328,6 +328,7 @@
 				96ECF8E627DA745C00429CF1 /* ProfileEditView.swift */,
 				96EFC14E26FB6F1400BE44A6 /* ProfilesView.swift */,
 				96EFC14826FB69D500BE44A6 /* HistoryView.swift */,
+				96C43B94283563CB00F45FC4 /* HistoryDetailView.swift */,
 				96EFC15026FB6F4100BE44A6 /* PrivacyView.swift */,
 				96EFC14C26FB6E4A00BE44A6 /* HelpView.swift */,
 				96C6F5F227E7727B004C4B7D /* CapsuleView.swift */,
@@ -335,7 +336,6 @@
 				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
 				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
 				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
-				96C43B94283563CB00F45FC4 /* HistoryDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
