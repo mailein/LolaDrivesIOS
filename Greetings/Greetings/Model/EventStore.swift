@@ -15,9 +15,9 @@ class EventStore: ObservableObject {
         try dirURL().appendingPathComponent(fileName)
     }
     
-    static func load(fileName: String, completion: @escaping (Result<[PCDFEvent], Error>)-> Void) {
+    static func load(fileURL: URL, completion: @escaping (Result<[PCDFEvent], Error>)-> Void) {
         do {
-            let fileURL = try fileURL(fileName: fileName)
+//            let fileURL = try fileURL(fileName: fileName)
 //                let file = try? FileHandle(forReadingFrom: fileURL)
             var events = [PCDFEvent]()
             
@@ -51,6 +51,7 @@ class EventStore: ObservableObject {
             
             for event in events {
                 if let event = event as? OBDEvent {
+                    //TODO: construct the pattern with all info available now in the event
                     data = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,
                                                                             timestamp: event.timestamp,
                                                                             bytes: event.bytes).getPattern()) + "\n"

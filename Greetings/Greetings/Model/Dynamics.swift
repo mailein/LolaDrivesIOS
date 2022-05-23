@@ -39,23 +39,17 @@ struct DistanceBar: View{
 struct DistanceDurationText: View {
     let distanceInMeters: Double//obd.outputValues[1,2,3]
     let durationInSeconds: Double//t-u/r/m
-    let seconds: Int//obd.outputValues[4,5,6]
-    let minutes: Int
-    let hours: Int
     
     init (distance: Double, durationInSeconds: Double){
         self.distanceInMeters = distance
         self.durationInSeconds = durationInSeconds
-        self.seconds = Int(durationInSeconds)
-        self.minutes = Int(seconds / 60)
-        self.hours = Int(seconds / 3600)
     }
     
     var body: some View{
         HStack{
             DistanceText(distanceInMeters: distanceInMeters)
             Spacer()
-            DurationText(durationInSeconds: durationInSeconds)
+            DurationText(durationInSeconds: Int64(durationInSeconds))
         }
     }
 }
@@ -73,20 +67,26 @@ struct DistanceText: View{
 }
 
 struct DurationText: View{
-    let durationInSeconds: Double
-    let seconds: Int
-    let minutes: Int
-    let hours: Int
-    
-    init(durationInSeconds: Double){
-        self.durationInSeconds = durationInSeconds
-        self.seconds = Int(durationInSeconds)
-        self.minutes = Int(seconds / 60)
-        self.hours = Int(seconds / 3600)
-    }
+    let durationInSeconds: Int64
     
     var body: some View{
-        Text("\(hours):\(String(format: "%02d", minutes - hours * 60)):\(String(format: "%02d", seconds - hours * 3600 - minutes * 60))")
+        let h = seconds2Hours(durationInSeconds)
+        let m = seconds2Minutes(durationInSeconds)
+        let s = seconds2Seconds(durationInSeconds)
+        Text("\(String(format: "%02d", h)):\(String(format: "%02d", m)):\(String(format: "%02d", s))")
+    }
+    
+    private func seconds2Seconds(_ seconds: Int64)-> Int{
+        return Int(seconds % 60)
+    }
+    
+    private func seconds2Minutes(_ seconds: Int64)-> Int{
+        let min = seconds / 60
+        return Int(min % 60)
+    }
+    
+    private func seconds2Hours(_ seconds: Int64)-> Int{
+        return Int(seconds / 3600)
     }
 }
 

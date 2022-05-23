@@ -49,7 +49,7 @@ struct RdeView: View {
             VStack{
                 HStack(spacing: 20){
                     VStack{
-                        DurationText(durationInSeconds: t_u + t_r + t_m)
+                        DurationText(durationInSeconds: Int64(t_u + t_r + t_m))
                             .font(.largeTitle)
                         Text("Total Time")
                     }

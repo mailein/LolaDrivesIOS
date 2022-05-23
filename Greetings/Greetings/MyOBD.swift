@@ -189,7 +189,7 @@ class MyOBD: ObservableObject{
                     //generate SupportedPidsEvent
                     let startIndex = pidCommand.commandString.startIndex
                     let i = pidCommand.commandString.index(pidCommand.commandString.startIndex, offsetBy: 2)
-                    self.addToEvents(command: pidCommand, duration: duration, isSupportedPidsCommand: true, mode: Int(pidCommand.commandString[startIndex..<i], radix: 16)!, pid: Int(pidCommand.commandString[i...], radix: 16)!)
+                    self.addToEvents(command: pidCommand, duration: duration, isSupportedPidsCommand: true)
                     
                     //get supported pids
                     var bitmap: [Bool] = []
@@ -486,7 +486,7 @@ class MyOBD: ObservableObject{
                              gps_speed: CLLocationSpeed?){
         if altitude != nil, longitude != nil, latitude != nil, gps_speed != nil {
             self.events.append(GPSEvent(source: "Phone-GPS",
-                                        timestamp: Int64(duration * 1000000000),
+                                        timestamp: Int64(duration * 1000000000),//seconds -> nanoseconds
                                         longitude: longitude!, latitude: latitude!,
                                         altitude: altitude!,
                                         speed: gps_speed as? KotlinDouble))//gps_speed: A negative value indicates an invalid speed. Because the actual speed can change many times between the delivery of location events, use this property for informational purposes only.
@@ -500,23 +500,28 @@ class MyOBD: ObservableObject{
     //OBDEvent
     private func addToEvents(command: LTOBD2Command,
                              duration: TimeInterval,
-                             isSupportedPidsCommand: Bool = false,
-                             mode: Int = 1,
-                             pid: Int = -1) {
+                             isSupportedPidsCommand: Bool = false) {
         if command.gotValidAnswer {
-            let raw = command.rawResponse[0]//header #bytes response
-            let firstSpaceIndex = raw.firstIndex(of: " ")!
-            let afterFirstSpaceIndex = raw.index(after: firstSpaceIndex)
-            let secondSpaceIndex = raw[afterFirstSpaceIndex...].firstIndex(of: " ")!
-            let header = raw[..<firstSpaceIndex]
-            let response = raw[secondSpaceIndex...].replacingOccurrences(of: " ", with: "")
-            print("add to event: \(raw), \(header), \(response)")
+            let header = command.cookedResponse.keys.first
+            let commandString = command.commandString
+            let responseArray = command.cookedResponse.values.first
+            let range = commandString.startIndex..<commandString.index(after: commandString.startIndex)
+            var response = commandString.replacingCharacters(in: range, with: "4")
+            responseArray?.forEach{ r in
+                let hexStr = String(Int(truncating: r), radix: 16, uppercase: true)
+                print("decimal: \(r), hex: \(hexStr)")
+                response.append(hexStr.count == 1 ? "0\(hexStr)" : hexStr)//decimal -> hex
+            }
+            print("add to event: \(command.cookedResponse), \(String(describing: header)), \(response)")
             if isSupportedPidsCommand {
                 let cooked: [NSNumber] = command.cookedResponse.values.first!
                 let supportedPids: [Int] = cooked.map({$0.intValue})
-                self.events.append(SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(pid), mode: Int32(mode), supportedPids: NSMutableArray.init(array: supportedPids)))
+                self.events.append(SupportedPidsEvent(source: "ECU-\(String(describing: header))", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(command.commandString.suffix(2)) ?? -1, mode: Int32(command.commandString.prefix(2)) ?? 1, supportedPids: NSMutableArray.init(array: supportedPids)))
             } else {
-                self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
+                //TODO: need to put all info into one pcdfevent or pcdfpattern, or switch case from LTOBD2Command to OBDEvent.toIntermediate()
+                let intermediate = OBDEvent(source: "ECU-\(String(describing: header))", timestamp: Int64(duration * 1000000000), bytes: response).toIntermediate()
+                self.events.append(intermediate)//duration is in seconds, timestamp is in nanoseconds
+//                print(intermediate.toString())//TODO: error: Value of type 'OBDIntermediateEvent' has no member 'toString'
             }
         }else{
             self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))
