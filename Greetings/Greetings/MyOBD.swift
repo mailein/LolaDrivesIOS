@@ -68,20 +68,20 @@ class MyOBD: ObservableObject{
     @Published var myEgrError: String = "No data"
     
     private var startTime: Date?
-    @ObservedObject var locationHelper = LocationHelper()
+    private var locationHelper: LocationHelper
     
     //RTLola outputs
-    var outputValues : [String: Double]
+    @Published var outputValues : [String: Double]
     
     //ppcdf
-    var events: [pcdfcore.PCDFEvent]
+    private var events: [pcdfcore.PCDFEvent]
     
     //UI
-    var isConnected: Bool // maybe later isConnected will be different than isOngoing, if we keep the bluetooth connected all the time
-    var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
-    var isOngoing: Bool
+    private var connected: Bool // maybe later isConnected will be different than isOngoing, if we keep the bluetooth connected all the time
+    private var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
+    private var isOngoing: Bool
     private var selectedCommands: [CommandItem]
-    var connectedAdapterName: String
+    private var connectedAdapterName: String
     
     init(){
         _obd2Adapter = nil
@@ -99,10 +99,11 @@ class MyOBD: ObservableObject{
         fuelType = ProfileCommands.commands.getByPid(pid: "51")!.obdCommand
         
         startTime = nil
+        locationHelper = LocationHelper()
         
         outputValues = [String: Double]()
         events = []
-        isConnected = false
+        connected = false
         isLiveMonitoring = false
         isOngoing = false
         selectedCommands = []
@@ -149,7 +150,7 @@ class MyOBD: ObservableObject{
             self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
             self._obd2Adapter!.connect()
             print("adapter init and connected")
-            self.isConnected = true
+            self.connected = true
             
             //It seems the correct obd BLE can be automatically discovered and connected,
             //so I only need to show green(connected) or red(disconnected).
@@ -168,7 +169,7 @@ class MyOBD: ObservableObject{
         
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
-        isConnected = false
+        connected = false
         isOngoing = false
     }
     
@@ -193,6 +194,20 @@ class MyOBD: ObservableObject{
     public func getRdeCommands() -> [CommandItem] {
         return self.rdeCommands
     }
+    
+    public func setLocationHelper(_ locationHelper: LocationHelper) {
+        self.locationHelper = locationHelper
+    }
+    
+    public func isLiveMonitoringOngoing() -> Bool { return isLiveMonitoring && isOngoing }
+    
+    public func isConnected() -> Bool { return self.connected }
+    
+    public func isLiveMonitoringMode() -> Bool { return self.isLiveMonitoring }
+    
+    public func isRunning() -> Bool { return self.isOngoing }
+    
+    public func getConnectedAdapterName() -> String { return self.connectedAdapterName }
     
     //MARK: - supported pids
     private func updateSensorDataForSupportedPids() {
@@ -236,6 +251,14 @@ class MyOBD: ObservableObject{
                             self.updateSensorDataForSupportedPid(commands: commands, index: index + 1)
                         }
                     } else {
+                        //generate Error Event for unsupported commands
+                        var commandItems: [CommandItem] = self.rdeCommands
+                        if self.isLiveMonitoring {
+                            commandItems = self.selectedCommands
+                        }
+                        let unsupported = commandItems.filter{ !self.supportedPids.contains(Int($0.pid, radix: 16)!) }
+                        self.addToEvents(unsupportedCommands: unsupported, duration: Date().timeIntervalSince(self.startTime!))
+                        
                         //fuelType
                         self._obd2Adapter?.transmitCommand(self.fuelType, responseHandler: {_ in
                             DispatchQueue.main.async {
@@ -252,7 +275,7 @@ class MyOBD: ObservableObject{
                                 if supported {
                                     let specFile = self.buildSpec()
                                     self.rustGreetings.initmonitor(s: specFile)
-                                    self.updateSensorData()
+                                    self.updateSensorData(commandItems: commandItems)
                                 }else{
                                     print("ERROR: Car is NOT compatible for RDE tests.")
                                 }
@@ -376,11 +399,7 @@ class MyOBD: ObservableObject{
     }
     
     //MARK: - loop: send and receive obd commands
-    private func updateSensorData () {
-        var commandItems: [CommandItem] = self.rdeCommands
-        if self.isLiveMonitoring {
-            commandItems = selectedCommands
-        }
+    private func updateSensorData (commandItems: [CommandItem]) {
         _obd2Adapter?.transmitMultipleCommands(
             commandItems
             .filter{ supportedPids.contains(Int($0.pid, radix: 16)!) } //only send supported commands
@@ -388,15 +407,14 @@ class MyOBD: ObservableObject{
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 //timestamp
-                if self.startTime == nil {
-                    self.startTime = Date()
-                }
                 let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
                 
                 //GPS
                 let altitude = self.locationHelper.altitude
                 self.myAltitude = "\(altitude) m"
-                self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, gps_speed: self.locationHelper.gps_speed)
+                let speedCommand = commandItems.filter{ $0.pid == "0D" }
+                let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue
+                self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: speed)
                 
                 commandItems.forEach { item in
                     let obdCommand = item.obdCommand
@@ -497,7 +515,7 @@ class MyOBD: ObservableObject{
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.updateSensorData()
+                    self.updateSensorData(commandItems: commandItems)
                 }
             }
         })
@@ -509,22 +527,22 @@ class MyOBD: ObservableObject{
                              altitude: CLLocationDistance?,
                              longitude: CLLocationDegrees?,
                              latitude: CLLocationDegrees?,
-                             gps_speed: CLLocationSpeed?){
-        if altitude != nil, longitude != nil, latitude != nil, gps_speed != nil {
+                             speed: Double?){
+        if altitude != nil, longitude != nil, latitude != nil, speed != nil {
             self.events.append(GPSEvent(source: "Phone-GPS",
                                         timestamp: Int64(duration * 1000000000),//seconds -> nanoseconds
                                         longitude: longitude!, latitude: latitude!,
                                         altitude: altitude!,
-                                        speed: gps_speed as? KotlinDouble))//gps_speed: A negative value indicates an invalid speed. Because the actual speed can change many times between the delivery of location events, use this property for informational purposes only.
+                                        speed: KotlinDouble(double: speed!)))
         }else{
             self.events.append(ErrorEvent(source: "GPS unavailable",
                                           timestamp: Int64(duration * 1000000000),
-                                          message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(gps_speed)"))
+                                          message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(speed)"))
         }
     }
     
     //OBDEvent
-    private func addToEvents(command: LTOBD2Command,
+    private func addToEvents(command: LTOBD2PID,
                              duration: TimeInterval,
                              isSupportedPidsCommand: Bool = false) {
         if command.gotValidAnswer {
@@ -535,7 +553,6 @@ class MyOBD: ObservableObject{
             var response = commandString.replacingCharacters(in: range, with: "4")
             responseArray.forEach{ r in
                 let hexStr = String(Int(truncating: r), radix: 16, uppercase: true)
-                print("decimal: \(r), hex: \(hexStr)")
                 response.append(hexStr.count == 1 ? "0\(hexStr)" : hexStr)//decimal -> hex
             }
             print("add to event: \(command.cookedResponse), \(String(describing: header)), \(response)")
@@ -546,9 +563,21 @@ class MyOBD: ObservableObject{
             } else {
                 self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
             }
-        }else{
-            self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))
         }
+    }
+    
+    private func addToEvents(unsupportedCommands: [CommandItem], duration: TimeInterval) {
+        var commandNames = ""
+        unsupportedCommands.forEach{ c in
+            commandNames.append("\(c.name), ")
+        }
+        if !commandNames.isEmpty {//remove last two char
+            commandNames.remove(at: commandNames.index(before: commandNames.endIndex))
+            commandNames.remove(at: commandNames.index(before: commandNames.endIndex))
+        }
+        self.events.append(ErrorEvent(source: "Unsupported pid",
+                                      timestamp: Int64(duration * 1000000000),
+                                      message: "The following OBD-Commands selected for tracking were not supported: \(commandNames)"))
     }
     
     //MARK: - file system

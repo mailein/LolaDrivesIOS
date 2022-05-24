@@ -29,7 +29,7 @@ class ViewModel: ObservableObject {
     }
     
     func getSelectedProfileCommands() -> [CommandItem]{
-        return model.selectedProfile.commands
+        return model.selectedProfile.commands.filter{ $0.enabled }
     }
     
     //MARK: - rde view

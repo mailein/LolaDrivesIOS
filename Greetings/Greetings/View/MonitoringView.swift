@@ -106,19 +106,19 @@ struct MonitoringView: View {
 //        .navigationBarTitleDisplayMode(.inline)
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: obd.isConnected)
+                ConnectedDisconnectedView(connected: obd.isConnected())
             }
         }
         .onAppear{
             //rule out current ongoing live monitoring or ongoing rde monitoring
-            if viewModel.isStartLiveMonitoring() && !obd.isOngoing {
+            if viewModel.isStartLiveMonitoring() && !obd.isRunning() {
                 liveMonitoring()
             }
         }
     }
     
     func getCurrentCommands() -> [CommandItem] {
-        if !obd.isLiveMonitoring{
+        if !obd.isLiveMonitoringMode(){
             return obd.getRdeCommands()
         }else{
             return obd.getSelectedCommands().filter({$0.enabled})

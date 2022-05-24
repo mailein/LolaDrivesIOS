@@ -24,7 +24,7 @@ struct RdeLogView: View{
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: obd.isConnected)
+                ConnectedDisconnectedView(connected: obd.isConnected())
             }
         }
         .navigationBarBackButtonHidden(true)

@@ -29,7 +29,7 @@ struct RdeView: View {
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: obd.isConnected)
+                ConnectedDisconnectedView(connected: obd.isConnected())
             }
         }
         .navigationBarTitleDisplayMode(.inline)

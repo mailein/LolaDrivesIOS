@@ -11,7 +11,7 @@ struct NavBar: ViewModifier{
                     HomeIconView()
                 }
                 ToolbarItem(placement: .navigationBarTrailing){
-                    ConnectedDisconnectedView(connected: obd.isConnected)
+                    ConnectedDisconnectedView(connected: obd.isConnected())
                 }
             }
     }
@@ -63,7 +63,7 @@ struct ConnectedDisconnectedView: View{
             }
         })
         .popover(isPresented: $showPopover, content: {
-            Text(obd.connectedAdapterName)
+            Text(obd.getConnectedAdapterName())
         })
     }
 }

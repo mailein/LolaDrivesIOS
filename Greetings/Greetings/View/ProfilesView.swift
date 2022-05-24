@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfilesView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
 //    @Binding var profiles: [Profile]//model
     @State private var unableToSelect = false
     
@@ -14,35 +15,36 @@ struct ProfilesView: View {
                         Text("(selected)")
                     }
                 }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false){
-                        Button(role: .destructive){
-                            if viewModel.isStartLiveMonitoring() {
-                                unableToSelect = false
-                                viewModel.deleteProfile(profile)
-                            }else{
-                                unableToSelect = true
-                            }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+                .disabled(obd.isLiveMonitoringOngoing())//viewModel.isStartLiveMonitoring() doesn't change here, because viewmodel doesn't publish the property change, model does.
+                .swipeActions(edge: .trailing, allowsFullSwipe: false){
+                    Button(role: .destructive){
+                        if viewModel.isStartLiveMonitoring() {
+                            unableToSelect = false
+                            viewModel.deleteProfile(profile)
+                        }else{
+                            unableToSelect = true
+                        }
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .swipeActions(edge: .leading, allowsFullSwipe: false){
+                    Button{
+                        if viewModel.isStartLiveMonitoring() {
+                            unableToSelect = false
+                            viewModel.selectProfile(profile)
+                        }else{
+                            unableToSelect = true
+                        }
+                    } label: {
+                        //UI changes
+                        if profile.isSelected {
+                            Label("Deselect", systemImage: "pin.slash")
+                        }else{
+                            Label("Select", systemImage: "pin")
                         }
                     }
-                    .swipeActions(edge: .leading, allowsFullSwipe: false){
-                        Button{
-                            if viewModel.isStartLiveMonitoring() {
-                                unableToSelect = false
-                                viewModel.selectProfile(profile)
-                            }else{
-                                unableToSelect = true
-                            }
-                        } label: {
-                            //UI changes
-                            if profile.isSelected {
-                                Label("Deselect", systemImage: "pin.slash")
-                            }else{
-                                Label("Select", systemImage: "pin")
-                            }
-                        }
-                    }
+                }
             }
 //            .onDelete(perform: delete)//unable to check isStartLiveMonitoring here
             .onMove(perform: reorder)
