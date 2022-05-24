@@ -119,7 +119,7 @@ struct MonitoringView: View {
     
     func getCurrentCommands() -> [CommandItem] {
         if !obd.isLiveMonitoring{
-            return obd.rdeCommands
+            return obd.getRdeCommands()
         }else{
             return obd.getSelectedCommands().filter({$0.enabled})
         }

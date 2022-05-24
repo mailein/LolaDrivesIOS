@@ -29,8 +29,6 @@ struct EventLogTabView: View{
     var body: some View{
         List{
             ForEach(eventStore.events, id: \.hashValue){ event in
-//                let intermediate = event.toIntermediate()
-//                let str = intermediate.description
                 VStack(alignment: .leading){
                     Text(String(describing: event.type))
                         .bold()

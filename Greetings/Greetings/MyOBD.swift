@@ -6,19 +6,19 @@ import pcdfcore
 
 class MyOBD: ObservableObject{
     // OBD
-    var _serviceUUIDs : [CBUUID]
+    private var _serviceUUIDs : [CBUUID]
 //    var _pids : [LTOBD2Command]
-    var _transporter : LTBTLESerialTransporter
-    var _obd2Adapter : LTOBD2Adapter?
-    var supportedPids: [Int] //pid# in decimal
-    var rdeCommands: [CommandItem] // The sensor profile of the car which is determined.
-    var fuelRateSupported: Bool
-    var faeSupported: Bool
-    var supportedPidCommands: [LTOBD2PID]
-    var fuelType: LTOBD2PID
+    private var _transporter : LTBTLESerialTransporter
+    private var _obd2Adapter : LTOBD2Adapter?
+    private var supportedPids: [Int] //pid# in decimal
+    private var rdeCommands: [CommandItem] // The sensor profile of the car which is determined.
+    private var fuelRateSupported: Bool
+    private var faeSupported: Bool
+    private var supportedPidCommands: [LTOBD2PID]
+    private var fuelType: LTOBD2PID
     
     // LOLA
-    let rustGreetings = RustGreetings()
+    private let rustGreetings = RustGreetings()
 //    let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")//even if it's in a folder, no need to add folder name
     private var specBody: String
     private var specHeader: String
@@ -67,7 +67,7 @@ class MyOBD: ObservableObject{
     @Published var myEngineExhaustFlowRate: String = "No data"
     @Published var myEgrError: String = "No data"
     
-    var startTime: Date?
+    private var startTime: Date?
     @ObservedObject var locationHelper = LocationHelper()
     
     //RTLola outputs
@@ -125,6 +125,7 @@ class MyOBD: ObservableObject{
         specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
     }
     
+    //MARK: - life cycle
     public func viewDidLoad (isLiveMonitoring isLive: Bool, selectedCommands selected: [CommandItem]) -> () {
         resetState(isLive: isLive, selected: selected) // reset at the beginning, so that the state is freezed at the end
         isOngoing = true
@@ -171,6 +172,29 @@ class MyOBD: ObservableObject{
         isOngoing = false
     }
     
+    //MARK: - delegate
+    @objc func onAdapterChangedState(){
+        DispatchQueue.main.async {
+            switch self._obd2Adapter?.adapterState{
+            case OBD2AdapterStateConnected://OBD2AdapterStateDiscovering,
+                print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
+                self.updateSensorDataForSupportedPids()
+            default:
+                print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
+            }
+        }
+    }
+    
+    //MARK: - access to properties
+    public func getSelectedCommands() -> [CommandItem] {
+        return self.selectedCommands
+    }
+    
+    public func getRdeCommands() -> [CommandItem] {
+        return self.rdeCommands
+    }
+    
+    //MARK: - supported pids
     private func updateSensorDataForSupportedPids() {
 //        let pid900 = LTOBD2PID_VIN_CODE_0902.init()//LTOBD2PID_VIN_CODE_0902.init() causes the bluetooth to fail "The connection has timed out unexpectedly."
         updateSensorDataForSupportedPid(commands: self.supportedPidCommands, index: 0)
@@ -351,6 +375,7 @@ class MyOBD: ObservableObject{
         return s
     }
     
+    //MARK: - loop: send and receive obd commands
     private func updateSensorData () {
         var commandItems: [CommandItem] = self.rdeCommands
         if self.isLiveMonitoring {
@@ -478,6 +503,7 @@ class MyOBD: ObservableObject{
         })
     }
     
+    //MARK: - pcdf events
     //GPSEvent
     private func addToEvents(duration: TimeInterval,
                              altitude: CLLocationDistance?,
@@ -518,16 +544,52 @@ class MyOBD: ObservableObject{
                 let supportedPids: [Int] = cooked.map({$0.intValue})
                 self.events.append(SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(command.commandString.suffix(2)) ?? -1, mode: Int32(command.commandString.prefix(2)) ?? 1, supportedPids: NSMutableArray.init(array: supportedPids)))
             } else {
-                //TODO: need to put all info into one pcdfevent or pcdfpattern, or switch case from LTOBD2Command to OBDEvent.toIntermediate()
-                let intermediate = OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response).toIntermediate()
-                self.events.append(intermediate)//duration is in seconds, timestamp is in nanoseconds
-//                print("tostring: \(intermediate.description())")//TODO: error: Value of type 'OBDIntermediateEvent' has no member 'toString'
+                self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
             }
         }else{
             self.events.append(ErrorEvent(source: "OBD got unvalid answer", timestamp: Int64(duration * 1000000000), message: "\(command.rawResponse)"))
         }
     }
     
+    //MARK: - file system
+    private func writeEventsToFile(completion: @escaping (Result<URL, Error>)->Void){
+//        for event in events {
+//            let json = event.serialize()
+//        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .short
+        let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
+        do {
+            let fileURL = try EventStore.fileURL(fileName: fileName)
+            EventStore.save(to: fileName, events: self.events){ result in
+                if case .success(let count) = result {
+                    print("successfully saved \(count) events to ppcdf file \(fileName)")
+                    completion(.success(fileURL))
+                }
+                if case .failure(let error) = result {
+                    completion(.failure(error))
+                    fatalError(error.localizedDescription)//TODO: error handling
+                }
+            }
+        } catch {
+            completion(.failure(error))
+        }
+        
+//        //debug
+//        EventStore.load(fileName: fileName) { result in
+//            if case .failure(let error) = result {
+//                fatalError(error.localizedDescription)
+//            }
+//            if case .success(let events) = result {
+//                for event in events {
+//                    print("event loaded from file: \(event)")
+//                }
+//            }
+//        }
+    }
+    
+    //MARK: - helper methods
     private func printCommandResponse(command: LTOBD2PID){
         print("============== \(command.description), cookedResponse: \(command.cookedResponse), formattedResponse: \(command.formattedResponse), commandString: \(command.commandString), completionTime: \(command.completionTime), failureResponse: \(command.failureResponse), freezeFrame: \(command.freezeFrame), gotAnswer: \(command.gotAnswer), gotValidAnswer: \(command.gotValidAnswer), isCAN: \(command.isCAN), isRawCommand: \(command.isRawCommand), purpose: \(command.purpose), rawResponse: \(command.rawResponse), selectedECU: \(command.selectedECU)")
     }
@@ -541,10 +603,6 @@ class MyOBD: ObservableObject{
             }
         }
         return ret
-    }
-    
-    public func getSelectedCommands() -> [CommandItem] {
-        return self.selectedCommands
     }
     
     private func initCommands( commands: inout [CommandItem]) {
@@ -613,54 +671,5 @@ class MyOBD: ObservableObject{
         myEngineFuelRateMulti = "No data"
         myEngineExhaustFlowRate = "No data"
         myEgrError = "No data"
-    }
-    
-    private func writeEventsToFile(completion: @escaping (Result<URL, Error>)->Void){
-//        for event in events {
-//            let json = event.serialize()
-//        }
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .short
-        dateFormatter.dateStyle = .short
-        let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
-        do {
-            let fileURL = try EventStore.fileURL(fileName: fileName)
-            EventStore.save(to: fileName, events: self.events){ result in
-                if case .success(let count) = result {
-                    print("successfully saved \(count) events to ppcdf file \(fileName)")
-                    completion(.success(fileURL))
-                }
-                if case .failure(let error) = result {
-                    completion(.failure(error))
-                    fatalError(error.localizedDescription)//TODO: error handling
-                }
-            }
-        } catch {
-            completion(.failure(error))
-        }
-        
-//        //debug
-//        EventStore.load(fileName: fileName) { result in
-//            if case .failure(let error) = result {
-//                fatalError(error.localizedDescription)
-//            }
-//            if case .success(let events) = result {
-//                for event in events {
-//                    print("event loaded from file: \(event)")
-//                }
-//            }
-//        }
-    }
-    
-    @objc func onAdapterChangedState(){
-        DispatchQueue.main.async {
-            switch self._obd2Adapter?.adapterState{
-            case OBD2AdapterStateConnected://OBD2AdapterStateDiscovering,
-                print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
-                self.updateSensorDataForSupportedPids()
-            default:
-                print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
-            }
-        }
     }
 }

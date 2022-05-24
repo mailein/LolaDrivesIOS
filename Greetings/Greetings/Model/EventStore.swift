@@ -4,6 +4,7 @@ import pcdfcore
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
     
+    //MARK: - directory
     public static func dirURL() throws -> URL {
         try FileManager.default.url(for: .documentDirectory,
                                     in: .userDomainMask,
@@ -11,6 +12,7 @@ class EventStore: ObservableObject {
                                     create: false)
     }
     
+    //MARK: - files
     public static func getAllFiles() -> [URL] {
         do {
             let dir = try dirURL()
@@ -46,6 +48,7 @@ class EventStore: ObservableObject {
         }
     }
     
+    //MARK: - file
     public static func fileURL(fileName: String) throws -> URL {
         try dirURL().appendingPathComponent(fileName)
     }
