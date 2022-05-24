@@ -11,6 +11,41 @@ class EventStore: ObservableObject {
                                     create: false)
     }
     
+    public static func getAllFiles() -> [URL] {
+        do {
+            let dir = try dirURL()
+            let dirContents = try FileManager.default.contentsOfDirectory(at: dir,
+                                                                      includingPropertiesForKeys: nil)
+            var ppcdfFiles = dirContents.filter{ $0.pathExtension == "ppcdf" }
+            ppcdfFiles.forEach{
+                print($0.path)
+            }
+            try ppcdfFiles.sort{ (a, b) in
+                let aLastPathComponent = a.deletingPathExtension().lastPathComponent
+                let bLastPathComponent = b.deletingPathExtension().lastPathComponent
+                let aDate = try Date(aLastPathComponent, strategy: .dateTime)
+                let bDate = try Date(bLastPathComponent, strategy: .dateTime)
+                let compare = aDate.compare(bDate).rawValue
+                return compare >= 0 //descending
+            }
+            return ppcdfFiles
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    //FOR DEBUG ONLY: clean dir at the start of app run
+    public static func clearAllFiles() {
+        let files = getAllFiles()
+        do {
+            for file in files {
+                try FileManager.default.removeItem(at: file)
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
     public static func fileURL(fileName: String) throws -> URL {
         try dirURL().appendingPathComponent(fileName)
     }

@@ -49,14 +49,5 @@ class ViewModel: ObservableObject {
     func startLiveMonitoringToggle(){
         model.startLiveMonitoring.toggle()
     }
-    
-    //MARK: - history view
-    func addPpcdfFile(_ file: URL) {
-        model.addPpcdfFile(file)
-    }
-    
-    func getPpcdfFiles() -> [URL]{
-        return model.ppcdfFilesURL
-    }
 }
 

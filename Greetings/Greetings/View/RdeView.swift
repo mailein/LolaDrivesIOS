@@ -150,10 +150,7 @@ struct RdeView: View {
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
-                    obd.disconnect(){result in
-                        if case .success(let fileURL) = result {
-                            viewModel.addPpcdfFile(fileURL)
-                        }
+                    obd.disconnect() { result in
                         if case .failure(let error) = result {
                             print("Fail to generate a ppcdf file. \(error.localizedDescription)")
                         }
