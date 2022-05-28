@@ -272,7 +272,7 @@ class MyOBD: ObservableObject{
                                 if supported {
                                     let specFile = self.buildSpec()
                                     self.rustGreetings.initmonitor(s: specFile)
-                                    self.updateSensorData(commandItems: commandItems)
+                                    self.updateSensorData()
                                 }else{
                                     print("ERROR: Car is NOT compatible for RDE tests.")
                                 }
@@ -396,7 +396,12 @@ class MyOBD: ObservableObject{
     }
     
     //MARK: - loop: send and receive obd commands
-    private func updateSensorData (commandItems: [CommandItem]) {
+    private func updateSensorData () {
+        var commandItems: [CommandItem] = self.rdeCommands
+        if self.isLiveMonitoring {
+            commandItems = self.selectedCommands
+        }
+        
         _obd2Adapter?.transmitMultipleCommands(
             commandItems
             .filter{ supportedPids.contains(Int($0.pid, radix: 16)!) } //only send supported commands
@@ -512,7 +517,7 @@ class MyOBD: ObservableObject{
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.updateSensorData(commandItems: commandItems)
+                    self.updateSensorData()
                 }
             }
         })
