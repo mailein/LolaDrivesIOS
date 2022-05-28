@@ -74,7 +74,7 @@ class MyOBD: ObservableObject{
     @Published var outputValues : [String: Double]
     
     //ppcdf
-    private var events: [pcdfcore.PCDFEvent]
+    private var fileName: String
     
     //UI
     private var connected: Bool // maybe later isConnected will be different than isOngoing, if we keep the bluetooth connected all the time
@@ -102,7 +102,7 @@ class MyOBD: ObservableObject{
         locationHelper = LocationHelper()
         
         outputValues = [String: Double]()
-        events = []
+        fileName = ""
         connected = false
         isLiveMonitoring = false
         isOngoing = false
@@ -136,6 +136,13 @@ class MyOBD: ObservableObject{
             //use notificationcenter, only call updateSensorData() when adapter status is Discovering / Connected
             NotificationCenter.default.addObserver(self, selector: #selector(onAdapterChangedState), name: Notification.Name(LTOBD2AdapterDidUpdateState), object: nil)
         }
+        self.fileName = genFileName()
+        //get timestamp
+        if self.startTime == nil {
+            self.startTime = Date()
+        }
+        let duration = Date().timeIntervalSince(self.startTime!)
+        genEvent(duration: duration)
         self.connect()
     }
     
@@ -163,10 +170,6 @@ class MyOBD: ObservableObject{
     }
     
     public func disconnect (completion: @escaping (Result<URL, Error>)->Void) {
-        writeEventsToFile(){result in//TODO: write early
-            completion(result)
-        }
-        
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
         connected = false
@@ -220,15 +223,12 @@ class MyOBD: ObservableObject{
         self._obd2Adapter?.transmitCommand(pidCommand, responseHandler: {_ in
             DispatchQueue.main.async {
                 //get timestamp
-                if self.startTime == nil {
-                    self.startTime = Date()
-                }
                 let duration = Date().timeIntervalSince(self.startTime!)
                 if (pidCommand.gotValidAnswer) {
                     //generate SupportedPidsEvent
                     let startIndex = pidCommand.commandString.startIndex
                     let i = pidCommand.commandString.index(pidCommand.commandString.startIndex, offsetBy: 2)
-                    self.addToEvents(command: pidCommand, duration: duration, isSupportedPidsCommand: true)
+                    self.genEvent(command: pidCommand, duration: duration, isSupportedPidsCommand: true)
                     
                     //get supported pids
                     var bitmap: [Bool] = []
@@ -257,17 +257,14 @@ class MyOBD: ObservableObject{
                             commandItems = self.selectedCommands
                         }
                         let unsupported = commandItems.filter{ !self.supportedPids.contains(Int($0.pid, radix: 16)!) }
-                        self.addToEvents(unsupportedCommands: unsupported, duration: Date().timeIntervalSince(self.startTime!))
+                        self.genEvent(unsupportedCommands: unsupported, duration: Date().timeIntervalSince(self.startTime!))
                         
                         //fuelType
                         self._obd2Adapter?.transmitCommand(self.fuelType, responseHandler: {_ in
                             DispatchQueue.main.async {
                                 //get timestamp
-                                if self.startTime == nil {
-                                    self.startTime = Date()
-                                }
                                 let duration = Date().timeIntervalSince(self.startTime!)
-                                self.addToEvents(command: self.fuelType, duration: duration)
+                                self.genEvent(command: self.fuelType, duration: duration)
                                 self.myFuelType = self.fuelType.formattedResponse
                                 
                                 let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
@@ -414,7 +411,7 @@ class MyOBD: ObservableObject{
                 self.myAltitude = "\(altitude) m"
                 let speedCommand = commandItems.filter{ $0.pid == "0D" }
                 let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue
-                self.addToEvents(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: speed)
+                self.genEvent(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: speed)
                 
                 commandItems.forEach { item in
                     let obdCommand = item.obdCommand
@@ -491,7 +488,7 @@ class MyOBD: ObservableObject{
                     default:
                         print("pid \(item.pid), no match case")
                     }
-                    self.addToEvents(command: obdCommand, duration: duration)
+                    self.genEvent(command: obdCommand, duration: duration)
                     self.printCommandResponse(command: obdCommand)
                 }
                 
@@ -522,27 +519,39 @@ class MyOBD: ObservableObject{
     }
     
     //MARK: - pcdf events
+    //MetaEvent
+    private func genEvent(duration: TimeInterval){
+        let event = MetaEvent(source: "app id",
+                              timestamp: Int64(duration * 1000000000),
+                              pcdf_type: "PERSISTENT",
+                              ppcdf_version: "1.0.0",
+                              ipcdf_version: nil)
+        writeEventToFile(event: event, createFile: true)
+    }
+    
     //GPSEvent
-    private func addToEvents(duration: TimeInterval,
+    private func genEvent(duration: TimeInterval,
                              altitude: CLLocationDistance?,
                              longitude: CLLocationDegrees?,
                              latitude: CLLocationDegrees?,
                              speed: Double?){
+        var event: PCDFEvent
         if altitude != nil, longitude != nil, latitude != nil, speed != nil {
-            self.events.append(GPSEvent(source: "Phone-GPS",
-                                        timestamp: Int64(duration * 1000000000),//seconds -> nanoseconds
-                                        longitude: longitude!, latitude: latitude!,
-                                        altitude: altitude!,
-                                        speed: KotlinDouble(double: speed!)))
+            event = GPSEvent(source: "Phone-GPS",
+                             timestamp: Int64(duration * 1000000000),//seconds -> nanoseconds
+                             longitude: longitude!, latitude: latitude!,
+                             altitude: altitude!,
+                             speed: KotlinDouble(double: speed!))
         }else{
-            self.events.append(ErrorEvent(source: "GPS unavailable",
-                                          timestamp: Int64(duration * 1000000000),
-                                          message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(speed)"))
+            event = ErrorEvent(source: "GPS unavailable",
+                               timestamp: Int64(duration * 1000000000),
+                               message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(speed)")
         }
+        writeEventToFile(event: event)
     }
     
     //OBDEvent
-    private func addToEvents(command: LTOBD2PID,
+    private func genEvent(command: LTOBD2PID,
                              duration: TimeInterval,
                              isSupportedPidsCommand: Bool = false) {
         if command.gotValidAnswer {
@@ -556,17 +565,21 @@ class MyOBD: ObservableObject{
                 response.append(hexStr.count == 1 ? "0\(hexStr)" : hexStr)//decimal -> hex
             }
             print("add to event: \(command.cookedResponse), \(String(describing: header)), \(response)")
+            
+            var event: PCDFEvent
             if isSupportedPidsCommand {
                 let cooked: [NSNumber] = command.cookedResponse.values.first!
                 let supportedPids: [Int] = cooked.map({$0.intValue})
-                self.events.append(SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(command.commandString.suffix(2)) ?? -1, mode: Int32(command.commandString.prefix(2)) ?? 1, supportedPids: NSMutableArray.init(array: supportedPids)))
+                event = SupportedPidsEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response, pid: Int32(command.commandString.suffix(2)) ?? -1, mode: Int32(command.commandString.prefix(2)) ?? 1, supportedPids: NSMutableArray.init(array: supportedPids))
             } else {
-                self.events.append(OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response))//duration is in seconds, timestamp is in nanoseconds
+                event = OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response)//duration is in seconds, timestamp is in nanoseconds
             }
+            writeEventToFile(event: event)
         }
     }
     
-    private func addToEvents(unsupportedCommands: [CommandItem], duration: TimeInterval) {
+    //unsupported pids
+    private func genEvent(unsupportedCommands: [CommandItem], duration: TimeInterval) {
         var commandNames = ""
         unsupportedCommands.forEach{ c in
             commandNames.append("\(c.name), ")
@@ -575,47 +588,28 @@ class MyOBD: ObservableObject{
             commandNames.remove(at: commandNames.index(before: commandNames.endIndex))
             commandNames.remove(at: commandNames.index(before: commandNames.endIndex))
         }
-        self.events.append(ErrorEvent(source: "Unsupported pid",
-                                      timestamp: Int64(duration * 1000000000),
-                                      message: "The following OBD-Commands selected for tracking were not supported: \(commandNames)"))
+        let event = ErrorEvent(source: "Unsupported pid",
+                               timestamp: Int64(duration * 1000000000),
+                               message: "The following OBD-Commands selected for tracking were not supported: \(commandNames)")
+        writeEventToFile(event: event)
     }
     
     //MARK: - file system
-    private func writeEventsToFile(completion: @escaping (Result<URL, Error>)->Void){
-//        for event in events {
-//            let json = event.serialize()
-//        }
+    private func genFileName() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .short
         dateFormatter.dateStyle = .short
         let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
-        do {
-            let fileURL = try EventStore.fileURL(fileName: fileName)
-            EventStore.save(to: fileName, events: self.events){ result in
-                if case .success(let count) = result {
-                    print("successfully saved \(count) events to ppcdf file \(fileName)")
-                    completion(.success(fileURL))
-                }
-                if case .failure(let error) = result {
-                    completion(.failure(error))
-                    fatalError(error.localizedDescription)//TODO: error handling
-                }
+        return fileName
+    }
+    
+    private func writeEventToFile(event: PCDFEvent, createFile: Bool = false) {
+        let file = self.fileName
+        EventStore.save(to: file, event: event, createFile: createFile){ result in
+            if case .success(_) = result {
+                print("successfully saved event \(event) to ppcdf file \(file)")
             }
-        } catch {
-            completion(.failure(error))
         }
-        
-//        //debug
-//        EventStore.load(fileName: fileName) { result in
-//            if case .failure(let error) = result {
-//                fatalError(error.localizedDescription)
-//            }
-//            if case .success(let events) = result {
-//                for event in events {
-//                    print("event loaded from file: \(event)")
-//                }
-//            }
-//        }
     }
     
     //MARK: - helper methods
@@ -655,7 +649,7 @@ class MyOBD: ObservableObject{
         startTime = nil
         
         outputValues = [String: Double]()
-        events = []
+        fileName = ""
 //        isConnected = false
         isLiveMonitoring = isLive
         isOngoing = false

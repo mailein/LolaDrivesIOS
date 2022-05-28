@@ -78,45 +78,77 @@ class EventStore: ObservableObject {
         }
     }
     
-    static func save(to fileName: String, events: [PCDFEvent], completion: @escaping (Result<Int, Error>)->Void) {
+//    static func save(to fileName: String, events: [PCDFEvent], completion: @escaping (Result<Int, Error>)->Void) {
+//        let serializer = Serializer()
+//        do {
+//            let outfile = try fileURL(fileName: fileName)
+//            //create the file before write to it，otherwise the file is nil
+//            //TODO: app id
+//            var data = serializer.generateFromPattern(pattern: MetaEvent(source: "app id",
+//                                                                         timestamp: Int64(Date().timeIntervalSinceReferenceDate),//TODO
+//                                                                         pcdf_type: "PERSISTENT",
+//                                                                         ppcdf_version: "1.0.0",
+//                                                                         ipcdf_version: nil).getPattern()) + "\n"
+//            try data.write(to: outfile, atomically: true, encoding: .utf8)
+//
+//            let file = try? FileHandle(forUpdating: outfile)
+//
+//            for event in events {
+//                if let event = event as? OBDEvent {
+//                    //TODO: construct the pattern with all info available now in the event
+//                    data = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,//TODO: background thread write string
+//                                                                            timestamp: event.timestamp,
+//                                                                            bytes: event.bytes).getPattern()) + "\n"
+//                } else {
+//                    data = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
+//                }
+//                try file?.seekToEnd()
+//                try file?.write(contentsOf: data.data(using: .utf8)!)
+//            }
+//
+//            try file?.close()
+//
+//            //debug
+////            let fileRead = try? FileHandle(forReadingFrom: outfile)
+////            let dataRead = try fileRead?.readToEnd()
+////            print(String(decoding: dataRead!, as: UTF8.self))
+////            try fileRead?.close()
+//
+//            completion(.success(events.count))
+//        }catch{
+//            completion(.failure(error))
+//        }
+//    }
+//
+    static func save(to fileName: String, event: PCDFEvent, createFile: Bool = false, completion: @escaping (Result<Int, Error>)->Void) {
         let serializer = Serializer()
-        do {
-            let outfile = try fileURL(fileName: fileName)
-            //create the file before write to it，otherwise the file is nil
-            //TODO: app id
-            var data = serializer.generateFromPattern(pattern: MetaEvent(source: "app id",
-                                                                         timestamp: Int64(Date().timeIntervalSinceReferenceDate),//TODO
-                                                                         pcdf_type: "PERSISTENT",
-                                                                         ppcdf_version: "1.0.0",
-                                                                         ipcdf_version: nil).getPattern()) + "\n"
-            try data.write(to: outfile, atomically: true, encoding: .utf8)
-            
-            let file = try? FileHandle(forUpdating: outfile)
-            
-            for event in events {
-                if let event = event as? OBDEvent {
-                    //TODO: construct the pattern with all info available now in the event
-                    data = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,//TODO: background thread write string
-                                                                            timestamp: event.timestamp,
-                                                                            bytes: event.bytes).getPattern()) + "\n"
-                } else {
-                    data = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
+        var str: String
+        if let event = event as? OBDEvent {
+            str = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,
+                                                                    timestamp: event.timestamp,
+                                                                    bytes: event.bytes).getPattern()) + "\n"
+        } else {
+            str = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
+        }
+        
+        DispatchQueue.global(qos: .background).async {
+            do {
+                let outfile = try fileURL(fileName: fileName)
+                var file = try? FileHandle(forUpdating: outfile)
+                if createFile {
+                    file = try FileHandle(forWritingTo: outfile)
                 }
                 try file?.seekToEnd()
-                try file?.write(contentsOf: data.data(using: .utf8)!)
+                try file?.write(contentsOf: str.data(using: .utf8)!)
+                try file?.close()
+                DispatchQueue.main.async {
+                    completion(.success(1))
+                }
+            }catch{
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
-            
-            try file?.close()
-            
-            //debug
-//            let fileRead = try? FileHandle(forReadingFrom: outfile)
-//            let dataRead = try fileRead?.readToEnd()
-//            print(String(decoding: dataRead!, as: UTF8.self))
-//            try fileRead?.close()
-            
-            completion(.success(events.count))
-        }catch{
-            completion(.failure(error))
         }
     }
 }
