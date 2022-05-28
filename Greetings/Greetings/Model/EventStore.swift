@@ -62,13 +62,12 @@ class EventStore: ObservableObject {
             let fileRead = try? FileHandle(forReadingFrom: fileURL)
             let dataRead = try fileRead?.readToEnd()
             let contentStr = String(decoding: dataRead!, as: UTF8.self)
-            print(contentStr)
 //            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
             try fileRead?.close()
             
-            let texts = contentStr.split(separator: "\n")
+            let texts = contentStr.components(separatedBy: "\n").filter{ !$0.isEmpty }
             for text in texts {
-                let event = PCDFEvent.Companion().fromString(string: String(text))//TODO: check gps event
+                let event = PCDFEvent.Companion().fromString(string: text)
                 events.append(event)
             }
             
@@ -78,69 +77,31 @@ class EventStore: ObservableObject {
         }
     }
     
-//    static func save(to fileName: String, events: [PCDFEvent], completion: @escaping (Result<Int, Error>)->Void) {
-//        let serializer = Serializer()
-//        do {
-//            let outfile = try fileURL(fileName: fileName)
-//            //create the file before write to it，otherwise the file is nil
-//            //TODO: app id
-//            var data = serializer.generateFromPattern(pattern: MetaEvent(source: "app id",
-//                                                                         timestamp: Int64(Date().timeIntervalSinceReferenceDate),//TODO
-//                                                                         pcdf_type: "PERSISTENT",
-//                                                                         ppcdf_version: "1.0.0",
-//                                                                         ipcdf_version: nil).getPattern()) + "\n"
-//            try data.write(to: outfile, atomically: true, encoding: .utf8)
-//
-//            let file = try? FileHandle(forUpdating: outfile)
-//
-//            for event in events {
-//                if let event = event as? OBDEvent {
-//                    //TODO: construct the pattern with all info available now in the event
-//                    data = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,//TODO: background thread write string
-//                                                                            timestamp: event.timestamp,
-//                                                                            bytes: event.bytes).getPattern()) + "\n"
-//                } else {
-//                    data = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
-//                }
-//                try file?.seekToEnd()
-//                try file?.write(contentsOf: data.data(using: .utf8)!)
-//            }
-//
-//            try file?.close()
-//
-//            //debug
-////            let fileRead = try? FileHandle(forReadingFrom: outfile)
-////            let dataRead = try fileRead?.readToEnd()
-////            print(String(decoding: dataRead!, as: UTF8.self))
-////            try fileRead?.close()
-//
-//            completion(.success(events.count))
-//        }catch{
-//            completion(.failure(error))
-//        }
-//    }
-//
     static func save(to fileName: String, event: PCDFEvent, createFile: Bool = false, completion: @escaping (Result<Int, Error>)->Void) {
         let serializer = Serializer()
         var str: String
+        //toIntermediate() will be used in HistoryView to show intermediateEvent.toString() message, so no need to transform to intermediate here
         if let event = event as? OBDEvent {
             str = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,
                                                                     timestamp: event.timestamp,
-                                                                    bytes: event.bytes).getPattern()) + "\n"
-        } else {
+                                                                   bytes: event.bytes).getPattern()) + "\n"
+        } else {//Meta, SupportPids, Error, GPS
             str = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
         }
-        
-        DispatchQueue.global(qos: .background).async {
+        print(str)
+        DispatchQueue.main.async {//TODO: bakcground thread causes data race, some lines are not complete
             do {
                 let outfile = try fileURL(fileName: fileName)
-                var file = try? FileHandle(forUpdating: outfile)
+                
                 if createFile {
-                    file = try FileHandle(forWritingTo: outfile)
+                    try str.write(to: outfile, atomically: true, encoding: .utf8)
+                }else{
+                    var file = try? FileHandle(forUpdating: outfile)
+                    try file?.seekToEnd()
+                    try file?.write(contentsOf: str.data(using: .utf8)!)
+                    try file?.close()
                 }
-                try file?.seekToEnd()
-                try file?.write(contentsOf: str.data(using: .utf8)!)
-                try file?.close()
+                
                 DispatchQueue.main.async {
                     completion(.success(1))
                 }
