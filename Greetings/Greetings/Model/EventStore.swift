@@ -96,7 +96,7 @@ class EventStore: ObservableObject {
                 if createFile {
                     try str.write(to: outfile, atomically: true, encoding: .utf8)
                 }else{
-                    var file = try? FileHandle(forUpdating: outfile)
+                    let file = try? FileHandle(forUpdating: outfile)
                     try file?.seekToEnd()
                     try file?.write(contentsOf: str.data(using: .utf8)!)
                     try file?.close()

@@ -92,14 +92,20 @@ struct DurationText: View{
 
 struct DynamicsBar: View{
     //literals
-    let barMiddle: Double = 0.5
+    let offsetRpa = 0.35 // GuidelineDynamicsBarLow Percentage
+    let boundaryRpa = 0.605
+    let lengthRpa: Double
+    let offsetPct = 0.62
+    let boundaryPct = 0.88
+    let lengthPct: Double
+    
     let maxRpa = 0.3 // Realistic maximum RPA
     let maxPct = 35.0
     
     var terrain: Category
     let avg_v: Double //obd.outputValues[7,8,9]
-    let rpa: Double //obd.outputValues[13,14,15]
-    let pct: Double //obd.outputValues[10,11,12]
+    let _rpa: Double //obd.outputValues[13,14,15]
+    let _pct: Double //obd.outputValues[10,11,12]
     
     // Calculate Horizontal Marker Positions
     let rpaThreshold: Double
@@ -111,10 +117,13 @@ struct DynamicsBar: View{
     let ballPct: Double
     
     init(terrain: Category, avg_v: Double, rpa: Double, pct: Double){
+        lengthRpa = boundaryRpa - offsetRpa
+        lengthPct = boundaryPct - offsetPct
+        
         self.terrain = terrain
         self.avg_v = avg_v
-        self.rpa = rpa
-        self.pct = pct
+        self._rpa = rpa > maxRpa ? 0 : rpa
+        self._pct = pct > maxPct ? 0 : pct
         
         switch terrain {
         case .URBAN:
@@ -127,17 +136,17 @@ struct DynamicsBar: View{
             rpaThreshold = avg_v <= 94.05 ? -0.0016 * avg_v + 0.1755 : 0.025
             pctThreshold = 0.0742 * avg_v + 18.966
         }
-        rpaMarkerPercentage = rpaThreshold / maxRpa
-        ballRpa = barMiddle * rpa / maxRpa
-        pctMarkerPercentage = pctThreshold / maxPct
-        ballPct = barMiddle + barMiddle * pct / maxPct
+        rpaMarkerPercentage = lengthRpa * rpaThreshold / maxRpa + offsetRpa
+        ballRpa = lengthRpa * self._rpa / maxRpa + boundaryRpa
+        pctMarkerPercentage = lengthPct * pctThreshold / maxPct + offsetPct
+        ballPct = lengthPct * self._pct / maxPct + boundaryPct
     }
     
     var body: some View{
         HStack(alignment: .center){
             Text("Dynamics")
-            
-            CapsuleView(barOffset: [rpaMarkerPercentage, barMiddle, pctMarkerPercentage], ballOffset: [ballRpa, ballPct])
+            CapsuleView(barOffset: [rpaMarkerPercentage], ballOffset: [ballRpa])
+            CapsuleView(barOffset: [pctMarkerPercentage], ballOffset: [ballPct])
         }
     }
     
