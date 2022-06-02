@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
         
-struct DistanceBar: View{
+struct DistanceBar: View{//TODO: use real distance instead of percentage
     //literals
     private let barLowUrban: Double = 0.29
     private let barHighUrban: Double = 0.44
@@ -32,7 +32,7 @@ struct DistanceBar: View{
     }
     
     var body: some View{
-        CapsuleView(barOffset: [barLow / barMax, barHigh / barMax], ballOffset: [totalDistance == 0 ? 0 : barMax * distance / totalDistance])
+        CapsuleView(barOffset: [barLow / barMax, barHigh / barMax], ballOffset: [], width: totalDistance == 0 ? 0 : barMax * distance / totalDistance)
     }
 }
 

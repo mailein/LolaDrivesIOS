@@ -77,7 +77,7 @@ class MyOBD: ObservableObject{
     private var fileName: String
     
     //UI
-    private var connected: Bool // maybe later isConnected will be different than isOngoing, if we keep the bluetooth connected all the time
+    @Published private var connected: Bool // maybe later isConnected will be different than isOngoing, if we keep the bluetooth connected all the time
     private var isLiveMonitoring: Bool //if true, use selectedProfile, otherwise use rdeProfile from buildSpec()
     private var isOngoing: Bool
     private var selectedCommands: [CommandItem]
@@ -157,7 +157,9 @@ class MyOBD: ObservableObject{
             self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
             self._obd2Adapter!.connect()
             print("adapter init and connected")
-            self.connected = true
+            DispatchQueue.main.async {//Publishing changes from background threads is not allowed
+                self.connected = true
+            }
             
             //It seems the correct obd BLE can be automatically discovered and connected,
             //so I only need to show green(connected) or red(disconnected).
@@ -169,7 +171,7 @@ class MyOBD: ObservableObject{
         _transporter.startUpdatingSignalStrength(withInterval: 1.0)
     }
     
-    public func disconnect (completion: @escaping (Result<URL, Error>)->Void) {
+    public func disconnect () {
         _obd2Adapter?.disconnect()
         _transporter.disconnect()
         connected = false
@@ -183,6 +185,9 @@ class MyOBD: ObservableObject{
             case OBD2AdapterStateConnected://OBD2AdapterStateDiscovering,
                 print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
                 self.updateSensorDataForSupportedPids()
+            case OBD2AdapterStateError, OBD2AdapterStateGone:
+                print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
+                self.disconnect()
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
             }
@@ -415,8 +420,8 @@ class MyOBD: ObservableObject{
                 let altitude = self.locationHelper.altitude
                 self.myAltitude = "\(altitude) m"
                 let speedCommand = commandItems.filter{ $0.pid == "0D" }
-                let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue
-                self.genEvent(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: speed)
+                let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue//TODO: wrong
+                self.genEvent(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: self.locationHelper.gps_speed)
                 
                 commandItems.forEach { item in
                     let obdCommand = item.obdCommand
@@ -427,6 +432,7 @@ class MyOBD: ObservableObject{
                         self.myRPM = obdCommand.formattedResponse
                     case "0D":
                         self.mySpeed = obdCommand.formattedResponse
+                        print("speed from OBD command: \(self.mySpeed)")
                     case "0F":
                         self.myIntakeTemp = obdCommand.formattedResponse
                     case "10":
@@ -542,6 +548,7 @@ class MyOBD: ObservableObject{
                              speed: Double?){
         var event: PCDFEvent
         if altitude != nil, longitude != nil, latitude != nil, speed != nil {
+            print("gpsevent: \(speed!), kotlin: \(KotlinDouble(double: speed!))")
             event = GPSEvent(source: "Phone-GPS",
                              timestamp: Int64(duration * 1000000000),//seconds -> nanoseconds
                              longitude: longitude!, latitude: latitude!,

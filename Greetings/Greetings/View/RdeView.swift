@@ -79,8 +79,9 @@ struct RdeView: View {
                 Text("NOₓ")
                     .font(.title3)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                CapsuleView(barOffset: [barLow / barMax, barHigh / barMax], ballOffset: [0.001 * noxAmount / barMax])
-                Text("\(String(format: "%.2f", noxAmount)) mg/km")
+                let ball = noxAmount / barMax
+                CapsuleView(barOffset: [barLow / barMax, barHigh / barMax], ballOffset: [], width: ball)
+                Text("\(String(format: "%.2f", 1000 * noxAmount)) mg/km")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
@@ -150,11 +151,7 @@ struct RdeView: View {
                     .cornerRadius(10)
             })
                 .simultaneousGesture(TapGesture().onEnded{
-                    obd.disconnect() { result in
-                        if case .failure(let error) = result {
-                            print("Fail to generate a ppcdf file. \(error.localizedDescription)")
-                        }
-                    }
+                    obd.disconnect()
                 })
         }
     }

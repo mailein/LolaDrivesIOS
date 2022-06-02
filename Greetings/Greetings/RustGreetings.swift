@@ -20,8 +20,8 @@ class RustGreetings {
             "r_rpa",
             "m_rpa",
             "nox_per_kilometer",
-            "is_valid_test",
-            "not_rde_test"
+            "is_valid_test_num",
+            "not_rde_test_num"
         ]
     
 //    func sayHello(to: String) -> String {
@@ -36,6 +36,7 @@ class RustGreetings {
 //    }
     
     func initmonitor(s: String) -> String{
+        print("spec file: \(s)")
         let result = rust_initmonitor(s, RELEVANT_OUTPUTS.joined(separator: ","))
         let swift_result = String(cString: result!)
         rust_string_free(UnsafeMutablePointer(mutating: result))
