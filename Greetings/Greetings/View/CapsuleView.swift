@@ -24,15 +24,7 @@ struct CapsuleView: View{
                     Capsule()
                         .fill(Color.green)
                         .frame(width: geometry.size.width * width)
-                    Text("\(width)")
-                        .position(x: 60, y: -10)
-                        .foregroundColor(.red)
                 }
-//                if width == 0 && ballOffset.isEmpty {
-//                    Capsule()//why Circle() is not aligned and goes to the middle point???
-//                        .fill(Color.green)
-//                        .frame(width: ballHeight)
-//                }
                 ForEach(barOffset, id: \.self){bar in
                     Rectangle()
                         .fill(Color.black)

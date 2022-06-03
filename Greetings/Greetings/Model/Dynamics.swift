@@ -139,9 +139,9 @@ struct DynamicsBar: View{
             pctThreshold = 0.0742 * avg_v + 18.966
         }
         rpaMarkerPercentage = lengthRpa * rpaThreshold / maxRpa + offsetRpa
-        ballRpa = lengthRpa * self._rpa / maxRpa + boundaryRpa
+        ballRpa = lengthRpa * self._rpa / maxRpa + offsetRpa
         pctMarkerPercentage = lengthPct * pctThreshold / maxPct + offsetPct
-        ballPct = lengthPct * self._pct / maxPct + boundaryPct
+        ballPct = lengthPct * self._pct / maxPct + offsetPct
     }
     
     var body: some View{
