@@ -41,6 +41,10 @@ class ViewModel: ObservableObject {
         model.exitRDE()
     }
     
+    func getDistanceSetting() -> Int {
+        return Int(model.distanceSetting)
+    }
+    
     //MARK: - monitoring view
     func isStartLiveMonitoring() -> Bool {
         return model.startLiveMonitoring

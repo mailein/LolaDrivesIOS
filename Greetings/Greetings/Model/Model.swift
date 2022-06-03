@@ -4,7 +4,7 @@ struct Model{
     //RDE view
     var started: Bool = false
     var isRDEMonitoring: Bool = false
-    var distanceSetting: Int = 84
+    var distanceSetting: Float = 83
     //RDE details view
     var totalTime: Double = 0
     
@@ -37,7 +37,7 @@ struct Model{
     
     //func to update the properties
     //MARK: - RDE
-    mutating func setDistanceSetting (to newDistanceSetting: Int) {
+    mutating func setDistanceSetting (to newDistanceSetting: Float) {
         self.distanceSetting = newDistanceSetting
     }
     

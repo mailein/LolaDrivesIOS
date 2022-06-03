@@ -3,7 +3,6 @@ import SwiftUI
 struct RdeSettingsView: View{
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var obd: MyOBD
-    @State var sliderValue: Double = 83
     
     var body: some View{
         VStack{
@@ -14,11 +13,11 @@ struct RdeSettingsView: View{
                 .foregroundColor(.gray)
             Spacer()
 
-            Text("\(Int(sliderValue)) km")
+            Text("\(Int(viewModel.model.distanceSetting)) km")
                 .font(.system(size: 60))
             
             Slider(
-                value: $sliderValue,
+                value: $viewModel.model.distanceSetting,
                 in: 48...100
             ) {
                 Text("distance")
