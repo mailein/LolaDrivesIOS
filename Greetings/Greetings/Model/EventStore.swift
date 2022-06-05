@@ -36,6 +36,14 @@ class EventStore: ObservableObject {
         }
     }
     
+    public static func removeFile(_ file: URL) {
+        do {
+            try FileManager.default.removeItem(at: file)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
     //FOR DEBUG ONLY: clean dir at the start of app run
     public static func clearAllFiles() {
         let files = getAllFiles()

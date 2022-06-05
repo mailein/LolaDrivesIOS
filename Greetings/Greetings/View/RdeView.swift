@@ -63,7 +63,6 @@ struct RdeView: View {
                 Spacer()
                 Text("Valid RDE trip: \(isValidTest == 1 ? "!" : "?")")
                     .font(.largeTitle)
-                Text("set distance to \(viewModel.getDistanceSetting())")
             }
         }
     }
@@ -74,7 +73,7 @@ struct RdeView: View {
         let barHigh: Double = 0.168//g/km
         let barMax: Double = 0.2//g/km
         
-        var noxAmount: Double //mg/km //obd.outputValues[16]
+        var noxAmount: Double //g/km //obd.outputValues[16]
         
         var body: some View{
             VStack{
