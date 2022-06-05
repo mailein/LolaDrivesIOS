@@ -92,13 +92,15 @@ struct MonitoringView: View {
             Button(action: {
                 liveMonitoring()
             }, label: {
-                if viewModel.isStartLiveMonitoringButton(){
-                    Text("Start Live Monitoring")
-                        .padding()
-                }else{
-                    Text("Stop Live Monitoring")
-                        .padding()
-                }
+                let (text, color) = viewModel.isStartLiveMonitoringButton() ? ("Start Live Monitoring", Color.green) : ("Stop Live Monitoring", Color.red)
+                Text(text)
+                    .bold()
+                    .font(.title2)
+                    .frame(width: 280, height: 50)
+                    .background(color)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding()
             })
             .disabled(viewModel.model.isRDEMonitoring)
         }

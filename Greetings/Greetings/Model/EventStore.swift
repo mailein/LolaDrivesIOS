@@ -19,9 +19,9 @@ class EventStore: ObservableObject {
             let dirContents = try FileManager.default.contentsOfDirectory(at: dir,
                                                                       includingPropertiesForKeys: nil)
             var ppcdfFiles = dirContents.filter{ $0.pathExtension == "ppcdf" }
-            ppcdfFiles.forEach{
-                print($0.path)
-            }
+//            ppcdfFiles.forEach{
+//                print($0.path)
+//            }
             try ppcdfFiles.sort{ (a, b) in
                 let aLastPathComponent = a.deletingPathExtension().lastPathComponent
                 let bLastPathComponent = b.deletingPathExtension().lastPathComponent
@@ -96,7 +96,6 @@ class EventStore: ObservableObject {
         } else {//Meta, SupportPids, Error, GPS
             str = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
         }
-        print(str)
         DispatchQueue.main.async {//TODO: bakcground thread causes data race, some lines are not complete
             do {
                 let outfile = try fileURL(fileName: fileName)

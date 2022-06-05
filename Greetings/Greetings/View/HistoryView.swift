@@ -27,7 +27,7 @@ struct HistoryView: View {
                     }
                 }
             }
-            .alert("Unable to delete during an ongoing test / monitoring", isPresented: $unableToDelete) {
+            .alert("Unable to delete during an ongoing RDE test / live monitoring", isPresented: $unableToDelete) {
                 Button("OK", role: .cancel, action: {})
             }
         }

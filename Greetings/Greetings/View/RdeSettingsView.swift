@@ -3,6 +3,7 @@ import SwiftUI
 struct RdeSettingsView: View{
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var obd: MyOBD
+    @State var unableToTap = false
     
     var body: some View{
         VStack{
@@ -34,20 +35,26 @@ struct RdeSettingsView: View{
             })
             Spacer()
             
-            NavigationLink(destination: RdeView(), label: {
-                Text("Start")
+            NavigationLink(destination: RdeView()){
+                Text("Start RDE test")
                     .bold()
                     .font(.title2)
                     .frame(width: 280, height: 50)
-                    .background(Color(.systemRed))
+                    .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-            })
-                .simultaneousGesture(TapGesture().onEnded{
+            }
+            .simultaneousGesture(TapGesture().onEnded{
+                if !viewModel.isStartLiveMonitoringButton() {
+                    unableToTap = true
+                } else {
+                    unableToTap = false
                     viewModel.startRDE()
                     obd.viewDidLoad(isLiveMonitoring: false, selectedCommands: [])
-                })
+                }
+            })
         }
+        .alert("Unable to start RDE test during live monitoring", isPresented: $unableToTap){ Button("OK", role: .cancel, action: {}) }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
                 ConnectedDisconnectedView(connected: obd.isConnected())
