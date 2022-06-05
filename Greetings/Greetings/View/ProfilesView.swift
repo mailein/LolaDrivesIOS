@@ -46,7 +46,7 @@ struct ProfilesView: View {
                     }
                 }
             }
-//            .onDelete(perform: delete)//unable to check isStartLiveMonitoring here
+            .onDelete(perform: delete)//unable to check isStartLiveMonitoring here
             .onMove(perform: reorder)
             .alert("Unable to select / delete during live monitoring", isPresented: $unableToSelect) { Button("OK", role: .cancel, action: {})
             }
