@@ -46,7 +46,7 @@ class ViewModel: ObservableObject {
     }
     
     //MARK: - monitoring view
-    func isStartLiveMonitoring() -> Bool {
+    func isStartLiveMonitoringButton() -> Bool {
         return model.startLiveMonitoring
     }
     

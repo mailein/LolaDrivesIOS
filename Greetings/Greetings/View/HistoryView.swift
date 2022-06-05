@@ -2,7 +2,9 @@ import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var obd: MyOBD
     @State var allFiles = EventStore.getAllFiles()
+    @State var unableToDelete = false
     
     var body: some View {
         List {
@@ -13,12 +15,20 @@ struct HistoryView: View {
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false){
                     Button(role: .destructive){
-                        EventStore.removeFile(fileURL)
-                        allFiles = EventStore.getAllFiles()//since binding the ForEach parameter to a function doesn't work, use @State to bind a var and update it here.
+                        if !viewModel.isStartLiveMonitoringButton() || obd.isRunning() {
+                            unableToDelete = true
+                        } else {
+                            unableToDelete = false
+                            EventStore.removeFile(fileURL)
+                            allFiles = EventStore.getAllFiles()//since binding the ForEach parameter to a function doesn't work, use @State to bind a var and update it here.
+                        }
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
                 }
+            }
+            .alert("Unable to delete during an ongoing test / monitoring", isPresented: $unableToDelete) {
+                Button("OK", role: .cancel, action: {})
             }
         }
         .navigationTitle("History")

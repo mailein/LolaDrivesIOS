@@ -92,7 +92,7 @@ struct MonitoringView: View {
             Button(action: {
                 liveMonitoring()
             }, label: {
-                if viewModel.isStartLiveMonitoring(){
+                if viewModel.isStartLiveMonitoringButton(){
                     Text("Start Live Monitoring")
                         .padding()
                 }else{
@@ -111,7 +111,7 @@ struct MonitoringView: View {
         }
         .onAppear{
             //rule out current ongoing live monitoring or ongoing rde monitoring
-            if viewModel.isStartLiveMonitoring() && !obd.isRunning() {
+            if viewModel.isStartLiveMonitoringButton() && !obd.isRunning() {
                 liveMonitoring()
             }
         }
@@ -126,7 +126,7 @@ struct MonitoringView: View {
     }
     
     func liveMonitoring(){
-        if viewModel.isStartLiveMonitoring() {//start live monitoring
+        if viewModel.isStartLiveMonitoringButton() {//start live monitoring
             obd.viewDidLoad(isLiveMonitoring: true, selectedCommands: viewModel.getSelectedProfileCommands())
         }else{//stop live monitoring
             obd.disconnect()

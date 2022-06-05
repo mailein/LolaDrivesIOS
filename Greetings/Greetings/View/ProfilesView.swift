@@ -18,7 +18,7 @@ struct ProfilesView: View {
                 .disabled(obd.isLiveMonitoringOngoing())//viewModel.isStartLiveMonitoring() doesn't change here, because viewmodel doesn't publish the property change, model does.
                 .swipeActions(edge: .trailing, allowsFullSwipe: false){
                     Button(role: .destructive){
-                        if viewModel.isStartLiveMonitoring() {
+                        if viewModel.isStartLiveMonitoringButton() {
                             unableToSelect = false
                             viewModel.deleteProfile(profile)
                         }else{
@@ -30,7 +30,7 @@ struct ProfilesView: View {
                 }
                 .swipeActions(edge: .leading, allowsFullSwipe: false){
                     Button{
-                        if viewModel.isStartLiveMonitoring() {
+                        if viewModel.isStartLiveMonitoringButton() {
                             unableToSelect = false
                             viewModel.selectProfile(profile)
                         }else{
@@ -48,7 +48,7 @@ struct ProfilesView: View {
             }
 //            .onDelete(perform: delete)//unable to check isStartLiveMonitoring here
             .onMove(perform: reorder)
-            .alert("Unable to select / delete due to live monitoring", isPresented: $unableToSelect) { Button("OK", role: .cancel) {}
+            .alert("Unable to select / delete due to live monitoring", isPresented: $unableToSelect) { Button("OK", role: .cancel, action: {})
             }
         }
         .toolbar{
