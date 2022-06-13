@@ -22,14 +22,12 @@ class EventStore: ObservableObject {
 //            ppcdfFiles.forEach{
 //                print($0.path)
 //            }
-            try ppcdfFiles.sort{ (a, b) in
-                let aLastPathComponent = a.deletingPathExtension().lastPathComponent
-                let bLastPathComponent = b.deletingPathExtension().lastPathComponent
-                let aDate = try Date(aLastPathComponent, strategy: .dateTime)
-                let bDate = try Date(bLastPathComponent, strategy: .dateTime)
-                let compare = aDate.compare(bDate).rawValue
-                return compare >= 0 //descending
-            }
+//            try ppcdfFiles.sort{ (a, b) in
+//                let aLastPathComponent = a.deletingPathExtension().lastPathComponent
+//                let bLastPathComponent = b.deletingPathExtension().lastPathComponent
+//                let compare = try Date(aLastPathComponent, strategy: .dateTime).compare(try Date(bLastPathComponent, strategy: .dateTime)).rawValue
+//                return compare >= 0 //descending
+//            }
             return ppcdfFiles
         } catch {
             fatalError(error.localizedDescription)
