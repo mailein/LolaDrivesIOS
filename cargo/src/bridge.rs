@@ -210,7 +210,7 @@ unsafe fn process_event(
 #[no_mangle]
 /// This is intended for the C code to call for deallocating the
 /// Rust-allocated i32 array.
-unsafe extern "C" fn deallocate_rust_buffer(ptr: *mut i32, len: c_uint) {
+pub unsafe extern "C" fn deallocate_rust_buffer(ptr: *mut f64, len: c_uint) {
     let len = len as usize;
     drop(Vec::from_raw_parts(ptr, len, len));
 }

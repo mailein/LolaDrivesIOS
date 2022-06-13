@@ -86,20 +86,19 @@ class EventStore: ObservableObject {
     }
     
     static func save(to fileName: String, event: PCDFEvent, createFile: Bool = false, completion: @escaping (Result<Int, Error>)->Void) {
-        let serializer = Serializer()
-        var str: String
+        var str: String = ""
         //toIntermediate() will be used in HistoryView to show intermediateEvent.toString() message, so no need to transform to intermediate here
         if let event = event as? OBDEvent {
-            str = serializer.generateFromPattern(pattern: OBDEvent(source: event.source,
+            str = Serializer().generateFromPattern(pattern: OBDEvent(source: event.source,
                                                                     timestamp: event.timestamp,
                                                                    bytes: event.bytes).getPattern()) + "\n"
         } else {//Meta, SupportPids, Error, GPS
-            str = serializer.generateFromPattern(pattern: event.getPattern()) + "\n"
+            str = Serializer().generateFromPattern(pattern: event.getPattern()) + "\n"
         }
         DispatchQueue.main.async {//TODO: bakcground thread causes data race, some lines are not complete
             do {
                 let outfile = try fileURL(fileName: fileName)
-                
+
                 if createFile {
                     try str.write(to: outfile, atomically: true, encoding: .utf8)
                 }else{
@@ -108,7 +107,7 @@ class EventStore: ObservableObject {
                     try file?.write(contentsOf: str.data(using: .utf8)!)
                     try file?.close()
                 }
-                
+
                 DispatchQueue.main.async {
                     completion(.success(1))
                 }

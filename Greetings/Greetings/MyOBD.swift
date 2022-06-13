@@ -126,6 +126,10 @@ class MyOBD: ObservableObject{
         specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     //MARK: - life cycle
     public func viewDidLoad (isLiveMonitoring isLive: Bool, selectedCommands selected: [CommandItem]) -> () {
         resetState(isLive: isLive, selected: selected) // reset at the beginning, so that the state is freezed at the end

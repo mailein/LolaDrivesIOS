@@ -52,7 +52,7 @@ class RustGreetings {
         var len: UInt32 = 0
         let result = rust_sendevent(&inputs, len_in, &len)
         let swift_result: [Double] = Array(UnsafeBufferPointer(start: result, count: Int(len)))
-//        rust_array_free(result)
+        rust_array_free(result, len)
         if swift_result.isEmpty {
             return [String: Double]()
         } else {

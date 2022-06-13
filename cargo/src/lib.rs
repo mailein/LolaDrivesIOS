@@ -39,3 +39,10 @@ pub extern fn rust_string_free(s: *mut c_char) {
         CString::from_raw(s)
     };
 }
+
+#[no_mangle]
+pub extern fn rust_array_free(ptr: *mut f64, len: c_uint) {
+    unsafe{
+        bridge::deallocate_rust_buffer(ptr, len);
+    }
+}
