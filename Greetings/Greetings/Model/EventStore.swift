@@ -4,6 +4,7 @@ import pcdfcore
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
     
+    
     //MARK: - directory
     public static func dirURL() throws -> URL {
         try FileManager.default.url(for: .documentDirectory,
@@ -22,12 +23,21 @@ class EventStore: ObservableObject {
 //            ppcdfFiles.forEach{
 //                print($0.path)
 //            }
-//            try ppcdfFiles.sort{ (a, b) in
-//                let aLastPathComponent = a.deletingPathExtension().lastPathComponent
-//                let bLastPathComponent = b.deletingPathExtension().lastPathComponent
-//                let compare = try Date(aLastPathComponent, strategy: .dateTime).compare(try Date(bLastPathComponent, strategy: .dateTime)).rawValue
-//                return compare >= 0 //descending
-//            }
+            ppcdfFiles.sort{ (a, b) in
+                let dateFormatter = dateFormatter()
+
+                let aLastPathComponent = a.deletingPathExtension().lastPathComponent
+                let bLastPathComponent = b.deletingPathExtension().lastPathComponent
+                let aDate = dateFormatter.date(from: aLastPathComponent)
+                let bDate = dateFormatter.date(from: bLastPathComponent)
+                
+                guard let aDate = aDate, let bDate = bDate else {
+                    return false
+                }
+                
+                let compare = aDate.compare(bDate).rawValue
+                return compare >= 0 //descending
+            }
             return ppcdfFiles
         } catch {
             fatalError(error.localizedDescription)
@@ -116,4 +126,13 @@ class EventStore: ObservableObject {
             }
         }
     }
+    
+    //MARK: - helper methods
+    public static func dateFormatter() -> DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "de_DE_POSIX")
+        dateFormatter.dateFormat = "yyyy.MM.dd, HH:mm:ss"
+        return dateFormatter
+    }
+    
 }

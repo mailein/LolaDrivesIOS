@@ -612,9 +612,7 @@ class MyOBD: ObservableObject{
     
     //MARK: - file system
     private func genFileName() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .short
-        dateFormatter.dateStyle = .short
+        let dateFormatter = EventStore.dateFormatter()
         let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
         return fileName
     }
