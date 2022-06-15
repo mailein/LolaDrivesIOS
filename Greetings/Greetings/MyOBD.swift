@@ -423,8 +423,8 @@ class MyOBD: ObservableObject{
                 //GPS
                 let altitude = self.locationHelper.altitude
                 self.myAltitude = "\(altitude) m"
-                let speedCommand = commandItems.filter{ $0.pid == "0D" }
-                let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue//TODO: wrong
+//                let speedCommand = commandItems.filter{ $0.pid == "0D" }
+//                let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue//TODO: wrong
                 self.genEvent(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: self.locationHelper.gps_speed)
                 
                 commandItems.forEach { item in
@@ -510,13 +510,13 @@ class MyOBD: ObservableObject{
                 let inputCommands: [LTOBD2PID] = self.rdeCommands.map{ $0.obdCommand }
                 let gotValidAnswers: [LTOBD2PID] = inputCommands.filter{ $0.gotValidAnswer }
                 if inputCommands.count ==  gotValidAnswers.count {
-                    //TODO: which order??? where to insert altitude??? // maybe all ok //TODO: varying count
-                    var s = [inputCommands[0].cookedResponse.values.first!.first!.doubleValue,//speed
+                    //TODO: which order??? where to insert altitude??? // maybe all ok
+                    var s = [(inputCommands[0].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//speed
                              altitude,
-                             inputCommands[1].cookedResponse.values.first!.first!.doubleValue,//temp
-                             inputCommands[2].cookedResponse.values.first!.first!.doubleValue,//nox
-                             inputCommands[3].cookedResponse.values.first!.first!.doubleValue,//fuelrate
-                             inputCommands[4].cookedResponse.values.first!.first!.doubleValue,//mafrate
+                             (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//temp
+                             (inputCommands[2].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//nox
+                             (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate
+                             (inputCommands[4].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//mafrate
                              duration]
 
                     let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
