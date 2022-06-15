@@ -515,15 +515,16 @@ class MyOBD: ObservableObject{
                     //TODO: which order??? where to insert altitude??? // maybe all ok
                     var s = [(inputCommands[0].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//speed
                              altitude,
-                             (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//temp
+                             (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue + 273.15,//temp in [K]
                              (inputCommands[2].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//nox
-                             (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate
                              (inputCommands[4].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//mafrate
+                             (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate
                              duration]
 
                     let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
                     if !output.isEmpty {//don't publish empty array, otherwise the rde view will display it
                         self.outputValues = output
+                        print("*********** rtlola inputs: \(s)")
                         print("*********** rtlola outputs: \(self.outputValues)")
                     }
                 }
