@@ -413,6 +413,11 @@ class MyOBD: ObservableObject{
             commandItems = self.selectedCommands
         }
         
+//        let protocolCmd = LTOBD2CommandELM327_DESCRIBE_PROTOCOL.command()
+//        _obd2Adapter?.transmitMultipleCommands([protocolCmd], completionHandler: { _ in
+//            print("protocol command: \(protocolCmd.formattedResponse)")
+//        })//ISO 15765-4 (CAN 11/500)
+        
         _obd2Adapter?.transmitMultipleCommands(
             commandItems
             .filter{ supportedPids.contains(Int($0.pid, radix: 16)!) } //only send supported commands

@@ -100,18 +100,18 @@
         __unused uint length = ( pci & 0b00001111 );
         
         // <Clunky workaround for mode 06 behavior START>
-        if ( bytesInLine.count > headerLength + 1 )
-        {
-            uint sid = bytesInLine[headerLength+1].unsignedIntValue & ~0x40;
-            if ( sid == 0x06 && bytesInLine.count > headerLength + 2 )
-            {
-                uint pid = bytesInLine[headerLength+2].unsignedIntValue;
-                if ( pid > 0x00 && pid % 0x20 )
-                {
-                    numberOfBytesInCommand--;
-                }
-            }
-        }
+//        if ( bytesInLine.count > headerLength + 1 )
+//        {
+//            uint sid = bytesInLine[headerLength+1].unsignedIntValue & ~0x40;
+//            if ( sid == 0x06 && bytesInLine.count > headerLength + 2 )
+//            {
+//                uint pid = bytesInLine[headerLength+2].unsignedIntValue;
+//                if ( pid > 0x00 && pid % 0x20 )
+//                {
+//                    numberOfBytesInCommand--;
+//                }
+//            }
+//        }
         // <Clunky workaround for mode 06 behavior STOP>
         
         BOOL isSingleFrame = ( frametype == 0x00 );
