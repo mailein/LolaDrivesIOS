@@ -420,7 +420,7 @@ class MyOBD: ObservableObject{
             (commands : [LTOBD2Command])->() in
             DispatchQueue.main.async {
                 //timestamp
-                let duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
+                var duration = Date().timeIntervalSince(self.startTime!) //in seconds, because in rust Duration::new(seconds: time, nanoseconds: 0)
                 
                 //GPS
                 let altitude = self.locationHelper.altitude
@@ -430,6 +430,7 @@ class MyOBD: ObservableObject{
                 self.genEvent(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: self.locationHelper.gps_speed)
                 
                 commandItems.forEach { item in
+                    duration = Date().timeIntervalSince(self.startTime!)
                     let obdCommand = item.obdCommand
                     switch item.pid {
                     case "05":
@@ -515,7 +516,7 @@ class MyOBD: ObservableObject{
                     //TODO: which order??? where to insert altitude??? // maybe all ok
                     var s = [(inputCommands[0].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//speed
                              altitude,
-                             (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue + 273.15,//temp in [K]
+                             (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue + 273,//temp in [K], 30 should also be allowed according to 5.2.4
                              (inputCommands[2].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//nox
                              (inputCommands[4].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//mafrate
                              (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate
@@ -524,6 +525,7 @@ class MyOBD: ObservableObject{
                     let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
                     if !output.isEmpty {//don't publish empty array, otherwise the rde view will display it
                         self.outputValues = output
+                        print("*********** rtlola inputs: [speed, altitude, temp, nox, mafrate, fuelrate, duration] ")
                         print("*********** rtlola inputs: \(s)")
                         print("*********** rtlola outputs: \(self.outputValues)")
                     }
