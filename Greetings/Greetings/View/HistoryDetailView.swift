@@ -47,7 +47,6 @@ struct EventLogTabView: View{
     }
 }
 
-
 struct RdeProfileTabView: View{
     var body: some View{
         Text("Speed profile")

@@ -1,8 +1,13 @@
 import Foundation
 
 class RustGreetings {
+    //both inputs and outputs should be in the same order as in spec file
     let RELEVANT_OUTPUTS = [
-//        "duration",
+//        "vp",
+//        "altitudep",
+//        "temperaturep",
+//        "nox_ppmp",
+//        "exhaust_mass_flowp",
             "d",
             "d_u",
             "d_r",
@@ -19,6 +24,9 @@ class RustGreetings {
             "u_rpa",
             "r_rpa",
             "m_rpa",
+//        "nox_mass_flow",
+//        "D_nox_mass",
+//        "nox_mass_aggregated",
             "nox_per_kilometer",
             "is_valid_test_num",
             "not_rde_test_num"

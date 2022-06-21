@@ -102,7 +102,7 @@ pub unsafe extern "C" fn receive_total_event(
     //let mut mon = unsafe { Box::from_raw(monitor as *mut KotlinMonitor) };
     let num_values = mon.num_inputs + 1;
     let inputs = std::slice::from_raw_parts(inputs, num_values as usize).to_vec();
-
+    //println!("***********   rust inputs: {:?}", inputs);
     //TODO
     //debug_assert!(inputs.is_ok());
     //if inputs.is_err() {
@@ -117,7 +117,9 @@ pub unsafe extern "C" fn receive_total_event(
         .copied()
         .map(|f| Value::Float(NotNan::new(f).unwrap()))
         .collect::<Vec<_>>();
-    process_event(mon, &inputs, *time, len_out)
+    let ret = process_event(mon, &inputs, *time, len_out);
+    //println!("***********   rust outputs: {:?}", std::slice::from_raw_parts(ret, *len_out as usize).to_vec());
+    return ret
 }
 
 /// Receives a single event and returns an array of verdicts.

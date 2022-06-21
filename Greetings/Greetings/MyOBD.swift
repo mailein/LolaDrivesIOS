@@ -444,7 +444,7 @@ class MyOBD: ObservableObject{
                         self.myRPM = obdCommand.formattedResponse
                     case "0D":
                         self.mySpeed = obdCommand.formattedResponse
-                        print("speed from OBD command: \(self.mySpeed)")
+//                        print("speed from OBD command: \(self.mySpeed)")
                     case "0F":
                         self.myIntakeTemp = obdCommand.formattedResponse
                     case "10":
@@ -496,6 +496,7 @@ class MyOBD: ObservableObject{
                         self.myIntakeAirTempSensor = obdCommand.formattedResponse
                     case "83":
                         self.myNox = obdCommand.formattedResponse
+//                        print("nox from obd command: \(self.myNox)")//eg. 21 ppm, 0 ppm, -1 ppm, -1 ppm
                     case "86":
                         self.myPmSensor = obdCommand.formattedResponse
                     case "9D":
@@ -512,7 +513,7 @@ class MyOBD: ObservableObject{
                         print("pid \(item.pid), no match case")
                     }
                     self.genEvent(command: obdCommand, duration: duration)
-                    self.printCommandResponse(command: obdCommand)
+//                    self.printCommandResponse(command: obdCommand)
                 }
                 
                 let inputCommands: [LTOBD2PID] = self.rdeCommands.map{ $0.obdCommand }
@@ -522,7 +523,7 @@ class MyOBD: ObservableObject{
                     var s = [(inputCommands[0].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//speed
                              altitude,
                              (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue + 273,//temp in [K], 30 should also be allowed according to 5.2.4
-                             (inputCommands[2].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//nox
+                             (inputCommands[2].formattedResponse.components(separatedBy: " ")[1] as NSString).doubleValue,//nox: use the second sensor value (post cleanning process)
                              (inputCommands[4].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//mafrate
                              (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate
                              duration]
@@ -530,7 +531,7 @@ class MyOBD: ObservableObject{
                     let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
                     if !output.isEmpty {//don't publish empty array, otherwise the rde view will display it
                         self.outputValues = output
-                        print("*********** rtlola inputs: [speed, altitude, temp, nox, mafrate, fuelrate, duration] ")
+//                        print("*********** rtlola inputs: [speed, altitude, temp, nox, mafrate, fuelrate, duration] ")
                         print("*********** rtlola inputs: \(s)")
                         print("*********** rtlola outputs: \(self.outputValues)")
                     }
@@ -562,7 +563,7 @@ class MyOBD: ObservableObject{
                              speed: Double?){
         var event: PCDFEvent
         if altitude != nil, longitude != nil, latitude != nil, speed != nil {
-            print("gpsevent: \(speed!), kotlin: \(KotlinDouble(double: speed!))")
+//            print("gpsevent: \(speed!), kotlin: \(KotlinDouble(double: speed!))")
             event = GPSEvent(source: "Phone-GPS",
                              timestamp: Int64(duration * 1000000000),//seconds -> nanoseconds
                              longitude: longitude!, latitude: latitude!,
@@ -590,7 +591,7 @@ class MyOBD: ObservableObject{
                 let hexStr = String(Int(truncating: r), radix: 16, uppercase: true)
                 response.append(hexStr.count == 1 ? "0\(hexStr)" : hexStr)//decimal -> hex
             }
-            print("add to event: \(command.cookedResponse), \(String(describing: header)), \(response)")
+//            print("add to event: \(command.cookedResponse), \(String(describing: header)), \(response)")
             
             var event: PCDFEvent
             if isSupportedPidsCommand {
@@ -631,7 +632,7 @@ class MyOBD: ObservableObject{
         let file = self.fileName
         EventStore.save(to: file, event: event, createFile: createFile){ result in
             if case .success(_) = result {
-                print("successfully saved event \(event) to ppcdf file \(file)")
+//                print("successfully saved event \(event) to ppcdf file \(file)")
             }
         }
     }
