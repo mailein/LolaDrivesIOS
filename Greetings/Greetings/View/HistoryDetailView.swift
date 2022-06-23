@@ -9,7 +9,7 @@ struct HistoryDetailView: View {
                 .tabItem{
                     Text("Event log")
                 }
-            RdeProfileTabView()
+            RdeLogView()
                 .tabItem{
                     Text("RDE profile")
                 }
@@ -44,12 +44,6 @@ struct EventLogTabView: View{
                 }
             }
         }
-    }
-}
-
-struct RdeProfileTabView: View{
-    var body: some View{
-        Text("Speed profile")
     }
 }
 

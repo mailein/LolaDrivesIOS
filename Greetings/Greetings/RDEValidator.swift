@@ -1,8 +1,5 @@
 import Foundation
 import pcdfcore
-//import Files
-//
-//let projectRepo = "\(Folder.home.path)/Developer/masterThesisLab/RustInIOS/Greetings"
 
 class RDEValidator {
     let VERBOSITY_MODE = true
@@ -10,14 +7,26 @@ class RDEValidator {
     // Last event time in seconds.
     private var time: Double = 0.0
     
-    var isPaused = false
+    var isPaused = false //TODO: true if bluetooth is disconnected
 
     // The sensor profile of the car which is determined.
     var rdeProfile: [OBDCommand] = []
     private var fuelType = ""
     private var fuelRateSupported = false
     private var faeSupported = false
-
+    
+    private var specBody: String
+    private var specHeader: String
+    private var specFuelRateInput: String
+    private var specFuelRateToCo2Diesel: String
+    private var specFuelRateToEMFDiesel: String
+    private var specFuelRateToCo2Gasoline: String
+    private var specFuelRateToEMFGasoline: String
+    private var specMAFToFuelRateDieselFAE: String
+    private var specMAFToFuelRateDiesel: String
+    private var specMAFToFuelRateGasolineFAE: String
+    private var specMAFToFuelRateGasoline: String
+    
     enum RDE_RTLOLA_INPUT_QUANTITIES { 
         case VELOCITY
         case ALTITUDE
@@ -28,6 +37,10 @@ class RDEValidator {
         case FUEL_AIR_EQUIVALENCE
     }
 
+    enum RdeError : Error {
+        case IllegalState
+    }
+    
     
     // Latest relevant values from OBD- and GPSSource.
     private var inputs: [RDE_RTLOLA_INPUT_QUANTITIES: Double?] =
@@ -54,13 +67,29 @@ class RDEValidator {
     }
 
     let rustGreetings = RustGreetings()
+    
+    init() {
+        //load spec file
+        specBody = specFile(filename: "spec_body.lola")
+        specHeader = specFile(filename: "spec_header.lola")
+        specFuelRateInput = specFile(filename: "spec_fuel_rate_input.lola")
+        specFuelRateToCo2Diesel = specFile(filename: "spec_fuel_rate_to_co2_diesel.lola")
+        specFuelRateToEMFDiesel = specFile(filename: "spec_fuel_rate_to_emf_diesel.spec")
+        specFuelRateToCo2Gasoline = specFile(filename: "spec_fuelrate_to_co2_gasoline.lola")
+        specFuelRateToEMFGasoline = specFile(filename: "spec_fuelrate_to_emf_gasoline.lola")
+        specMAFToFuelRateDieselFAE = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola")
+        specMAFToFuelRateDiesel = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola")
+        specMAFToFuelRateGasolineFAE = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola")
+        specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
+    }
 
+    // data are all the events from a ppcdf file
     func monitorOffline(data: [PCDFEvent]) throws -> [Double] { //todo func names to decap. letter
         if(data.isEmpty){
             throw RdeError.IllegalState
         }
         
-        let initialEvents = data[0..<13]
+        let initialEvents = data[0..<13]//TODO: why 13? maybe it's large enough so that all supportedPids-&FuelType-Event are included
         
         // Check initial events for supported PIDs, fuel type, etc.
         var suppPids : [Int] = []
@@ -74,7 +103,8 @@ class RDEValidator {
                     // Get Fueltype
                     case is FuelTypeEvent:
                         fuelType = (iEvent as! FuelTypeEvent).fueltype
-                    default: break
+                    default:
+                        print("event is not suppPids or fuelType: \(iEvent)")
                 }
             }
         }
@@ -89,8 +119,9 @@ class RDEValidator {
             throw RdeError.IllegalState
         }
         
+        let spec = buildSpec()
         // Setup RTLola Monitor
-        rustGreetings.initmonitor(s: specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola"))
+        rustGreetings.initmonitor(s: spec)
         
         var result : [Double] = []
         for event in data {
@@ -135,7 +166,7 @@ class RDEValidator {
         }
         
         // Check whether we have received data for every input needed and that we are not paused (bluetooth disconnected).
-        if (initialDataComplete && !isPaused) {
+        if (initialDataComplete && !isPaused) {//TODO: actually no need for bluetooth to be active here
             var inputsToSend : [Double] = []
             for input in inputs.values {
                 if(input != nil){
@@ -149,17 +180,15 @@ class RDEValidator {
             if(VERBOSITY_MODE){
                 print("Sending(Lola): \(inputsToSend)")
             }
-            // Send latest received inputs to the RTLola monitor to update our streams, in return we receive an array of
-            // values of selected OutputStreams (see: lola-rust-bridge) which we send to the outputchannel (e.g. the UI).
+            // Send latest received inputs to the RTLola monitor to update our streams, in return we receive an array of values of selected OutputStreams (see: lola-rust-bridge) which we send to the outputchannel (e.g. the UI).
             let lolaResult = rustGreetings.sendevent(inputs: &inputsToSend, len_in: UInt32(inputsToSend.count))
             if(VERBOSITY_MODE){
                 print("Receiving(Lola): \(lolaResult)")
             }
-            // The result may be empty, since we are referring to periodic streams (1 Hz). So we receive updated results
-            // every full second.
-            if (!lolaResult.isEmpty) {
-//                outputChannel.offer(lolaResult)//todo
-            }
+            // The result may be empty, since we are referring to periodic streams (1 Hz). So we receive updated results every full second.
+//            if (!lolaResult.isEmpty) {
+//                outputChannel.offer(lolaResult)
+//            }
             return Array(lolaResult.values)
         }
         return []
@@ -240,26 +269,38 @@ class RDEValidator {
         return true
     }
 
-    enum RdeError : Error {
-        case IllegalState
-    }
-    
-    let header = "//////////////////////////////////////////////////////////\n" +
-        "// Test Parameters                                      //\n" +
-        "//////////////////////////////////////////////////////////\n" +
-        "input v: Float64           // vehicle speed in [km/h]\n" +
-        "output vp : Float64 @1Hz :=  v.hold().defaults(to: 0.0) //vehcile speed periodic stream\n" +
-        "\n" +
-        "input altitude: Float64     // above see level in [m]\n" +
-        "output altitudep : Float64 @1Hz := altitude.hold().defaults(to: 0.0) //altitude periodic stream\n" +
-        "\n" +
-        "input temperature: Float64 // ambient temperature in [K]\n" +
-        "output temperaturep: Float64 @1Hz := temperature.hold().defaults(to: 280.0) //temperature periodic " +
-        "stream\n" +
-        "\n" +
-        "// we only do this exemplary for NOx and CO2\n" +
-        "input nox_ppm: Float64  // in [ppm]\n" +
-        "output nox_ppmp: Float64 @1Hz := nox_ppm.hold().defaults(to: 0.0) //nox periodic stream \n" +
-        "\ninput mass_air_flow : Float64 \n"
+    private func buildSpec() -> String {
+        var s = ""
+        s.append(specHeader)
 
+        if fuelRateSupported {
+            s.append(specFuelRateInput)
+        } else {
+            if fuelType == "Diesel" {
+                if (faeSupported) {
+                    s.append(specMAFToFuelRateDieselFAE)
+                } else {
+                    s.append(specMAFToFuelRateDiesel)
+                }
+            }
+            if fuelType == "Gasoline" {
+                if (faeSupported) {
+                    s.append(specMAFToFuelRateGasolineFAE)
+                } else {
+                    s.append(specMAFToFuelRateGasoline)
+                }
+            }
+        }
+        if fuelType == "Diesel" {
+            s.append(specFuelRateToCo2Diesel)
+            s.append(specFuelRateToEMFDiesel)
+        }
+        if fuelType == "Gasoline"{
+            s.append(specFuelRateToCo2Gasoline)
+            s.append(specFuelRateToEMFGasoline)
+        }
+        s.append(specBody)
+
+        return s
+    }
 }

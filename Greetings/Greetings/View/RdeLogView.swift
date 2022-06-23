@@ -41,9 +41,3 @@ struct RdeEventLogView: View{
         }
     }
 }
-
-struct RdeLogView_Previews: PreviewProvider {
-    static var previews: some View {
-        RdeLogView()
-    }
-}
