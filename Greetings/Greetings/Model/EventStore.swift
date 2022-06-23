@@ -76,8 +76,11 @@ class EventStore: ObservableObject {
             var events = [PCDFEvent]()
             
             let fileRead = try? FileHandle(forReadingFrom: fileURL)
-            let dataRead = try fileRead?.readToEnd()
-            let contentStr = String(decoding: dataRead!, as: UTF8.self)
+            guard let dataRead = try fileRead?.readToEnd() else {
+                return
+            }
+            
+            let contentStr = String(decoding: dataRead, as: UTF8.self)
 //            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
             try fileRead?.close()
             

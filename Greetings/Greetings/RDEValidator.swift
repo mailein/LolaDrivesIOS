@@ -85,7 +85,7 @@ class RDEValidator {
 
     // data are all the events from a ppcdf file
     func monitorOffline(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
-        if(data.isEmpty){
+        if(data.isEmpty || data.count < 7){
             throw RdeError.IllegalState
         }
         
