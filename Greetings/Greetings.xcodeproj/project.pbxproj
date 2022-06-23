@@ -14,6 +14,7 @@
 		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
 		9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		962B13D826D7E432001F8760 /* MyOBD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962B13D726D7E432001F8760 /* MyOBD.swift */; };
+		962F4AD928647D6C00DC15E5 /* MultiSensorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */; };
 		963238292734CA62008070D5 /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963238282734CA62008070D5 /* LocationHelper.swift */; };
 		9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
@@ -30,7 +31,6 @@
 		969B9844280EB0E0004A2123 /* spec_body.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B983A280EB0E0004A2123 /* spec_body.lola */; };
 		969B9845280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */; };
 		96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADC26BC205900934FCA /* RDEValidator.swift */; };
-		96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DAE026C143C400934FCA /* PatternParser.swift */; };
 		96B71F20271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F1F271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf */; };
 		96B71F22271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F21271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf */; };
 		96B71F24271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F23271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf */; };
@@ -105,6 +105,7 @@
 		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
 		962B13D726D7E432001F8760 /* MyOBD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOBD.swift; sourceTree = "<group>"; };
+		962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSensorReducer.swift; sourceTree = SOURCE_ROOT; };
 		963238282734CA62008070D5 /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
 		9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rde-lola-test-drive-spec-no-percentile1.lola"; sourceTree = "<group>"; };
 		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
@@ -121,7 +122,6 @@
 		969B983A280EB0E0004A2123 /* spec_body.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_body.lola; sourceTree = "<group>"; };
 		969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuelrate_to_co2_gasoline.lola; sourceTree = "<group>"; };
 		96A0DADC26BC205900934FCA /* RDEValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDEValidator.swift; sourceTree = "<group>"; };
-		96A0DAE026C143C400934FCA /* PatternParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternParser.swift; sourceTree = "<group>"; };
 		96B71F1F271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_11-45-26.ppcdf"; sourceTree = "<group>"; };
 		96B71F21271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-02-52.ppcdf"; sourceTree = "<group>"; };
 		96B71F23271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-03-30.ppcdf"; sourceTree = "<group>"; };
@@ -217,9 +217,9 @@
 				960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */,
 				960DACBB26396D95005DEABB /* RustGreetings.swift */,
 				96A0DADC26BC205900934FCA /* RDEValidator.swift */,
-				96A0DAE026C143C400934FCA /* PatternParser.swift */,
 				96FEAE8226CE6251005255D0 /* Util.swift */,
 				962B13D726D7E432001F8760 /* MyOBD.swift */,
+				962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */,
 				963238282734CA62008070D5 /* LocationHelper.swift */,
 			);
 			path = Greetings;
@@ -505,6 +505,7 @@
 				96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */,
 				96ECF8E727DA745C00429CF1 /* ProfileEditView.swift in Sources */,
 				96ECF8E127DA732700429CF1 /* Profile.swift in Sources */,
+				962F4AD928647D6C00DC15E5 /* MultiSensorReducer.swift in Sources */,
 				96ECF8E327DA734300429CF1 /* ProfileCommands.swift in Sources */,
 				96ECF8DF27DA731100429CF1 /* CommandItem.swift in Sources */,
 				96C6F5F327E7727B004C4B7D /* CapsuleView.swift in Sources */,
@@ -522,7 +523,6 @@
 				96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */,
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
 				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,
-				96A0DAE126C143C400934FCA /* PatternParser.swift in Sources */,
 				96C6F60F27F1CF63004C4B7D /* BaseWebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

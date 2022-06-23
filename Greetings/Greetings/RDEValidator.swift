@@ -96,7 +96,7 @@ class RDEValidator {
         for event in initialEvents {
             if(event.type == pcdfcore.EventType.obdResponse){
                 // Get Supported PIDs
-                let iEvent = (event as! pcdfcore.OBDEvent).toIntermediate()
+                let iEvent = (event as! OBDEvent).toIntermediate()
                 switch iEvent{
                     case is SupportedPidsEvent:
                         suppPids.append(contentsOf: (iEvent as! SupportedPidsEvent).supportedPids as NSArray as! [Int])
@@ -140,29 +140,11 @@ class RDEValidator {
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
         }else if(event.type == pcdfcore.EventType.obdResponse){
             // Reduces the event if possible (e.g. NOx or FuelRate events) using the PCDFCore library.
-            //todo ignore sensorreducer for now
-            let rEvent = (event as! OBDEvent).toIntermediate()
-            if(rEvent is SpeedEvent){
-                inputs[.VELOCITY] = Double((rEvent as! SpeedEvent).speed)
-            }
-            if(rEvent is AmbientAirTemperatureEvent){
-                inputs[.TEMPERATURE] = Double((rEvent as! AmbientAirTemperatureEvent).temperature) + 273.15  // C -> K
-            }
-            if(rEvent is MAFAirFlowRateEvent){
-                inputs[.MASS_AIR_FLOW] = (rEvent as! MAFAirFlowRateEvent).rate
-            }
-            if(rEvent is MAFSensorEvent){
-                inputs[.MASS_AIR_FLOW] = (rEvent as! MAFSensorEvent).mafSensorA
-            }
-            if(rEvent is NOXSensorEvent){
-                inputs[.NOX_PPM] = Double((rEvent as! NOXSensorEvent).sensor1_2)
-            }
-            if(rEvent is FuelRateEvent){
-                inputs[.FUEL_RATE] = (rEvent as! FuelRateEvent).engineFuelRate
-            }
-            if(rEvent is FuelAirEquivalenceRatioEvent){
-                inputs[.FUEL_AIR_EQUIVALENCE] = (rEvent as! FuelAirEquivalenceRatioEvent).ratio
-            }
+            let iEvent = (event as! OBDEvent).toIntermediate()
+            let sensorReducer = MultiSensorReducer()
+            let rEvent = sensorReducer.reduce(event: iEvent)
+            
+            collectOBDEvent(event: rEvent as! OBDIntermediateEvent)
         }
         
         // Check whether we have received data for every input needed and that we are not paused (bluetooth disconnected).
@@ -302,5 +284,29 @@ class RDEValidator {
         s.append(specBody)
 
         return s
+    }
+    
+    private func collectOBDEvent(event: OBDIntermediateEvent) {
+        if(event is SpeedEvent){
+            inputs[.VELOCITY] = Double((event as! SpeedEvent).speed)
+        }
+        if(event is AmbientAirTemperatureEvent){
+            inputs[.TEMPERATURE] = Double((event as! AmbientAirTemperatureEvent).temperature) + 273  // C -> K
+        }
+        if(event is MAFAirFlowRateEvent){
+            inputs[.MASS_AIR_FLOW] = (event as! MAFAirFlowRateEvent).rate
+        }
+        if(event is MAFSensorEvent){
+            inputs[.MASS_AIR_FLOW] = (event as! MAFSensorEvent).mafSensorA
+        }
+        if(event is NOXReducedEvent){//after reduce
+            inputs[.NOX_PPM] = Double((event as! NOXReducedEvent).nox_ppm)
+        }
+        if(event is FuelRateReducedEvent){//after reduce
+            inputs[.FUEL_RATE] = (event as! FuelRateReducedEvent).fuelRate
+        }
+        if(event is FuelAirEquivalenceRatioEvent){
+            inputs[.FUEL_AIR_EQUIVALENCE] = (event as! FuelAirEquivalenceRatioEvent).ratio
+        }
     }
 }

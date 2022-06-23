@@ -519,13 +519,13 @@ class MyOBD: ObservableObject{
                 let inputCommands: [LTOBD2PID] = self.rdeCommands.map{ $0.obdCommand }
                 let gotValidAnswers: [LTOBD2PID] = inputCommands.filter{ $0.gotValidAnswer }
                 if inputCommands.count ==  gotValidAnswers.count {
-                    //TODO: which order??? where to insert altitude??? // maybe all ok
+                    //both inputs and outputs should be in the same order as in spec file
                     var s = [(inputCommands[0].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//speed
                              altitude,
                              (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue + 273,//temp in [K], 30 should also be allowed according to 5.2.4
-                             (inputCommands[2].formattedResponse.components(separatedBy: " ")[1] as NSString).doubleValue,//nox: use the second sensor value (post cleanning process)
+                             (inputCommands[2].formattedResponse.components(separatedBy: " ")[1] as NSString).doubleValue,//nox: use the second sensor value (post cleanning process)//TODO: use NOXReducedEvent to get the correct value
                              (inputCommands[4].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//mafrate
-                             (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate
+                             (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate//TODO: use FuelRateReducedEvent to get the correct value
                              duration]
 
                     let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
