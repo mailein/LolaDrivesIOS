@@ -98,8 +98,8 @@ class EventStore: ObservableObject {
         //toIntermediate() will be used in HistoryView to show intermediateEvent.toString() message, so no need to transform to intermediate here
         if let event = event as? OBDEvent {
             str = Serializer().generateFromPattern(pattern: OBDEvent(source: event.source,
-                                                                    timestamp: event.timestamp,
-                                                                   bytes: event.bytes).getPattern()) + "\n"
+                                                                     timestamp: event.timestamp,
+                                                                     bytes: event.bytes).getPattern()) + "\n"
         } else {//Meta, SupportPids, Error, GPS
             str = Serializer().generateFromPattern(pattern: event.getPattern()) + "\n"
         }

@@ -223,6 +223,8 @@ class MyOBD: ObservableObject{
     
     public func getConnectedAdapterName() -> String { return self.connectedAdapterName }
     
+    public func getFileName() -> String { return self.fileName }
+    
     //MARK: - supported pids
     private func updateSensorDataForSupportedPids() {
 //        let pid900 = LTOBD2PID_VIN_CODE_0902.init()//LTOBD2PID_VIN_CODE_0902.init() causes the bluetooth to fail "The connection has timed out unexpectedly."

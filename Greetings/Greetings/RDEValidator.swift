@@ -84,7 +84,7 @@ class RDEValidator {
     }
 
     // data are all the events from a ppcdf file
-    func monitorOffline(data: [PCDFEvent]) throws -> [Double] { //todo func names to decap. letter
+    func monitorOffline(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
         if(data.isEmpty){
             throw RdeError.IllegalState
         }
@@ -123,7 +123,7 @@ class RDEValidator {
         // Setup RTLola Monitor
         rustGreetings.initmonitor(s: spec)
         
-        var result : [Double] = []
+        var result = [String: Double]()
         for event in data {
             let lolaResult = collectData(event: event) //todo await, swift5.5
             if(!lolaResult.isEmpty){
@@ -135,7 +135,7 @@ class RDEValidator {
         return result
     }
 
-    private func collectData(event: PCDFEvent) -> [Double] { //todo async, swift5.5
+    private func collectData(event: PCDFEvent) -> [String: Double] { //todo async, swift5.5
         if(event.type == pcdfcore.EventType.gps){
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
         }else if(event.type == pcdfcore.EventType.obdResponse){
@@ -171,9 +171,9 @@ class RDEValidator {
 //            if (!lolaResult.isEmpty) {
 //                outputChannel.offer(lolaResult)
 //            }
-            return Array(lolaResult.values)
+            return lolaResult
         }
-        return []
+        return [:]
     }
     
     private func checkSupportedPids(supportedPids: [Int], fuelType: String) -> Bool {

@@ -1,4 +1,5 @@
 import SwiftUI
+import pcdfcore
 
 struct RdeLogView: View{
     @EnvironmentObject var viewModel: ViewModel
@@ -6,7 +7,7 @@ struct RdeLogView: View{
     
     var body: some View{
         TabView{
-            RdeEventLogView()
+            RdeEventLogView(fileName: obd.getFileName())
                 .tabItem{
                     Text("Event Log")
                 }
@@ -32,6 +33,26 @@ struct RdeLogView: View{
 }
 
 struct RdeEventLogView: View{
+    let fileName: String
+    let outputs: [String: Double]
+    
+    init(fileName: String) {
+        self.fileName = fileName
+        do {
+            let fileUrl = try EventStore.fileURL(fileName: fileName)
+            var events: [PCDFEvent] = []
+            EventStore.load(fileURL: fileUrl) { result in
+                if case .success(let e) = result {
+                    events = e
+                }
+            }
+            let rdeValidator = RDEValidator()
+            outputs = try rdeValidator.monitorOffline(data: events)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
     var body: some View{
         VStack{
             Text("Valid RDE Trip:")
