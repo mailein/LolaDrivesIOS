@@ -24,33 +24,26 @@ struct RdeLogView: View{
                 }
             }
             .navigationBarBackButtonHidden(true)
-            .padding()
     }
 }
 
 struct RdeResultView: View{
     let fileName: String
-    let outputs: [String: Double]
+    let fileUrl: URL
+    @StateObject private var eventStore = EventStore()
     
     init(fileName: String) {
         self.fileName = fileName
         do {
-            let fileUrl = try EventStore.fileURL(fileName: fileName)
-            var events: [PCDFEvent] = []
-            EventStore.load(fileURL: fileUrl) { result in
-                if case .success(let e) = result {
-                    events = e
-                }
-            }
-            let rdeValidator = RDEValidator()
-            outputs = try rdeValidator.monitorOffline(data: events)
+            fileUrl = try EventStore.fileURL(fileName: fileName)
         } catch {
-            print(error.localizedDescription)
-            outputs = [:]
+            fileUrl = URL(fileURLWithPath: "")
+            
+            fatalError(error.localizedDescription)
         }
     }
     
-    var body: some View{
+    var body: some View {
         ScrollView{
             VStack(alignment: .leading){
                 RdeResultLine(name: "Valid RDE Trip", imageName: getValidRdeTrip(), helpMsg: .validRdeTrip)
@@ -59,36 +52,50 @@ struct RdeResultView: View{
                 RdeResultLine(name: "NOₓ Emissions", value: getNoxPerKilometer(), unit: "mg/km", helpMsg: .nox)
                 
                 RdeResultSection(category: .URBAN,
-                                 t: outputs["t_u"] ?? 0,
-                                 d: outputs["d_u"] ?? 0,
-                                 avg: outputs["u_avg_v"] ?? 0,
-                                 pct: outputs["u_va_pct"] ?? 0,
-                                 rpa: outputs["u_rpa"] ?? 0,
-                                 totalDistance: outputs["d"] ?? 0)
+                                 t: eventStore.outputs["t_u"] ?? 0,
+                                 d: eventStore.outputs["d_u"] ?? 0,
+                                 avg: eventStore.outputs["u_avg_v"] ?? 0,
+                                 pct: eventStore.outputs["u_va_pct"] ?? 0,
+                                 rpa: eventStore.outputs["u_rpa"] ?? 0,
+                                 totalDistance: eventStore.outputs["d"] ?? 0)
                 
                 RdeResultSection(category: .RURAL,
-                                 t: outputs["t_r"] ?? 0,
-                                 d: outputs["d_r"] ?? 0,
-                                 avg: outputs["r_avg_v"] ?? 0,
-                                 pct: outputs["r_va_pct"] ?? 0,
-                                 rpa: outputs["r_rpa"] ?? 0,
-                                 totalDistance: outputs["d"] ?? 0)
+                                 t: eventStore.outputs["t_r"] ?? 0,
+                                 d: eventStore.outputs["d_r"] ?? 0,
+                                 avg: eventStore.outputs["r_avg_v"] ?? 0,
+                                 pct: eventStore.outputs["r_va_pct"] ?? 0,
+                                 rpa: eventStore.outputs["r_rpa"] ?? 0,
+                                 totalDistance: eventStore.outputs["d"] ?? 0)
                 
                 RdeResultSection(category: .MOTORWAY,
-                                 t: outputs["t_m"] ?? 0,
-                                 d: outputs["d_m"] ?? 0,
-                                 avg: outputs["m_avg_v"] ?? 0,
-                                 pct: outputs["m_va_pct"] ?? 0,
-                                 rpa: outputs["m_rpa"] ?? 0,
-                                 totalDistance: outputs["d"] ?? 0)
+                                 t: eventStore.outputs["t_m"] ?? 0,
+                                 d: eventStore.outputs["d_m"] ?? 0,
+                                 avg: eventStore.outputs["m_avg_v"] ?? 0,
+                                 pct: eventStore.outputs["m_va_pct"] ?? 0,
+                                 rpa: eventStore.outputs["m_rpa"] ?? 0,
+                                 totalDistance: eventStore.outputs["d"] ?? 0)
                 
             }
             .padding()
         }
+        .onAppear{
+            EventStore.load(fileURL: fileUrl) { result in
+                if case .success(let events) = result {
+                    let rdeValidator = RDEValidator()
+                    do {
+                        eventStore.outputs = try rdeValidator.monitorOffline(data: events)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    print("rde result successfully loaded \(events.count) events")
+                }
+            }
+        }
     }
     
+    
     func getValidRdeTrip() -> String {
-        if outputs["is_valid_test_num"] == 1.0 && outputs["not_rde_test_num"] != 0.0 {
+        if eventStore.outputs["is_valid_test_num"] == 1.0 && eventStore.outputs["not_rde_test_num"] != 0.0 {
             return "checkmark"
         } else {
             return "xmark"
@@ -96,19 +103,19 @@ struct RdeResultView: View{
     }
     
     func getTotalDuration() -> Double {
-        let tu: Double = outputs["t_u"] ?? 0
-        let tr: Double = outputs["t_r"] ?? 0
-        let tm: Double = outputs["t_m"] ?? 0
+        let tu: Double = eventStore.outputs["t_u"] ?? 0
+        let tr: Double = eventStore.outputs["t_r"] ?? 0
+        let tm: Double = eventStore.outputs["t_m"] ?? 0
         return tu + tr + tm
     }
     
     func getTotalDistance() -> Double {
-        let d: Double = outputs["d"] ?? 0
+        let d: Double = eventStore.outputs["d"] ?? 0
         return d
     }
     
     func getNoxPerKilometer() -> Double {
-        let nox: Double = outputs["nox_per_kilometer"] ?? 0
+        let nox: Double = eventStore.outputs["nox_per_kilometer"] ?? 0
         return nox * 1000
     }
     

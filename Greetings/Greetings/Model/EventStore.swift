@@ -3,7 +3,7 @@ import pcdfcore
 
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
-    
+    @Published var outputs: [String: Double] = [:]
     
     //MARK: - directory
     public static func dirURL() throws -> URL {
@@ -70,29 +70,31 @@ class EventStore: ObservableObject {
     }
     
     static func load(fileURL: URL, completion: @escaping (Result<[PCDFEvent], Error>)-> Void) {
-        do {
-//            let fileURL = try fileURL(fileName: fileName)
-//                let file = try? FileHandle(forReadingFrom: fileURL)
-            var events = [PCDFEvent]()
-            
-            let fileRead = try? FileHandle(forReadingFrom: fileURL)
-            guard let dataRead = try fileRead?.readToEnd() else {
-                return
+        DispatchQueue.main.async {
+            do {
+                //            let fileURL = try fileURL(fileName: fileName)
+                //                let file = try? FileHandle(forReadingFrom: fileURL)
+                var events = [PCDFEvent]()
+                
+                let fileRead = try? FileHandle(forReadingFrom: fileURL)
+                guard let dataRead = try fileRead?.readToEnd() else {
+                    return
+                }
+                
+                let contentStr = String(decoding: dataRead, as: UTF8.self)
+                //            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
+                try fileRead?.close()
+                
+                let texts = contentStr.components(separatedBy: "\n").filter{ !$0.isEmpty }
+                for text in texts {
+                    let event = PCDFEvent.Companion().fromString(string: text)
+                    events.append(event)
+                }
+                
+                completion(.success(events))
+            } catch {
+                completion(.failure(error))
             }
-            
-            let contentStr = String(decoding: dataRead, as: UTF8.self)
-//            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
-            try fileRead?.close()
-            
-            let texts = contentStr.components(separatedBy: "\n").filter{ !$0.isEmpty }
-            for text in texts {
-                let event = PCDFEvent.Companion().fromString(string: text)
-                events.append(event)
-            }
-            
-            completion(.success(events))
-        } catch {
-            completion(.failure(error))
         }
     }
     
@@ -119,13 +121,9 @@ class EventStore: ObservableObject {
                     try file?.close()
                 }
 
-                DispatchQueue.main.async {
-                    completion(.success(1))
-                }
+                completion(.success(1))
             }catch{
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
+                completion(.failure(error))
             }
         }
     }
