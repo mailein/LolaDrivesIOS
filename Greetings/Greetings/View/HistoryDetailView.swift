@@ -20,6 +20,7 @@ struct HistoryDetailView: View {
                 Text(file.deletingPathExtension().lastPathComponent)
             }
         }
+        .padding(.top, 1)//a hopefully invisible workaround, otherwise TabView being inside NavigationView causes the navigation bar to be transparent
     }
 }
 
