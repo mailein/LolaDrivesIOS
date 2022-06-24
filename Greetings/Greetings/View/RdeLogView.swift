@@ -6,29 +6,26 @@ struct RdeLogView: View{
     @EnvironmentObject var obd: MyOBD
     
     var body: some View{
-        TabView{
-            RdeResultView(fileName: obd.getFileName())
-                .tabItem{
-                    Text("Event Log")
-                }
-        }
-        .toolbar{
-            ToolbarItem(placement: .navigationBarLeading){
-                Button(action: {
-                    viewModel.exitRDE()
-                }) {
-                    HStack(spacing: 0) {
-                        Image(systemName: "chevron.backward")
-                            .aspectRatio(contentMode: .fill)
-                        Text("Configuration")
+        RdeResultView(fileName: obd.getFileName())
+            .navigationTitle("RDE result")
+            .toolbar{
+                ToolbarItem(placement: .navigationBarLeading){
+                    Button(action: {
+                        viewModel.exitRDE()
+                    }) {
+                        HStack(spacing: 0) {
+                            Image(systemName: "chevron.backward")
+                                .aspectRatio(contentMode: .fill)
+                            Text("Configuration")
+                        }
                     }
                 }
+                ToolbarItem(placement: .navigationBarTrailing){
+                    ConnectedDisconnectedView(connected: obd.isConnected())
+                }
             }
-            ToolbarItem(placement: .navigationBarTrailing){
-                ConnectedDisconnectedView(connected: obd.isConnected())
-            }
-        }
-        .navigationBarBackButtonHidden(true)
+            .navigationBarBackButtonHidden(true)
+            .padding()
     }
 }
 
@@ -55,11 +52,11 @@ struct RdeResultView: View{
     }
     
     var body: some View{
-        VStack{
-            RdeResultLine(name: "Valid RDE Trip:", image: getValidRdeTrip(), helpMsg: "valid rde trip help msg test test")
+        VStack(alignment: .leading){
+            RdeResultLine(name: "Valid RDE Trip:", imageName: getValidRdeTrip(), helpMsg: "valid rde trip help msg test test")
             RdeResultLine(name: "Total Duration:", durationText: DurationText(durationInSeconds: Int64(getTotalDuration())))
             RdeResultLine(name: "Total Distance:", distanceText: DistanceText(distanceInMeters: getTotalDistance()))
-            RdeResultLine(name: "NOₓ Emissions:", value: "\(getNoxPerKilometer()) mg/km")
+            RdeResultLine(name: "NOₓ Emissions:", value: getNoxPerKilometer(), unit: "mg/km")
             
             RdeResultSection(text: "Urban",
                              t: outputs["d_u"] ?? 0,
@@ -94,22 +91,23 @@ struct RdeResultView: View{
         let rpa: Double
         
         var body: some View {
-            VStack{
+            VStack(alignment: .leading){
                 Divider()
                 Text(text).bold()
                 RdeResultLine(name: "Duration", durationText: DurationText(durationInSeconds: Int64(t)))
                 RdeResultLine(name: "Distance", distanceText: DistanceText(distanceInMeters: d))
-                RdeResultLine(name: "Average Speed", value: "\(avg) km/h")
-                RdeResultLine(name: "95Percentile(va)", value: "\(pct) m^2/s^3")
-                RdeResultLine(name: "RPA", value: "\(rpa) m/s^2")
+                RdeResultLine(name: "Average Speed", value: avg, unit: "km/h")
+                RdeResultLine(name: "95Percentile(va)", value: pct, unit: "m^2/s^3")
+                RdeResultLine(name: "RPA", value: rpa, unit: "m/s^2")
             }
         }
     }
     
     struct RdeResultLine: View {
         private let name: String
-        private var value: String? = nil
-        private var image: Image? = nil
+        private var value: Double? = nil
+        private var unit: String? = nil
+        private var imageName: String? = nil
         private var duration: DurationText? = nil
         private var distance: DistanceText? = nil
         private var helpMsg: String?
@@ -117,15 +115,16 @@ struct RdeResultView: View{
         
         @State private var showPopover = false
         
-        init(name: String, value: String, helpMsg: String? = nil) {
+        init(name: String, value: Double, unit: String, helpMsg: String? = nil) {
             self.name = name
             self.value = value
+            self.unit = unit
             self.helpMsg = helpMsg
         }
         
-        init(name: String, image: Image, helpMsg: String? = nil) {
+        init(name: String, imageName: String, helpMsg: String? = nil) {
             self.name = name
-            self.image = image
+            self.imageName = imageName
             self.helpMsg = helpMsg
         }
         
@@ -145,11 +144,13 @@ struct RdeResultView: View{
             HStack(alignment: .bottom){
                 Text(name)
                     .frame(width: width, alignment: .bottomLeading)
-                if value != nil {
-                    Text(value!)
+                if value != nil && unit != nil {
+                    Text("\(String(format: "%.2f", value!)) \(unit!)")
                 }
-                if image != nil {
-                    image!
+                if imageName != nil {
+                    let color = imageName! == "xmark" ? Color.red : Color.green
+                    Image(systemName: imageName!)
+                        .foregroundColor(color)
                 }
                 if duration != nil {
                     duration!
@@ -157,12 +158,14 @@ struct RdeResultView: View{
                 if distance != nil {
                     distance!
                 }
+                Spacer()
                 if helpMsg != nil {
                     Button(action: {
                         showPopover = true
                     }, label: {
                         Image(systemName: "questionmark.circle")
                     })
+                    .frame(alignment: .trailing)
                     .popover(isPresented: $showPopover, content: {
                         Text(helpMsg!)
                     })
@@ -171,11 +174,11 @@ struct RdeResultView: View{
         }
     }
     
-    func getValidRdeTrip() -> Image {
+    func getValidRdeTrip() -> String {
         if outputs["is_valid_test_num"] == 1.0 && outputs["not_rde_test_num"] != 0.0 {
-            return Image(systemName: "checkmark")
+            return "checkmark"
         } else {
-            return Image(systemName: "xmark")
+            return "xmark"
         }
     }
     
