@@ -9,12 +9,17 @@ struct HistoryDetailView: View {
                 .tabItem{
                     Text("Event log")
                 }
-            RdeLogView()
+            RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{
                     Text("RDE profile")
                 }
         }
-        .navigationTitle(file.deletingPathExtension().lastPathComponent)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar{
+            ToolbarItem(placement: .principal) {
+                Text(file.deletingPathExtension().lastPathComponent)
+            }
+        }
     }
 }
 

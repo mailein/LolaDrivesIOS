@@ -7,7 +7,6 @@ struct RdeLogView: View{
     
     var body: some View{
         RdeResultView(fileName: obd.getFileName())
-            .navigationTitle("RDE result")
             .toolbar{
                 ToolbarItem(placement: .navigationBarLeading){
                     Button(action: {
@@ -52,36 +51,39 @@ struct RdeResultView: View{
     }
     
     var body: some View{
-        VStack(alignment: .leading){
-            RdeResultLine(name: "Valid RDE Trip", imageName: getValidRdeTrip(), helpMsg: .validRdeTrip)
-            RdeResultLine(name: "Total Duration", durationText: DurationText(durationInSeconds: Int64(getTotalDuration())), helpMsg: .totalDuration)
-            RdeResultLine(name: "Total Distance", distanceText: DistanceText(distanceInMeters: getTotalDistance()))
-            RdeResultLine(name: "NOₓ Emissions", value: getNoxPerKilometer(), unit: "mg/km", helpMsg: .nox)
-            
-            RdeResultSection(category: .URBAN,
-                             t: outputs["t_u"] ?? 0,
-                             d: outputs["d_u"] ?? 0,
-                             avg: outputs["u_avg_v"] ?? 0,
-                             pct: outputs["u_va_pct"] ?? 0,
-                             rpa: outputs["u_rpa"] ?? 0,
-                             totalDistance: outputs["d"] ?? 0)
-
-            RdeResultSection(category: .RURAL,
-                             t: outputs["t_r"] ?? 0,
-                             d: outputs["d_r"] ?? 0,
-                             avg: outputs["r_avg_v"] ?? 0,
-                             pct: outputs["r_va_pct"] ?? 0,
-                             rpa: outputs["r_rpa"] ?? 0,
-                             totalDistance: outputs["d"] ?? 0)
-
-            RdeResultSection(category: .MOTORWAY,
-                             t: outputs["t_m"] ?? 0,
-                             d: outputs["d_m"] ?? 0,
-                             avg: outputs["m_avg_v"] ?? 0,
-                             pct: outputs["m_va_pct"] ?? 0,
-                             rpa: outputs["m_rpa"] ?? 0,
-                             totalDistance: outputs["d"] ?? 0)
-            
+        ScrollView{
+            VStack(alignment: .leading){
+                RdeResultLine(name: "Valid RDE Trip", imageName: getValidRdeTrip(), helpMsg: .validRdeTrip)
+                RdeResultLine(name: "Total Duration", durationText: DurationText(durationInSeconds: Int64(getTotalDuration())), helpMsg: .totalDuration)
+                RdeResultLine(name: "Total Distance", distanceText: DistanceText(distanceInMeters: getTotalDistance()))
+                RdeResultLine(name: "NOₓ Emissions", value: getNoxPerKilometer(), unit: "mg/km", helpMsg: .nox)
+                
+                RdeResultSection(category: .URBAN,
+                                 t: outputs["t_u"] ?? 0,
+                                 d: outputs["d_u"] ?? 0,
+                                 avg: outputs["u_avg_v"] ?? 0,
+                                 pct: outputs["u_va_pct"] ?? 0,
+                                 rpa: outputs["u_rpa"] ?? 0,
+                                 totalDistance: outputs["d"] ?? 0)
+                
+                RdeResultSection(category: .RURAL,
+                                 t: outputs["t_r"] ?? 0,
+                                 d: outputs["d_r"] ?? 0,
+                                 avg: outputs["r_avg_v"] ?? 0,
+                                 pct: outputs["r_va_pct"] ?? 0,
+                                 rpa: outputs["r_rpa"] ?? 0,
+                                 totalDistance: outputs["d"] ?? 0)
+                
+                RdeResultSection(category: .MOTORWAY,
+                                 t: outputs["t_m"] ?? 0,
+                                 d: outputs["d_m"] ?? 0,
+                                 avg: outputs["m_avg_v"] ?? 0,
+                                 pct: outputs["m_va_pct"] ?? 0,
+                                 rpa: outputs["m_rpa"] ?? 0,
+                                 totalDistance: outputs["d"] ?? 0)
+                
+            }
+            .padding()
         }
     }
     
