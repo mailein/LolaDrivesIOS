@@ -41,7 +41,6 @@ class RDEValidator {
         case IllegalState
     }
     
-    
     // Latest relevant values from OBD- and GPSSource.
     private var inputs: [RDE_RTLOLA_INPUT_QUANTITIES: Double?] =
         [.VELOCITY : nil,
@@ -135,6 +134,32 @@ class RDEValidator {
         return result
     }
 
+    private func getInputsToSend() -> [Double] {
+        var inputsToSend: [Double] = []
+        if inputs[.VELOCITY]! != nil {
+            inputsToSend.append(inputs[.VELOCITY]!!)//TODO: why it's not Double? type but Double?? type
+        }
+        if inputs[.ALTITUDE]! != nil {
+            inputsToSend.append(inputs[.ALTITUDE]!!)
+        }
+        if inputs[.TEMPERATURE]! != nil {
+            inputsToSend.append(inputs[.TEMPERATURE]!!)
+        }
+        if inputs[.NOX_PPM]! != nil {
+            inputsToSend.append(inputs[.NOX_PPM]!!)
+        }
+        if inputs[.MASS_AIR_FLOW]! != nil {
+            inputsToSend.append(inputs[.MASS_AIR_FLOW]!!)
+        }
+        if inputs[.FUEL_RATE]! != nil {
+            inputsToSend.append(inputs[.FUEL_RATE]!!)
+        }
+        if inputs[.FUEL_AIR_EQUIVALENCE]! != nil {
+            inputsToSend.append(inputs[.FUEL_AIR_EQUIVALENCE]!!)
+        }
+        return inputsToSend
+    }
+    
     private func collectData(event: PCDFEvent) -> [String: Double] { //todo async, swift5.5
         if(event.type == pcdfcore.EventType.gps){
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
@@ -149,12 +174,14 @@ class RDEValidator {
         
         // Check whether we have received data for every input needed and that we are not paused (bluetooth disconnected).
         if (initialDataComplete && !isPaused) {//TODO: actually no need for bluetooth to be active here
-            var inputsToSend : [Double] = []
-            for input in inputs.values {
-                if(input != nil){
-                    inputsToSend.append(input!)
-                }
-            }
+            //swift dictionary is unordered, so need to maintain the correct order here
+            var inputsToSend: [Double] = getInputsToSend()
+//            for input in inputs.values {
+//                if(input != nil){
+//                    inputsToSend.append(input!)
+//                }
+//            }
+            
             // Prevent time from going backwards
             time = max(time, Double(event.timestamp) / 1_000_000_000.0)
             inputsToSend.append(time)
@@ -164,6 +191,7 @@ class RDEValidator {
             }
             // Send latest received inputs to the RTLola monitor to update our streams, in return we receive an array of values of selected OutputStreams (see: lola-rust-bridge) which we send to the outputchannel (e.g. the UI).
             let lolaResult = rustGreetings.sendevent(inputs: &inputsToSend, len_in: UInt32(inputsToSend.count))
+            
             if(VERBOSITY_MODE){
                 print("Receiving(Lola): \(lolaResult)")
             }
