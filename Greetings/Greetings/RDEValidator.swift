@@ -9,11 +9,13 @@ class RDEValidator {
     
     var isPaused = false //TODO: true if bluetooth is disconnected
 
-    // The sensor profile of the car which is determined.
-    var rdeProfile: [OBDCommand] = []
     private var fuelType = ""
     private var fuelRateSupported = false
     private var faeSupported = false
+    
+    // The sensor profile of the car which is determined.
+    var rdeProfile: [OBDCommand] = []
+    let rustGreetings: RustGreetings
     
     private var specBody: String
     private var specHeader: String
@@ -50,40 +52,36 @@ class RDEValidator {
          .MASS_AIR_FLOW : nil,
          .FUEL_RATE : nil,
          .FUEL_AIR_EQUIVALENCE : nil]
-    
-    /*
-        Initial data is complete if we received values for all the sensors in the determined sensor profile and GPS data.
-        If complete, we can start communicating with the RTLola engine.
-     */
-    private var initialDataComplete: Bool {
-        var countAvailable = 0
-        for pair in inputs {
-            if (pair.value != nil) {
-                countAvailable += 1
-            }
-        }
-        return countAvailable == rdeProfile.count + 1
-    }
 
-    let rustGreetings = RustGreetings()
-    
-    init() {
+    init(rustGreetings: RustGreetings = RustGreetings(),
+         specBody: String = specFile(filename: "spec_body.lola"),
+         specHeader: String = specFile(filename: "spec_header.lola"),
+         specFuelRateInput: String = specFile(filename: "spec_fuel_rate_input.lola"),
+         specFuelRateToCo2Diesel: String = specFile(filename: "spec_fuel_rate_to_co2_diesel.lola"),
+         specFuelRateToEMFDiesel: String = specFile(filename: "spec_fuel_rate_to_emf_diesel.spec"),
+         specFuelRateToCo2Gasoline: String = specFile(filename: "spec_fuelrate_to_co2_gasoline.lola"),
+         specFuelRateToEMFGasoline: String = specFile(filename: "spec_fuelrate_to_emf_gasoline.lola"),
+         specMAFToFuelRateDieselFAE: String = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola"),
+         specMAFToFuelRateDiesel: String = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola"),
+         specMAFToFuelRateGasolineFAE: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola"),
+         specMAFToFuelRateGasoline: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")) {
+        self.rustGreetings = rustGreetings
         //load spec file
-        specBody = specFile(filename: "spec_body.lola")
-        specHeader = specFile(filename: "spec_header.lola")
-        specFuelRateInput = specFile(filename: "spec_fuel_rate_input.lola")
-        specFuelRateToCo2Diesel = specFile(filename: "spec_fuel_rate_to_co2_diesel.lola")
-        specFuelRateToEMFDiesel = specFile(filename: "spec_fuel_rate_to_emf_diesel.spec")
-        specFuelRateToCo2Gasoline = specFile(filename: "spec_fuelrate_to_co2_gasoline.lola")
-        specFuelRateToEMFGasoline = specFile(filename: "spec_fuelrate_to_emf_gasoline.lola")
-        specMAFToFuelRateDieselFAE = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola")
-        specMAFToFuelRateDiesel = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola")
-        specMAFToFuelRateGasolineFAE = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola")
-        specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
+        self.specBody = specBody
+        self.specHeader = specHeader
+        self.specFuelRateInput = specFuelRateInput
+        self.specFuelRateToCo2Diesel = specFuelRateToCo2Diesel
+        self.specFuelRateToEMFDiesel = specFuelRateToEMFDiesel
+        self.specFuelRateToCo2Gasoline = specFuelRateToCo2Gasoline
+        self.specFuelRateToEMFGasoline = specFuelRateToEMFGasoline
+        self.specMAFToFuelRateDieselFAE = specMAFToFuelRateDieselFAE
+        self.specMAFToFuelRateDiesel = specMAFToFuelRateDiesel
+        self.specMAFToFuelRateGasolineFAE = specMAFToFuelRateGasolineFAE
+        self.specMAFToFuelRateGasoline = specMAFToFuelRateGasoline
     }
 
     // data are all the events from a ppcdf file
-    func monitorOffline(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
+    public func monitorOffline(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
         if(data.isEmpty || data.count < 7){
             throw RdeError.IllegalState
         }
@@ -124,7 +122,7 @@ class RDEValidator {
         
         var result = [String: Double]()
         for event in data {
-            let lolaResult = collectData(event: event) //todo await, swift5.5
+            let lolaResult = collectData(event: event, rdeProfileCount: rdeProfile.count, isPaused: self.isPaused) //todo await, swift5.5
             if(!lolaResult.isEmpty){
                 result = lolaResult
             }
@@ -134,7 +132,10 @@ class RDEValidator {
         return result
     }
 
-    private func collectData(event: PCDFEvent) -> [String: Double] { //todo async, swift5.5
+    public func collectData(event: PCDFEvent, rdeProfileCount: Int, altitude: Double? = nil, isPaused: Bool) -> [String: Double] { //todo async, swift5.5
+        if altitude != nil {
+            inputs[.ALTITUDE] = altitude
+        }
         if(event.type == pcdfcore.EventType.gps){
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
         }else if(event.type == pcdfcore.EventType.obdResponse){
@@ -147,7 +148,7 @@ class RDEValidator {
         }
         
         // Check whether we have received data for every input needed and that we are not paused (bluetooth disconnected).
-        if (initialDataComplete && !isPaused) {//TODO: actually no need for bluetooth to be active here
+        if (initialDataComplete(rdeProfileCount: rdeProfileCount) && !isPaused) {//TODO: actually no need for bluetooth to be active here
             //swift dictionary is unordered, so need to maintain the correct order here
             var inputsToSend: [Double] = getInputsToSend()
 //            for input in inputs.values {
@@ -253,7 +254,7 @@ class RDEValidator {
         return true
     }
 
-    private func buildSpec() -> String {
+    public func buildSpec() -> String {
         var s = ""
         s.append(specHeader)
 
@@ -310,6 +311,20 @@ class RDEValidator {
         if(event is FuelAirEquivalenceRatioEvent){
             inputs[.FUEL_AIR_EQUIVALENCE] = (event as! FuelAirEquivalenceRatioEvent).ratio
         }
+    }
+    
+    /*
+        Initial data is complete if we received values for all the sensors in the determined sensor profile and GPS data.
+        If complete, we can start communicating with the RTLola engine.
+     */
+    private func initialDataComplete(rdeProfileCount: Int) -> Bool {
+        var countAvailable = 0
+        for pair in inputs {
+            if (pair.value != nil) {
+                countAvailable += 1
+            }
+        }
+        return countAvailable == rdeProfileCount + 1
     }
     
     private func getInputsToSend() -> [Double] {

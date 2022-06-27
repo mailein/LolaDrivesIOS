@@ -67,6 +67,8 @@ class MyOBD: ObservableObject{
     @Published var myEngineExhaustFlowRate: String = "No data"
     @Published var myEgrError: String = "No data"
     
+    private let rdeValidator: RDEValidator
+    
     private var startTime: Date?
     private var locationHelper: LocationHelper
     
@@ -124,6 +126,8 @@ class MyOBD: ObservableObject{
         specMAFToFuelRateDiesel = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola")
         specMAFToFuelRateGasolineFAE = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola")
         specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
+        
+        rdeValidator = RDEValidator(rustGreetings: rustGreetings, specBody: specBody, specHeader: specHeader, specFuelRateInput: specFuelRateInput, specFuelRateToCo2Diesel: specFuelRateToCo2Diesel, specFuelRateToEMFDiesel: specFuelRateToEMFDiesel, specFuelRateToCo2Gasoline: specFuelRateToCo2Gasoline, specFuelRateToEMFGasoline: specFuelRateToEMFGasoline, specMAFToFuelRateDieselFAE: specMAFToFuelRateDieselFAE, specMAFToFuelRateDiesel: specMAFToFuelRateDiesel, specMAFToFuelRateGasolineFAE: specMAFToFuelRateGasolineFAE, specMAFToFuelRateGasoline: specMAFToFuelRateGasoline)
     }
     
     deinit {
@@ -283,7 +287,7 @@ class MyOBD: ObservableObject{
                                 let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
                                 //TODO: if not supported, throw exception?
                                 if supported {
-                                    let specFile = self.buildSpec()
+                                    let specFile = self.rdeValidator.buildSpec()
                                     self.rustGreetings.initmonitor(s: specFile)
                                     self.updateSensorData()
                                 }else{
@@ -373,41 +377,6 @@ class MyOBD: ObservableObject{
         return true
     }
     
-    private func buildSpec() -> String {
-        var s = ""
-        s.append(specHeader)
-
-        if fuelRateSupported {
-            s.append(specFuelRateInput)
-        } else {
-            if myFuelType == "Diesel" {
-                if (faeSupported) {
-                    s.append(specMAFToFuelRateDieselFAE)
-                } else {
-                    s.append(specMAFToFuelRateDiesel)
-                }
-            }
-            if myFuelType == "Gasoline" {
-                if (faeSupported) {
-                    s.append(specMAFToFuelRateGasolineFAE)
-                } else {
-                    s.append(specMAFToFuelRateGasoline)
-                }
-            }
-        }
-        if myFuelType == "Diesel" {
-            s.append(specFuelRateToCo2Diesel)
-            s.append(specFuelRateToEMFDiesel)
-        }
-        if myFuelType == "Gasoline"{
-            s.append(specFuelRateToCo2Gasoline)
-            s.append(specFuelRateToEMFGasoline)
-        }
-        s.append(specBody)
-
-        return s
-    }
-    
     //MARK: - loop: send and receive obd commands
     private func updateSensorData () {
         var commandItems: [CommandItem] = self.rdeCommands
@@ -434,9 +403,12 @@ class MyOBD: ObservableObject{
                 self.myAltitude = "\(altitude) m"
                 self.genEventAndWriteToFile(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: self.locationHelper.gps_speed)
                 
-                commandItems.forEach { item in
+                for item in commandItems {
                     duration = Date().timeIntervalSince(self.startTime!)
                     let obdCommand = item.obdCommand
+                    if !obdCommand.gotValidAnswer {
+                        continue
+                    }
                     switch item.pid {
                     case "05":
                         self.myCoolantTemp = obdCommand.formattedResponse
@@ -513,74 +485,15 @@ class MyOBD: ObservableObject{
                     default:
                         print("pid \(item.pid), no match case")
                     }
-                    self.genEventAndWriteToFile(command: obdCommand, duration: duration)
-//                    self.printCommandResponse(command: obdCommand)
-                }
-                
-                let inputCommands: [LTOBD2PID] = self.rdeCommands.map{ $0.obdCommand }
-                let gotValidAnswers: [LTOBD2PID] = inputCommands.filter{ $0.gotValidAnswer }
-                if inputCommands.count ==  gotValidAnswers.count {
-                    //obd command -> OBDIntermediateEvent
-                    var inputEvents: [OBDIntermediateEvent] = inputCommands.map {
-                        let event = self.genEvent(command: $0, duration: duration)!
-                        let iEvent = (event as! OBDEvent).toIntermediate()
-                        let sensorReducer = MultiSensorReducer()
-                        let rEvent = sensorReducer.reduce(event: iEvent)
-                        return rEvent as! OBDIntermediateEvent
-                    }
+                    let event = self.genEvent(command: obdCommand, duration: duration)
                     
-                    //only one MASS_AIR_FLOW input
-                    var containsMAFAirFlowRateEvent = false
-                    var containsMAFSensorEvent = false
-                    for e in inputEvents {
-                        if e is MAFAirFlowRateEvent {
-                            containsMAFAirFlowRateEvent = true
+                    if let event = event {
+//                        self.printCommandResponse(command: obdCommand)
+                        let lolaResult = self.rdeValidator.collectData(event: event, rdeProfileCount: self.rdeCommands.count, altitude: altitude, isPaused: !self.connected)
+                        if !lolaResult.isEmpty {
+                            self.outputValues = lolaResult
                         }
-                        if e is MAFSensorEvent {
-                            containsMAFSensorEvent = true
-                        }
-                    }
-                    if containsMAFAirFlowRateEvent && containsMAFSensorEvent {
-                        let i = inputEvents.firstIndex(where: $0 is MAFAirFlowRateEvent)
-                        inputEvents.remove(at: i)
-                    }
-                    
-                    //OBDIntermediateEvent -> input value
-                    var inputs: [Double] = inputEvents.map {
-                        if $0 is SpeedEvent {
-                            return Double(($0 as! SpeedEvent).speed)
-                        }
-                        if $0 is AmbientAirTemperatureEvent {
-                            return Double(($0 as! AmbientAirTemperatureEvent).temperature) + 273
-                        }
-                        if $0 is NOXReducedEvent {
-                            return Double(($0 as! NOXReducedEvent).nox_ppm)
-                        }
-                        if $0 is MAFAirFlowRateEvent {
-                            return ($0 as! MAFAirFlowRateEvent).rate
-                        }
-                        if $0 is MAFSensorEvent {
-                            return ($0 as! MAFSensorEvent).mafSensorA
-                        }
-                        if $0 is FuelRateReducedEvent {
-                            return ($0 as! FuelRateReducedEvent).fuelRate
-                        }
-                        if $0 is FuelAirEquivalenceRatioEvent {
-                            return ($0 as! FuelAirEquivalenceRatioEvent).ratio
-                        }
-                        return 0.0
-                    }
-                    
-                    //+ altitude, + timestamp at the correct index
-                    inputs.insert(altitude, at: 1)
-                    inputs.append(duration)//TODO: maybe try sending event one at a time, so the timestamp is different
-                    
-                    let output = self.rustGreetings.sendevent(inputs: &inputs, len_in: UInt32(inputs.count))
-                    if !output.isEmpty {//don't publish empty array, otherwise the rde view will display it
-                        self.outputValues = output
-//                        print("*********** rtlola inputs: [speed, altitude, temp, nox, mafrate, fuelrate, duration] ")
-                        print("*********** rtlola inputs: \(s)")
-                        print("*********** rtlola outputs: \(self.outputValues)")
+                        self.writeEventToFile(event: event)
                     }
                 }
 
