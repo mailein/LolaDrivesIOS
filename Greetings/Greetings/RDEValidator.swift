@@ -116,7 +116,7 @@ class RDEValidator {
             throw RdeError.IllegalState
         }
         
-        let spec = buildSpec()
+        let spec = buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.fuelType)
         // Setup RTLola Monitor
         rustGreetings.initmonitor(s: spec)
         
@@ -254,7 +254,7 @@ class RDEValidator {
         return true
     }
 
-    public func buildSpec() -> String {
+    public func buildSpec(fuelRateSupported: Bool, fuelType: String) -> String {
         var s = ""
         s.append(specHeader)
 

@@ -287,7 +287,7 @@ class MyOBD: ObservableObject{
                                 let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
                                 //TODO: if not supported, throw exception?
                                 if supported {
-                                    let specFile = self.rdeValidator.buildSpec()
+                                    let specFile = self.rdeValidator.buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.myFuelType)
                                     self.rustGreetings.initmonitor(s: specFile)
                                     self.updateSensorData()
                                 }else{
