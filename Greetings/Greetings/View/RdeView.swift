@@ -81,7 +81,7 @@ struct RdeView: View {
                     .font(.title3)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 let ball = noxAmount / barMax
-                CapsuleView(barOffsets: [barLow / barMax, barHigh / barMax], ballOffsets: [], width: ball)
+                CapsuleView(barOffsets: [barLow / barMax, barHigh / barMax], ballOffsets: [], capsuleCategory: .NOX, width: ball)
                 Text("\(String(format: "%.2f", 1000 * noxAmount)) mg/km")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

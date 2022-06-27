@@ -4,17 +4,17 @@ struct CapsuleView: View{
     var barOffsets: [Double]
     var ballOffsets: [Double]
     var width: Double
-    var isHigherWarning: Bool
+    var capsuleCategory: CapsuleCategory
     
     private var barWidth: CGFloat = 1
     private var ballHeight: CGFloat = 10
     
     let VERBOSITY_MODE = true
     
-    init(barOffsets: [Double] = [0, 1], ballOffsets: [Double] = [0, 1], isHigherWarning: Bool = false, width: Double = 0){
+    init(barOffsets: [Double] = [0, 1], ballOffsets: [Double] = [0, 1], capsuleCategory: CapsuleCategory, width: Double = 0){
         self.barOffsets = barOffsets
         self.ballOffsets = ballOffsets
-        self.isHigherWarning = isHigherWarning
+        self.capsuleCategory = capsuleCategory
         self.width = width
     }
     
@@ -25,13 +25,17 @@ struct CapsuleView: View{
                     .fill(Color.blue)
                     .frame(height: ballHeight)
                 if width != 0 {
-                    let color: Color = width >= barOffsets[1] ? .red : (width >= barOffsets[0] ? .yellow : .green)
+                    let color: Color =
+                    (capsuleCategory == .NOX && width > barOffsets[1]) ||
+                    (capsuleCategory == .DISTANCE && (width < barOffsets[0] || width > barOffsets[1])) ?
+                        .red : (((capsuleCategory == .NOX && width <= barOffsets[0]) ||
+                                 (capsuleCategory == .DISTANCE && width >= barOffsets[0] && width <= barOffsets[1])) ? .green : .yellow)
                     Capsule()
                         .fill(color)
                         .frame(width: geometry.size.width * width)
                     if VERBOSITY_MODE {
                         Text(String(format: "%.2f", width))
-                            .foregroundColor(.green)
+                            .foregroundColor(color)
                             .position(x: 40, y: -10)
                     }
                 }
@@ -46,14 +50,16 @@ struct CapsuleView: View{
                     }
                 }
                 ForEach(ballOffsets, id: \.self) {ball in
-                    let color: Color = (isHigherWarning && ballOffsets[0] > barOffsets[0]) || (!isHigherWarning && ballOffsets[0] < barOffsets[0]) ? .red : .yellow
+                    let color: Color =
+                    (capsuleCategory == .DYNAMICS_HIGH && ballOffsets[0] > barOffsets[0]) ||
+                    (capsuleCategory == .DYNAMICS_LOW && ballOffsets[0] < barOffsets[0]) ? .red : .green
                     Circle()
                         .fill(color)
                         .frame(width: ballHeight, height: ballHeight)
                         .offset(x: ball * (geometry.size.width - ballHeight), y: 0)
                     if VERBOSITY_MODE {
                         Text(String(format: "%.2f", ball))
-                            .foregroundColor(.yellow)
+                            .foregroundColor(color)
                             .position(x: ball * (geometry.size.width - ballHeight), y: 20)
                     }
                 }
@@ -64,8 +70,9 @@ struct CapsuleView: View{
     }
 }
 
-struct CapsuleView_Previews: PreviewProvider {
-    static var previews: some View {
-        CapsuleView()
-    }
+enum CapsuleCategory {
+    case NOX
+    case DISTANCE
+    case DYNAMICS_LOW
+    case DYNAMICS_HIGH
 }
