@@ -3,7 +3,7 @@ import Foundation
 class RustGreetings {
     //both inputs and outputs should be in the same order as in spec file
     let RELEVANT_OUTPUTS = [
-//        "vp",
+//        "vp",//is_urban: vp <= 60.0, is_rural: (60.0 < vp) && (vp <= 90.0), is_motorway: 90.0 < vp
 //        "altitudep",
 //        "temperaturep",
 //        "nox_ppmp",
@@ -18,8 +18,13 @@ class RustGreetings {
             "u_avg_v",
             "r_avg_v",
             "m_avg_v",
+//        "a",
+//        "va",
+//        "u_va_pct_h", //=va if a >= 0.1 && is_urban
             "u_va_pct",
+//        "r_va_pct_h", //=va if a >= 0.1 && is_rural
             "r_va_pct",
+//        "m_va_pct_h", //=va if a >= 0.1 && is_motorway
             "m_va_pct",
             "u_rpa",
             "r_rpa",

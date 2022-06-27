@@ -114,8 +114,8 @@ struct DynamicsBar: View{
     init(terrain: Category, avg_v: Double, rpa: Double, pct: Double){
         self.terrain = terrain
         self.avg_v = avg_v
-        self._rpa = rpa > maxRpa ? 0 : rpa
-        self._pct = pct > maxPct ? 0 : pct
+        self._rpa = rpa > maxRpa ? maxRpa : rpa
+        self._pct = pct > maxPct ? maxPct : pct
         
         switch terrain {
         case .URBAN:
@@ -129,9 +129,9 @@ struct DynamicsBar: View{
             pctThreshold = 0.0742 * avg_v + 18.966
         }
         rpaMarkerPercentage = rpaThreshold / maxRpa
-        ballRpa = self._rpa / maxRpa
+        ballRpa = self._rpa / maxRpa // the scale is [0%, 100%]
         pctMarkerPercentage = pctThreshold / maxPct
-        ballPct = self._pct / maxPct
+        ballPct = self._pct / maxPct // the scale is [0%, 100%]
     }
     
     var body: some View{

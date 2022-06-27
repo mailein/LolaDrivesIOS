@@ -146,7 +146,7 @@ class MyOBD: ObservableObject{
             self.startTime = Date()
         }
         let duration = Date().timeIntervalSince(self.startTime!)
-        genEvent(duration: duration)
+        genEventAndWriteToFile(duration: duration)
         self.connect()
     }
     
@@ -241,7 +241,7 @@ class MyOBD: ObservableObject{
                     //generate SupportedPidsEvent
                     let startIndex = pidCommand.commandString.startIndex
                     let i = pidCommand.commandString.index(pidCommand.commandString.startIndex, offsetBy: 2)
-                    self.genEvent(command: pidCommand, duration: duration, isSupportedPidsCommand: true)
+                    self.genEventAndWriteToFile(command: pidCommand, duration: duration, isSupportedPidsCommand: true)
                     
                     //get supported pids
                     var bitmap: [Bool] = []
@@ -270,14 +270,14 @@ class MyOBD: ObservableObject{
                             commandItems = self.selectedCommands
                         }
                         let unsupported = commandItems.filter{ !self.supportedPids.contains(Int($0.pid, radix: 16)!) }
-                        self.genEvent(unsupportedCommands: unsupported, duration: Date().timeIntervalSince(self.startTime!))
+                        self.genEventAndWriteToFile(unsupportedCommands: unsupported, duration: Date().timeIntervalSince(self.startTime!))
                         
                         //fuelType
                         self._obd2Adapter?.transmitCommand(self.fuelType, responseHandler: {_ in
                             DispatchQueue.main.async {
                                 //get timestamp
                                 let duration = Date().timeIntervalSince(self.startTime!)
-                                self.genEvent(command: self.fuelType, duration: duration)
+                                self.genEventAndWriteToFile(command: self.fuelType, duration: duration)
                                 self.myFuelType = self.fuelType.formattedResponse
                                 
                                 let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
@@ -432,9 +432,7 @@ class MyOBD: ObservableObject{
                 //GPS
                 let altitude = self.locationHelper.altitude
                 self.myAltitude = "\(altitude) m"
-//                let speedCommand = commandItems.filter{ $0.pid == "0D" }
-//                let speed = speedCommand[0].obdCommand.cookedResponse.values.first!.first!.doubleValue//TODO: wrong
-                self.genEvent(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: self.locationHelper.gps_speed)
+                self.genEventAndWriteToFile(duration: duration, altitude: altitude, longitude: self.locationHelper.longitude, latitude: self.locationHelper.latitude, speed: self.locationHelper.gps_speed)
                 
                 commandItems.forEach { item in
                     duration = Date().timeIntervalSince(self.startTime!)
@@ -498,6 +496,7 @@ class MyOBD: ObservableObject{
                         self.myIntakeAirTempSensor = obdCommand.formattedResponse
                     case "83":
                         self.myNox = obdCommand.formattedResponse
+//                        self.printCommandResponse(command: obdCommand)
 //                        print("nox from obd command: \(self.myNox)")//eg. 21 ppm, 0 ppm, -1 ppm, -1 ppm
                     case "86":
                         self.myPmSensor = obdCommand.formattedResponse
@@ -514,23 +513,69 @@ class MyOBD: ObservableObject{
                     default:
                         print("pid \(item.pid), no match case")
                     }
-                    self.genEvent(command: obdCommand, duration: duration)
+                    self.genEventAndWriteToFile(command: obdCommand, duration: duration)
 //                    self.printCommandResponse(command: obdCommand)
                 }
                 
                 let inputCommands: [LTOBD2PID] = self.rdeCommands.map{ $0.obdCommand }
                 let gotValidAnswers: [LTOBD2PID] = inputCommands.filter{ $0.gotValidAnswer }
                 if inputCommands.count ==  gotValidAnswers.count {
-                    //both inputs and outputs should be in the same order as in spec file
-                    var s = [(inputCommands[0].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//speed
-                             altitude,
-                             (inputCommands[1].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue + 273,//temp in [K], 30 should also be allowed according to 5.2.4
-                             (inputCommands[2].formattedResponse.components(separatedBy: " ")[1] as NSString).doubleValue,//nox: use the second sensor value (post cleanning process)//TODO: use NOXReducedEvent to get the correct value
-                             (inputCommands[4].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//mafrate
-                             (inputCommands[3].formattedResponse.components(separatedBy: " ")[0] as NSString).doubleValue,//fuelrate//TODO: use FuelRateReducedEvent to get the correct value
-                             duration]
-
-                    let output = self.rustGreetings.sendevent(inputs: &s, len_in: UInt32(s.count))
+                    //obd command -> OBDIntermediateEvent
+                    var inputEvents: [OBDIntermediateEvent] = inputCommands.map {
+                        let event = self.genEvent(command: $0, duration: duration)!
+                        let iEvent = (event as! OBDEvent).toIntermediate()
+                        let sensorReducer = MultiSensorReducer()
+                        let rEvent = sensorReducer.reduce(event: iEvent)
+                        return rEvent as! OBDIntermediateEvent
+                    }
+                    
+                    //only one MASS_AIR_FLOW input
+                    var containsMAFAirFlowRateEvent = false
+                    var containsMAFSensorEvent = false
+                    for e in inputEvents {
+                        if e is MAFAirFlowRateEvent {
+                            containsMAFAirFlowRateEvent = true
+                        }
+                        if e is MAFSensorEvent {
+                            containsMAFSensorEvent = true
+                        }
+                    }
+                    if containsMAFAirFlowRateEvent && containsMAFSensorEvent {
+                        let i = inputEvents.firstIndex(where: $0 is MAFAirFlowRateEvent)
+                        inputEvents.remove(at: i)
+                    }
+                    
+                    //OBDIntermediateEvent -> input value
+                    var inputs: [Double] = inputEvents.map {
+                        if $0 is SpeedEvent {
+                            return Double(($0 as! SpeedEvent).speed)
+                        }
+                        if $0 is AmbientAirTemperatureEvent {
+                            return Double(($0 as! AmbientAirTemperatureEvent).temperature) + 273
+                        }
+                        if $0 is NOXReducedEvent {
+                            return Double(($0 as! NOXReducedEvent).nox_ppm)
+                        }
+                        if $0 is MAFAirFlowRateEvent {
+                            return ($0 as! MAFAirFlowRateEvent).rate
+                        }
+                        if $0 is MAFSensorEvent {
+                            return ($0 as! MAFSensorEvent).mafSensorA
+                        }
+                        if $0 is FuelRateReducedEvent {
+                            return ($0 as! FuelRateReducedEvent).fuelRate
+                        }
+                        if $0 is FuelAirEquivalenceRatioEvent {
+                            return ($0 as! FuelAirEquivalenceRatioEvent).ratio
+                        }
+                        return 0.0
+                    }
+                    
+                    //+ altitude, + timestamp at the correct index
+                    inputs.insert(altitude, at: 1)
+                    inputs.append(duration)//TODO: maybe try sending event one at a time, so the timestamp is different
+                    
+                    let output = self.rustGreetings.sendevent(inputs: &inputs, len_in: UInt32(inputs.count))
                     if !output.isEmpty {//don't publish empty array, otherwise the rde view will display it
                         self.outputValues = output
 //                        print("*********** rtlola inputs: [speed, altitude, temp, nox, mafrate, fuelrate, duration] ")
@@ -548,21 +593,26 @@ class MyOBD: ObservableObject{
     
     //MARK: - pcdf events
     //MetaEvent
-    private func genEvent(duration: TimeInterval){
+    private func genEvent(duration: TimeInterval) -> PCDFEvent {
         let event = MetaEvent(source: "app id",
                               timestamp: Int64(duration * 1000000000),
                               pcdf_type: "PERSISTENT",
                               ppcdf_version: "1.0.0",
                               ipcdf_version: nil)
+        return event
+    }
+    
+    private func genEventAndWriteToFile(duration: TimeInterval) {
+        let event = genEvent(duration: duration)
         writeEventToFile(event: event, createFile: true)
     }
     
     //GPSEvent
     private func genEvent(duration: TimeInterval,
-                             altitude: CLLocationDistance?,
-                             longitude: CLLocationDegrees?,
-                             latitude: CLLocationDegrees?,
-                             speed: Double?){
+                          altitude: CLLocationDistance?,
+                          longitude: CLLocationDegrees?,
+                          latitude: CLLocationDegrees?,
+                          speed: Double?) -> PCDFEvent {
         var event: PCDFEvent
         if altitude != nil, longitude != nil, latitude != nil, speed != nil {
 //            print("gpsevent: \(speed!), kotlin: \(KotlinDouble(double: speed!))")
@@ -576,13 +626,22 @@ class MyOBD: ObservableObject{
                                timestamp: Int64(duration * 1000000000),
                                message: "altitude: \(altitude), longitude: \(longitude), latitude: \(latitude), gps_speed: \(speed)")
         }
+        return event
+    }
+    
+    private func genEventAndWriteToFile(duration: TimeInterval,
+                                        altitude: CLLocationDistance?,
+                                        longitude: CLLocationDegrees?,
+                                        latitude: CLLocationDegrees?,
+                                        speed: Double?) {
+        let event = genEvent(duration: duration, altitude: altitude, longitude: longitude, latitude: latitude, speed: speed)
         writeEventToFile(event: event)
     }
     
     //OBDEvent
     private func genEvent(command: LTOBD2PID,
-                             duration: TimeInterval,
-                             isSupportedPidsCommand: Bool = false) {
+                          duration: TimeInterval,
+                          isSupportedPidsCommand: Bool = false) -> PCDFEvent? {
         if command.gotValidAnswer {
             let header = command.cookedResponse.first!.key
             let commandString = command.commandString
@@ -603,12 +662,22 @@ class MyOBD: ObservableObject{
             } else {
                 event = OBDEvent(source: "ECU-\(header)", timestamp: Int64(duration * 1000000000), bytes: response)//duration is in seconds, timestamp is in nanoseconds
             }
+            return event
+        }
+        return nil
+    }
+    
+    private func genEventAndWriteToFile(command: LTOBD2PID,
+                                        duration: TimeInterval,
+                                        isSupportedPidsCommand: Bool = false) {
+        let event = genEvent(command: command, duration: duration, isSupportedPidsCommand: isSupportedPidsCommand)
+        if let event = event {
             writeEventToFile(event: event)
         }
     }
     
     //unsupported pids
-    private func genEvent(unsupportedCommands: [CommandItem], duration: TimeInterval) {
+    private func genEvent(unsupportedCommands: [CommandItem], duration: TimeInterval) -> PCDFEvent {
         var commandNames = ""
         unsupportedCommands.forEach{ c in
             commandNames.append("\(c.name), ")
@@ -620,6 +689,11 @@ class MyOBD: ObservableObject{
         let event = ErrorEvent(source: "Unsupported pid",
                                timestamp: Int64(duration * 1000000000),
                                message: "The following OBD-Commands selected for tracking were not supported: \(commandNames)")
+        return event
+    }
+    
+    private func genEventAndWriteToFile(unsupportedCommands: [CommandItem], duration: TimeInterval) {
+        let event = genEvent(unsupportedCommands: unsupportedCommands, duration: duration)
         writeEventToFile(event: event)
     }
     

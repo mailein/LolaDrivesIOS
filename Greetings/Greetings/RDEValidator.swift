@@ -134,32 +134,6 @@ class RDEValidator {
         return result
     }
 
-    private func getInputsToSend() -> [Double] {
-        var inputsToSend: [Double] = []
-        if inputs[.VELOCITY]! != nil {
-            inputsToSend.append(inputs[.VELOCITY]!!)//TODO: why it's not Double? type but Double?? type
-        }
-        if inputs[.ALTITUDE]! != nil {
-            inputsToSend.append(inputs[.ALTITUDE]!!)
-        }
-        if inputs[.TEMPERATURE]! != nil {
-            inputsToSend.append(inputs[.TEMPERATURE]!!)
-        }
-        if inputs[.NOX_PPM]! != nil {
-            inputsToSend.append(inputs[.NOX_PPM]!!)
-        }
-        if inputs[.MASS_AIR_FLOW]! != nil {
-            inputsToSend.append(inputs[.MASS_AIR_FLOW]!!)
-        }
-        if inputs[.FUEL_RATE]! != nil {
-            inputsToSend.append(inputs[.FUEL_RATE]!!)
-        }
-        if inputs[.FUEL_AIR_EQUIVALENCE]! != nil {
-            inputsToSend.append(inputs[.FUEL_AIR_EQUIVALENCE]!!)
-        }
-        return inputsToSend
-    }
-    
     private func collectData(event: PCDFEvent) -> [String: Double] { //todo async, swift5.5
         if(event.type == pcdfcore.EventType.gps){
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
@@ -336,5 +310,31 @@ class RDEValidator {
         if(event is FuelAirEquivalenceRatioEvent){
             inputs[.FUEL_AIR_EQUIVALENCE] = (event as! FuelAirEquivalenceRatioEvent).ratio
         }
+    }
+    
+    private func getInputsToSend() -> [Double] {
+        var inputsToSend: [Double] = []
+        if inputs[.VELOCITY]! != nil {
+            inputsToSend.append(inputs[.VELOCITY]!!)//TODO: why it's not Double? type but Double?? type
+        }
+        if inputs[.ALTITUDE]! != nil {
+            inputsToSend.append(inputs[.ALTITUDE]!!)
+        }
+        if inputs[.TEMPERATURE]! != nil {
+            inputsToSend.append(inputs[.TEMPERATURE]!!)
+        }
+        if inputs[.NOX_PPM]! != nil {
+            inputsToSend.append(inputs[.NOX_PPM]!!)
+        }
+        if inputs[.MASS_AIR_FLOW]! != nil {
+            inputsToSend.append(inputs[.MASS_AIR_FLOW]!!)
+        }
+        if inputs[.FUEL_RATE]! != nil {
+            inputsToSend.append(inputs[.FUEL_RATE]!!)
+        }
+        if inputs[.FUEL_AIR_EQUIVALENCE]! != nil {
+            inputsToSend.append(inputs[.FUEL_AIR_EQUIVALENCE]!!)
+        }
+        return inputsToSend
     }
 }
