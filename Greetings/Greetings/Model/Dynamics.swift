@@ -32,8 +32,8 @@ struct DistanceBar: View{
     }
     
     var body: some View{
-        CapsuleView(barOffset: [barLow / barMax, barHigh / barMax],
-                    ballOffset: [],
+        CapsuleView(barOffsets: [barLow / barMax, barHigh / barMax],
+                    ballOffsets: [],
                     width: totalDistance == 0 ? 0 : (distance / Double(totalDistance * 1000))  / barMax)//km*1000=m
     }
 }
@@ -137,8 +137,8 @@ struct DynamicsBar: View{
     var body: some View{
         HStack(alignment: .center){
             Text("Dynamics")
-            CapsuleView(barOffset: [rpaMarkerPercentage], ballOffset: [ballRpa])
-            CapsuleView(barOffset: [pctMarkerPercentage], ballOffset: [ballPct])
+            CapsuleView(barOffsets: [rpaMarkerPercentage], ballOffsets: [ballRpa], isHigherWarning: false)
+            CapsuleView(barOffsets: [pctMarkerPercentage], ballOffsets: [ballPct], isHigherWarning: true)
         }
     }
     
