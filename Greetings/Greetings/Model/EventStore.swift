@@ -84,7 +84,7 @@ class EventStore: ObservableObject {
                 let contentStr = String(decoding: dataRead, as: UTF8.self)
                 //            let contentStr = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
                 try fileRead?.close()
-                
+//                print("ppcdf file \(fileURL):\n\(contentStr)")//to get ppcdf file
                 let texts = contentStr.components(separatedBy: "\n").filter{ !$0.isEmpty }
                 for text in texts {
                     let event = PCDFEvent.Companion().fromString(string: text)

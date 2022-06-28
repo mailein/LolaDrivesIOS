@@ -245,7 +245,7 @@ NSString* const LTBTLESerialTransporterDidUpdateSignalStrength = @"LTBTLESerialT
     {
         [_manager stopScan];
     }
-    
+//    LOG( @"Did discover peripheral %@ with services: %@", peripheral, peripheral.services );
     CBService* atCommChannel = peripheral.services.firstObject;
     [peripheral discoverCharacteristics:nil forService:atCommChannel];
 }
@@ -269,7 +269,7 @@ NSString* const LTBTLESerialTransporterDidUpdateSignalStrength = @"LTBTLESerialT
             _writer = characteristic;
         }
     }
-    
+//    LOG( @"Did discover service %@ with characteristics: %@", service, service.characteristics )
     if ( _reader && _writer )
     {
         [self connectionAttemptSucceeded];

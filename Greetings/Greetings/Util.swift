@@ -15,7 +15,7 @@ func specFile(filename: String) -> String{
     // file path
     let bundle = Bundle.main
     let path = bundle.path(forResource: name, ofType: type)
-    print(path!)
+//    print(path!)
     
     do {
         return try String(contentsOf: URL(fileURLWithPath: path!), encoding: .utf8)
