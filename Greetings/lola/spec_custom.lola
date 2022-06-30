@@ -1,3 +1,18 @@
 
 //avg(nox) at fuel rate ranges
 output fuel_ratep: Float64 @1Hz:= fuel_rate.hold().defaults(to: 0.0) // fuel_rate periodic stream
+
+output nox_u_h: Float64 @1Hz := if is_urban then D_nox_mass else 0.0
+output nox_sum_u: Float @1Hz := nox_u_h.aggregate(over: 2h, using: sum)
+output nox_per_kilometer_u: Float64 @1Hz := (if d_u > 0.0 then nox_sum_u / (d_u / 1000.0) else 0.0)//nox_per_kilometer_u
+output nox_avg_u: Float @1Hz := nox_u_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+
+output nox_r_h: Float64 @1Hz := if is_rural then D_nox_mass else 0.0
+output nox_sum_r: Float @1Hz := nox_r_h.aggregate(over: 2h, using: sum)
+output nox_per_kilometer_r: Float64 @1Hz := (if d_r > 0.0 then nox_sum_r / (d_r / 1000.0) else 0.0)//nox_per_kilometer_r
+output nox_avg_r: Float @1Hz := nox_r_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+
+output nox_m_h: Float64 @1Hz := if is_motorway then D_nox_mass else 0.0
+output nox_sum_m: Float @1Hz := nox_m_h.aggregate(over: 2h, using: sum)
+output nox_per_kilometer_m: Float64 @1Hz := (if d_m > 0.0 then nox_sum_m / (d_m / 1000.0) else 0.0)//nox_per_kilometer_m
+output nox_avg_m: Float @1Hz := nox_m_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)

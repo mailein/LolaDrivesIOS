@@ -280,11 +280,11 @@ class RDEValidator {
         var extraNames: [String] = []
         let (specNoxAvgAtFuelRate, outputNamesNoxAvgAtFuelRate) = genCustomSpecNoxAvgAtFuelRate()
         s.append(specCustom + specNoxAvgAtFuelRate)
-        extraNames.append(contentsOf: outputNamesNoxAvgAtFuelRate)
+//        extraNames.append(contentsOf: outputNamesNoxAvgAtFuelRate)
         
         let (specFuelRateAvgAtSpeed, outputNamesFuelRateAvgAtSpeed) = genCustomSpecFuelRateAvgAtSpeed()
         s.append(specFuelRateAvgAtSpeed)
-        extraNames.append(contentsOf: outputNamesFuelRateAvgAtSpeed)
+//        extraNames.append(contentsOf: outputNamesFuelRateAvgAtSpeed)
 
         return (s, extraNames)
     }

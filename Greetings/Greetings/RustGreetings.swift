@@ -34,7 +34,13 @@ class RustGreetings {
 //        "nox_mass_aggregated",
             "nox_per_kilometer",
             "is_valid_test_num",
-            "not_rde_test_num"
+            "not_rde_test_num",
+        "nox_per_kilometer_u",
+        "nox_avg_u",
+        "nox_per_kilometer_r",
+        "nox_avg_r",
+        "nox_per_kilometer_m",
+        "nox_avg_m"
         ]
     
 //    func sayHello(to: String) -> String {
