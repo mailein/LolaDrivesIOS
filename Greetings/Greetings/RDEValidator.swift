@@ -277,10 +277,16 @@ class RDEValidator {
         }
         s.append(specBody)
         
-        let (spec, outputNames) = genCustomSpecNoxAvgAtFuelRate()
-        s.append(specCustom + spec)
+        var extraNames: [String] = []
+        let (specNoxAvgAtFuelRate, outputNamesNoxAvgAtFuelRate) = genCustomSpecNoxAvgAtFuelRate()
+        s.append(specCustom + specNoxAvgAtFuelRate)
+        extraNames.append(contentsOf: outputNamesNoxAvgAtFuelRate)
+        
+        let (specFuelRateAvgAtSpeed, outputNamesFuelRateAvgAtSpeed) = genCustomSpecFuelRateAvgAtSpeed()
+        s.append(specFuelRateAvgAtSpeed)
+        extraNames.append(contentsOf: outputNamesFuelRateAvgAtSpeed)
 
-        return (s, outputNames)
+        return (s, extraNames)
     }
     
     private func collectOBDEvent(event: OBDIntermediateEvent) {
