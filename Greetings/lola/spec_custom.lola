@@ -1,0 +1,84 @@
+
+//avg(nox) at fuel rate ranges
+output fuel_ratep: Float64 @1Hz:= fuel_rate.hold().defaults(to: 0.0) // fuel_rate periodic stream
+
+output is_fuel_rate_0_1: Bool := (fuel_ratep >= 0.0) && (fuel_ratep < 1.0)
+output is_fuel_rate_1_2: Bool := (fuel_ratep >= 1.0) && (fuel_ratep < 2.0)
+output is_fuel_rate_2_3: Bool := (fuel_ratep >= 2.0) && (fuel_ratep < 3.0)
+output is_fuel_rate_3_4: Bool := (fuel_ratep >= 3.0) && (fuel_ratep < 4.0)
+output is_fuel_rate_4_5: Bool := (fuel_ratep >= 4.0) && (fuel_ratep < 5.0)
+output is_fuel_rate_5_6: Bool := (fuel_ratep >= 5.0) && (fuel_ratep < 6.0)
+output is_fuel_rate_6_7: Bool := (fuel_ratep >= 6.0) && (fuel_ratep < 7.0)
+output is_fuel_rate_7_8: Bool := (fuel_ratep >= 7.0) && (fuel_ratep < 8.0)
+output is_fuel_rate_8_9: Bool := (fuel_ratep >= 8.0) && (fuel_ratep < 9.0)
+output is_fuel_rate_9_10: Bool := (fuel_ratep >= 9.0) && (fuel_ratep < 10.0)
+output is_fuel_rate_10_11: Bool := (fuel_ratep >= 10.0) && (fuel_ratep < 11.0)
+output is_fuel_rate_11_12: Bool := (fuel_ratep >= 11.0) && (fuel_ratep < 12.0)
+output is_fuel_rate_12_13: Bool := (fuel_ratep >= 12.0) && (fuel_ratep < 13.0)
+output is_fuel_rate_13_14: Bool := (fuel_ratep >= 13.0) && (fuel_ratep < 14.0)
+output is_fuel_rate_14_15: Bool := (fuel_ratep >= 14.0) && (fuel_ratep < 15.0)
+output is_fuel_rate_15_16: Bool := (fuel_ratep >= 15.0) && (fuel_ratep < 16.0)
+output is_fuel_rate_16_17: Bool := (fuel_ratep >= 16.0) && (fuel_ratep < 17.0)
+output is_fuel_rate_17_18: Bool := (fuel_ratep >= 17.0) && (fuel_ratep < 18.0)
+output is_fuel_rate_18_19: Bool := (fuel_ratep >= 18.0) && (fuel_ratep < 19.0)
+output is_fuel_rate_19_20: Bool := (fuel_ratep >= 19.0) && (fuel_ratep < 20.0)
+output is_fuel_rate_20_21: Bool := (fuel_ratep >= 20.0) && (fuel_ratep < 21.0)
+output is_fuel_rate_21_22: Bool := (fuel_ratep >= 21.0) && (fuel_ratep < 22.0)
+output is_fuel_rate_22_23: Bool := (fuel_ratep >= 22.0) && (fuel_ratep < 23.0)
+output is_fuel_rate_23_24: Bool := (fuel_ratep >= 23.0) && (fuel_ratep < 24.0)
+output is_fuel_rate_24_25: Bool := (fuel_ratep >= 24.0) && (fuel_ratep < 25.0)
+output is_fuel_rate_25_or_more: Bool := fuel_ratep >= 25.0
+
+output nox_at_fuel_rate_0_1_h: Float64 @1Hz := if is_fuel_rate_0_1 then D_nox_mass else 0.0
+output nox_at_fuel_rate_1_2_h: Float64 @1Hz := if is_fuel_rate_1_2 then D_nox_mass else 0.0
+output nox_at_fuel_rate_2_3_h: Float64 @1Hz := if is_fuel_rate_2_3 then D_nox_mass else 0.0
+output nox_at_fuel_rate_3_4_h: Float64 @1Hz := if is_fuel_rate_3_4 then D_nox_mass else 0.0
+output nox_at_fuel_rate_4_5_h: Float64 @1Hz := if is_fuel_rate_4_5 then D_nox_mass else 0.0
+output nox_at_fuel_rate_5_6_h: Float64 @1Hz := if is_fuel_rate_5_6 then D_nox_mass else 0.0
+output nox_at_fuel_rate_6_7_h: Float64 @1Hz := if is_fuel_rate_6_7 then D_nox_mass else 0.0
+output nox_at_fuel_rate_7_8_h: Float64 @1Hz := if is_fuel_rate_7_8 then D_nox_mass else 0.0
+output nox_at_fuel_rate_8_9_h: Float64 @1Hz := if is_fuel_rate_8_9 then D_nox_mass else 0.0
+output nox_at_fuel_rate_9_10_h: Float64 @1Hz := if is_fuel_rate_9_10 then D_nox_mass else 0.0
+output nox_at_fuel_rate_10_11_h: Float64 @1Hz := if is_fuel_rate_10_11 then D_nox_mass else 0.0
+output nox_at_fuel_rate_11_12_h: Float64 @1Hz := if is_fuel_rate_11_12 then D_nox_mass else 0.0
+output nox_at_fuel_rate_12_13_h: Float64 @1Hz := if is_fuel_rate_12_13 then D_nox_mass else 0.0
+output nox_at_fuel_rate_13_14_h: Float64 @1Hz := if is_fuel_rate_13_14 then D_nox_mass else 0.0
+output nox_at_fuel_rate_14_15_h: Float64 @1Hz := if is_fuel_rate_14_15 then D_nox_mass else 0.0
+output nox_at_fuel_rate_15_16_h: Float64 @1Hz := if is_fuel_rate_15_16 then D_nox_mass else 0.0
+output nox_at_fuel_rate_16_17_h: Float64 @1Hz := if is_fuel_rate_16_17 then D_nox_mass else 0.0
+output nox_at_fuel_rate_17_18_h: Float64 @1Hz := if is_fuel_rate_17_18 then D_nox_mass else 0.0
+output nox_at_fuel_rate_18_19_h: Float64 @1Hz := if is_fuel_rate_18_19 then D_nox_mass else 0.0
+output nox_at_fuel_rate_19_20_h: Float64 @1Hz := if is_fuel_rate_19_20 then D_nox_mass else 0.0
+output nox_at_fuel_rate_20_21_h: Float64 @1Hz := if is_fuel_rate_20_21 then D_nox_mass else 0.0
+output nox_at_fuel_rate_21_22_h: Float64 @1Hz := if is_fuel_rate_21_22 then D_nox_mass else 0.0
+output nox_at_fuel_rate_22_23_h: Float64 @1Hz := if is_fuel_rate_22_23 then D_nox_mass else 0.0
+output nox_at_fuel_rate_23_24_h: Float64 @1Hz := if is_fuel_rate_23_24 then D_nox_mass else 0.0
+output nox_at_fuel_rate_24_25_h: Float64 @1Hz := if is_fuel_rate_24_25 then D_nox_mass else 0.0
+output nox_at_fuel_rate_25_or_more_h: Float64 @1Hz := if is_fuel_rate_25_or_more then D_nox_mass else 0.0
+
+output nox_avg_at_fuel_rate_0_1: Float64 @1Hz := nox_at_fuel_rate_0_1_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_1_2: Float64 @1Hz := nox_at_fuel_rate_1_2_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_2_3: Float64 @1Hz := nox_at_fuel_rate_2_3_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_3_4: Float64 @1Hz := nox_at_fuel_rate_3_4_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_4_5: Float64 @1Hz := nox_at_fuel_rate_4_5_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_5_6: Float64 @1Hz := nox_at_fuel_rate_5_6_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_6_7: Float64 @1Hz := nox_at_fuel_rate_6_7_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_7_8: Float64 @1Hz := nox_at_fuel_rate_7_8_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_8_9: Float64 @1Hz := nox_at_fuel_rate_8_9_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_9_10: Float64 @1Hz := nox_at_fuel_rate_9_10_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_10_11: Float64 @1Hz := nox_at_fuel_rate_10_11_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_11_12: Float64 @1Hz := nox_at_fuel_rate_11_12_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_12_13: Float64 @1Hz := nox_at_fuel_rate_12_13_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_13_14: Float64 @1Hz := nox_at_fuel_rate_13_14_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_14_15: Float64 @1Hz := nox_at_fuel_rate_14_15_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_15_16: Float64 @1Hz := nox_at_fuel_rate_15_16_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_16_17: Float64 @1Hz := nox_at_fuel_rate_16_17_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_17_18: Float64 @1Hz := nox_at_fuel_rate_17_18_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_18_19: Float64 @1Hz := nox_at_fuel_rate_18_19_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_19_20: Float64 @1Hz := nox_at_fuel_rate_19_20_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_20_21: Float64 @1Hz := nox_at_fuel_rate_20_21_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_21_22: Float64 @1Hz := nox_at_fuel_rate_21_22_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_22_23: Float64 @1Hz := nox_at_fuel_rate_22_23_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_23_24: Float64 @1Hz := nox_at_fuel_rate_23_24_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_24_25: Float64 @1Hz := nox_at_fuel_rate_24_25_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)
+output nox_avg_at_fuel_rate_25_or_more: Float64 @1Hz := nox_at_fuel_rate_25_or_more_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)

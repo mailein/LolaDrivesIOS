@@ -28,6 +28,7 @@ class RDEValidator {
     private var specMAFToFuelRateDiesel: String
     private var specMAFToFuelRateGasolineFAE: String
     private var specMAFToFuelRateGasoline: String
+    private var specCustom: String
     
     enum RDE_RTLOLA_INPUT_QUANTITIES { 
         case VELOCITY
@@ -64,7 +65,7 @@ class RDEValidator {
          specMAFToFuelRateDieselFAE: String = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola"),
          specMAFToFuelRateDiesel: String = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola"),
          specMAFToFuelRateGasolineFAE: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola"),
-         specMAFToFuelRateGasoline: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")) {
+         specMAFToFuelRateGasoline: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola"), specCustom: String = specFile(filename: "spec_custom.lola")) {
         self.rustGreetings = rustGreetings
         //load spec file
         self.specBody = specBody
@@ -78,6 +79,7 @@ class RDEValidator {
         self.specMAFToFuelRateDiesel = specMAFToFuelRateDiesel
         self.specMAFToFuelRateGasolineFAE = specMAFToFuelRateGasolineFAE
         self.specMAFToFuelRateGasoline = specMAFToFuelRateGasoline
+        self.specCustom = specCustom
     }
 
     // data are all the events from a ppcdf file
@@ -285,6 +287,7 @@ class RDEValidator {
             s.append(specFuelRateToEMFGasoline)
         }
         s.append(specBody)
+        s.append(specCustom)
 
         return s
     }

@@ -31,6 +31,7 @@ class MyOBD: ObservableObject{
     private var specMAFToFuelRateDiesel: String
     private var specMAFToFuelRateGasolineFAE: String
     private var specMAFToFuelRateGasoline: String
+    private var specCustom: String
     
     @Published var mySpeed : String = "No data"
     @Published var myAltitude : String = "No data"
@@ -126,8 +127,9 @@ class MyOBD: ObservableObject{
         specMAFToFuelRateDiesel = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola")
         specMAFToFuelRateGasolineFAE = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola")
         specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
+        specCustom = specFile(filename: "spec_custom.lola")
         
-        rdeValidator = RDEValidator(rustGreetings: rustGreetings, specBody: specBody, specHeader: specHeader, specFuelRateInput: specFuelRateInput, specFuelRateToCo2Diesel: specFuelRateToCo2Diesel, specFuelRateToEMFDiesel: specFuelRateToEMFDiesel, specFuelRateToCo2Gasoline: specFuelRateToCo2Gasoline, specFuelRateToEMFGasoline: specFuelRateToEMFGasoline, specMAFToFuelRateDieselFAE: specMAFToFuelRateDieselFAE, specMAFToFuelRateDiesel: specMAFToFuelRateDiesel, specMAFToFuelRateGasolineFAE: specMAFToFuelRateGasolineFAE, specMAFToFuelRateGasoline: specMAFToFuelRateGasoline)
+        rdeValidator = RDEValidator(rustGreetings: rustGreetings, specBody: specBody, specHeader: specHeader, specFuelRateInput: specFuelRateInput, specFuelRateToCo2Diesel: specFuelRateToCo2Diesel, specFuelRateToEMFDiesel: specFuelRateToEMFDiesel, specFuelRateToCo2Gasoline: specFuelRateToCo2Gasoline, specFuelRateToEMFGasoline: specFuelRateToEMFGasoline, specMAFToFuelRateDieselFAE: specMAFToFuelRateDieselFAE, specMAFToFuelRateDiesel: specMAFToFuelRateDiesel, specMAFToFuelRateGasolineFAE: specMAFToFuelRateGasolineFAE, specMAFToFuelRateGasoline: specMAFToFuelRateGasoline, specCustom: specCustom)
     }
     
     deinit {
