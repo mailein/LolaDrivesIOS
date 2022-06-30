@@ -54,37 +54,26 @@ class RDEValidator {
          .FUEL_RATE : nil,
          .FUEL_AIR_EQUIVALENCE : nil]
 
-    init(rustGreetings: RustGreetings = RustGreetings(),
-         specBody: String = specFile(filename: "spec_body.lola"),
-         specHeader: String = specFile(filename: "spec_header.lola"),
-         specFuelRateInput: String = specFile(filename: "spec_fuel_rate_input.lola"),
-         specFuelRateToCo2Diesel: String = specFile(filename: "spec_fuel_rate_to_co2_diesel.lola"),
-         specFuelRateToEMFDiesel: String = specFile(filename: "spec_fuel_rate_to_emf_diesel.spec"),
-         specFuelRateToCo2Gasoline: String = specFile(filename: "spec_fuelrate_to_co2_gasoline.lola"),
-         specFuelRateToEMFGasoline: String = specFile(filename: "spec_fuelrate_to_emf_gasoline.lola"),
-         specMAFToFuelRateDieselFAE: String = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola"),
-         specMAFToFuelRateDiesel: String = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola"),
-         specMAFToFuelRateGasolineFAE: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola"),
-         specMAFToFuelRateGasoline: String = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola"), specCustom: String = specFile(filename: "spec_custom.lola")) {
+    init(rustGreetings: RustGreetings = RustGreetings()) {
         self.rustGreetings = rustGreetings
         //load spec file
-        self.specBody = specBody
-        self.specHeader = specHeader
-        self.specFuelRateInput = specFuelRateInput
-        self.specFuelRateToCo2Diesel = specFuelRateToCo2Diesel
-        self.specFuelRateToEMFDiesel = specFuelRateToEMFDiesel
-        self.specFuelRateToCo2Gasoline = specFuelRateToCo2Gasoline
-        self.specFuelRateToEMFGasoline = specFuelRateToEMFGasoline
-        self.specMAFToFuelRateDieselFAE = specMAFToFuelRateDieselFAE
-        self.specMAFToFuelRateDiesel = specMAFToFuelRateDiesel
-        self.specMAFToFuelRateGasolineFAE = specMAFToFuelRateGasolineFAE
-        self.specMAFToFuelRateGasoline = specMAFToFuelRateGasoline
-        self.specCustom = specCustom
+        specBody = specFile(filename: "spec_body.lola")
+        specHeader = specFile(filename: "spec_header.lola")
+        specFuelRateInput = specFile(filename: "spec_fuel_rate_input.lola")
+        specFuelRateToCo2Diesel = specFile(filename: "spec_fuel_rate_to_co2_diesel.lola")
+        specFuelRateToEMFDiesel = specFile(filename: "spec_fuel_rate_to_emf_diesel.spec")
+        specFuelRateToCo2Gasoline = specFile(filename: "spec_fuelrate_to_co2_gasoline.lola")
+        specFuelRateToEMFGasoline = specFile(filename: "spec_fuelrate_to_emf_gasoline.lola")
+        specMAFToFuelRateDieselFAE = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola")
+        specMAFToFuelRateDiesel = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola")
+        specMAFToFuelRateGasolineFAE = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola")
+        specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
+        specCustom = specFile(filename: "spec_custom.lola")
     }
 
     // data are all the events from a ppcdf file
     public func monitorOffline(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
-        if(data.isEmpty || data.count < 7){
+        if(data.isEmpty || data.count < 13){
             throw RdeError.IllegalState
         }
         
@@ -118,9 +107,9 @@ class RDEValidator {
             throw RdeError.IllegalState
         }
         
-        let spec = buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.fuelType)
+        let (spec, extraNames) = buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.fuelType)
         // Setup RTLola Monitor
-        rustGreetings.initmonitor(s: spec)
+        rustGreetings.initmonitor(s: spec, customOutputNames: extraNames)
         
         var result = [String: Double]()
         for event in data {
@@ -256,7 +245,7 @@ class RDEValidator {
         return true
     }
 
-    public func buildSpec(fuelRateSupported: Bool, fuelType: String) -> String {
+    public func buildSpec(fuelRateSupported: Bool, fuelType: String) -> (String, [String]) {
         var s = ""
         s.append(specHeader)
 
@@ -287,9 +276,11 @@ class RDEValidator {
             s.append(specFuelRateToEMFGasoline)
         }
         s.append(specBody)
-        s.append(specCustom)
+        
+        let (spec, outputNames) = genCustomSpecNoxAvgAtFuelRate()
+        s.append(specCustom + spec)
 
-        return s
+        return (s, outputNames)
     }
     
     private func collectOBDEvent(event: OBDIntermediateEvent) {

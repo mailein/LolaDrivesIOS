@@ -36,3 +36,37 @@ extension BinaryInteger {
         return binaryString
     }
 }
+
+func genCustomSpec(format: String, lastLineFormat: String, nameFormat: String, nameLastLineFormat: String, start: Int, end: Int, step: Int) -> (String, [String]) {
+    var str = ""
+    var names: [String] = []
+    for i in stride(from: start, to: end, by: step) {
+        str += String(format: format, "\(i)", "\(i+step)")
+        str += "\n"
+        names.append(String(format: nameFormat, "\(i)", "\(i+step)"))
+    }
+    str += String(format: lastLineFormat, "\(end)")
+    names.append(String(format: nameLastLineFormat, "\(end)"))
+    
+    return (str, names)
+}
+
+func genCustomSpecNoxAvgAtFuelRate() -> (String, [String]) {
+    let isFuelRateFormat = "output is_fuel_rate_%1$@_%2$@: Bool := (fuel_ratep >= %1$@.0) && (fuel_ratep < %2$@.0)"
+    let noxAtFuelRateFormat = "output nox_at_fuel_rate_%1$@_%2$@_h: Float64 @1Hz := if is_fuel_rate_%1$@_%2$@ then D_nox_mass else 0.0"
+    let noxAvgAtFuelRateFormat = "output nox_avg_at_fuel_rate_%1$@_%2$@: Float64 @1Hz := nox_at_fuel_rate_%1$@_%2$@_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)"
+    
+    let isFuelRateLastLineFormat = "output is_fuel_rate_%1$@_or_more: Bool := fuel_ratep >= %1$@.0"
+    let noxAtFuelRateLastLineFormat = "output nox_at_fuel_rate_%1$@_or_more_h: Float64 @1Hz := if is_fuel_rate_%1$@_or_more then D_nox_mass else 0.0"
+    let noxAvgAtFuelRateLastLineFormat = "output nox_avg_at_fuel_rate_%1$@_or_more: Float64 @1Hz := nox_at_fuel_rate_%1$@_or_more_h.aggregate(over: 2h, using: avg).defaults(to: 0.0)"
+    
+    let nameFormat = "nox_avg_at_fuel_rate_%1$@_%2$@"
+    let nameLastLineFormat = "nox_avg_at_fuel_rate_%1$@_or_more"
+    
+    let format = "\(isFuelRateFormat)\n\(noxAtFuelRateFormat)\n\(noxAvgAtFuelRateFormat)"
+    let lastLineFormat = "\(isFuelRateLastLineFormat)\n\(noxAtFuelRateLastLineFormat)\n\(noxAvgAtFuelRateLastLineFormat)"
+    
+    let (spec, names) = genCustomSpec(format: format, lastLineFormat: lastLineFormat, nameFormat: nameFormat, nameLastLineFormat: nameLastLineFormat, start: 0, end: 25, step: 1)
+    
+    return (spec, names)
+}

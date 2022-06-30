@@ -19,19 +19,6 @@ class MyOBD: ObservableObject{
     
     // LOLA
     private let rustGreetings = RustGreetings()
-//    let fileContent = specFile(filename: "rde-lola-test-drive-spec-no-percentile1.lola")//even if it's in a folder, no need to add folder name
-    private var specBody: String
-    private var specHeader: String
-    private var specFuelRateInput: String
-    private var specFuelRateToCo2Diesel: String
-    private var specFuelRateToEMFDiesel: String
-    private var specFuelRateToCo2Gasoline: String
-    private var specFuelRateToEMFGasoline: String
-    private var specMAFToFuelRateDieselFAE: String
-    private var specMAFToFuelRateDiesel: String
-    private var specMAFToFuelRateGasolineFAE: String
-    private var specMAFToFuelRateGasoline: String
-    private var specCustom: String
     
     @Published var mySpeed : String = "No data"
     @Published var myAltitude : String = "No data"
@@ -115,21 +102,7 @@ class MyOBD: ObservableObject{
         }
         connectedAdapterName = ""
         
-        //load spec file
-        specBody = specFile(filename: "spec_body.lola")
-        specHeader = specFile(filename: "spec_header.lola")
-        specFuelRateInput = specFile(filename: "spec_fuel_rate_input.lola")
-        specFuelRateToCo2Diesel = specFile(filename: "spec_fuel_rate_to_co2_diesel.lola")
-        specFuelRateToEMFDiesel = specFile(filename: "spec_fuel_rate_to_emf_diesel.spec")
-        specFuelRateToCo2Gasoline = specFile(filename: "spec_fuelrate_to_co2_gasoline.lola")
-        specFuelRateToEMFGasoline = specFile(filename: "spec_fuelrate_to_emf_gasoline.lola")
-        specMAFToFuelRateDieselFAE = specFile(filename: "spec_maf_to_fuel_rate_diesel_fae.lola")
-        specMAFToFuelRateDiesel = specFile(filename: "spec_maf_to_fuel_rate_diesel.lola")
-        specMAFToFuelRateGasolineFAE = specFile(filename: "spec_maf_to_fuel_rate_gasoline_fae.lola")
-        specMAFToFuelRateGasoline = specFile(filename: "spec_maf_to_fuel_rate_gasoline.lola")
-        specCustom = specFile(filename: "spec_custom.lola")
-        
-        rdeValidator = RDEValidator(rustGreetings: rustGreetings, specBody: specBody, specHeader: specHeader, specFuelRateInput: specFuelRateInput, specFuelRateToCo2Diesel: specFuelRateToCo2Diesel, specFuelRateToEMFDiesel: specFuelRateToEMFDiesel, specFuelRateToCo2Gasoline: specFuelRateToCo2Gasoline, specFuelRateToEMFGasoline: specFuelRateToEMFGasoline, specMAFToFuelRateDieselFAE: specMAFToFuelRateDieselFAE, specMAFToFuelRateDiesel: specMAFToFuelRateDiesel, specMAFToFuelRateGasolineFAE: specMAFToFuelRateGasolineFAE, specMAFToFuelRateGasoline: specMAFToFuelRateGasoline, specCustom: specCustom)
+        rdeValidator = RDEValidator(rustGreetings: rustGreetings)
     }
     
     deinit {
@@ -289,8 +262,8 @@ class MyOBD: ObservableObject{
                                 let supported = self.checkSupportedPids(supportedPids: self.supportedPids, fuelType: self.myFuelType)
                                 //TODO: if not supported, throw exception?
                                 if supported {
-                                    let specFile = self.rdeValidator.buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.myFuelType)
-                                    self.rustGreetings.initmonitor(s: specFile)
+                                    let (specFile, extraNames) = self.rdeValidator.buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.myFuelType)
+                                    self.rustGreetings.initmonitor(s: specFile, customOutputNames: extraNames)
                                     self.updateSensorData()
                                 }else{
                                     print("ERROR: Car is NOT compatible for RDE tests.")

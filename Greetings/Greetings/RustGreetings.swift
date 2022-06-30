@@ -2,7 +2,7 @@ import Foundation
 
 class RustGreetings {
     //both inputs and outputs should be in the same order as in spec file
-    let RELEVANT_OUTPUTS = [
+    private var RELEVANT_OUTPUTS = [
 //        "vp",//is_urban: vp <= 60.0, is_rural: (60.0 < vp) && (vp <= 90.0), is_motorway: 90.0 < vp
 //        "altitudep",
 //        "temperaturep",
@@ -34,33 +34,7 @@ class RustGreetings {
 //        "nox_mass_aggregated",
             "nox_per_kilometer",
             "is_valid_test_num",
-            "not_rde_test_num",
-        "nox_avg_at_fuel_rate_0_1",
-        "nox_avg_at_fuel_rate_1_2",
-        "nox_avg_at_fuel_rate_2_3",
-        "nox_avg_at_fuel_rate_3_4",
-        "nox_avg_at_fuel_rate_4_5",
-        "nox_avg_at_fuel_rate_5_6",
-        "nox_avg_at_fuel_rate_6_7",
-        "nox_avg_at_fuel_rate_7_8",
-        "nox_avg_at_fuel_rate_8_9",
-        "nox_avg_at_fuel_rate_9_10",
-        "nox_avg_at_fuel_rate_10_11",
-        "nox_avg_at_fuel_rate_11_12",
-        "nox_avg_at_fuel_rate_12_13",
-        "nox_avg_at_fuel_rate_13_14",
-        "nox_avg_at_fuel_rate_14_15",
-        "nox_avg_at_fuel_rate_15_16",
-        "nox_avg_at_fuel_rate_16_17",
-        "nox_avg_at_fuel_rate_17_18",
-        "nox_avg_at_fuel_rate_18_19",
-        "nox_avg_at_fuel_rate_19_20",
-        "nox_avg_at_fuel_rate_20_21",
-        "nox_avg_at_fuel_rate_21_22",
-        "nox_avg_at_fuel_rate_22_23",
-        "nox_avg_at_fuel_rate_23_24",
-        "nox_avg_at_fuel_rate_24_25",
-        "nox_avg_at_fuel_rate_25_or_more"
+            "not_rde_test_num"
         ]
     
 //    func sayHello(to: String) -> String {
@@ -74,8 +48,9 @@ class RustGreetings {
 //        return rust_add(a,b)
 //    }
     
-    func initmonitor(s: String) -> String{
+    func initmonitor(s: String, customOutputNames: [String]) -> String{
         print("spec file: \(s)")
+        appendCustomOutputNames(names: customOutputNames)
         let result = rust_initmonitor(s, RELEVANT_OUTPUTS.joined(separator: ","))
         let swift_result = String(cString: result!)
         rust_string_free(UnsafeMutablePointer(mutating: result))
@@ -97,6 +72,12 @@ class RustGreetings {
         } else {
             let dict = Dictionary(uniqueKeysWithValues: zip(RELEVANT_OUTPUTS, swift_result))
             return dict
+        }
+    }
+    
+    func appendCustomOutputNames(names: [String]) {
+        for name in names {
+            self.RELEVANT_OUTPUTS.append(name)
         }
     }
 }
