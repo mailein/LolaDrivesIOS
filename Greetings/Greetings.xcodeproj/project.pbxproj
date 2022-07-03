@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -58,6 +58,7 @@
 		96C6F61B27F1D538004C4B7D /* logo_cpec_final_rgb_v2.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */; };
 		96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		96CD5189287234C5003BAE41 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 96CD5188287234C5003BAE41 /* Charts */; };
 		96E8274A286DBC340095EA5B /* spec_custom.lola in Resources */ = {isa = PBXBuildFile; fileRef = 96E82749286DBC340095EA5B /* spec_custom.lola */; };
 		96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DA27DA72D600429CF1 /* Model.swift */; };
 		96ECF8DD27DA72F200429CF1 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DC27DA72F200429CF1 /* Menu.swift */; };
@@ -149,6 +150,7 @@
 		96C6F61427F1D538004C4B7D /* uds.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uds.png; sourceTree = "<group>"; };
 		96C6F61527F1D538004C4B7D /* erc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erc.png; sourceTree = "<group>"; };
 		96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_cpec_final_rgb_v2.png; sourceTree = "<group>"; };
+		96CD5187287234A4003BAE41 /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
 		96E82749286DBC340095EA5B /* spec_custom.lola */ = {isa = PBXFileReference; lastKnownFileType = text; path = spec_custom.lola; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96CD5189287234C5003BAE41 /* Charts in Frameworks */,
 				9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */,
 				96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
@@ -226,6 +229,7 @@
 				962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */,
 				963238282734CA62008070D5 /* LocationHelper.swift */,
 				9670CCA4286F2F9200E1BDC9 /* Uploader.swift */,
+				96CD5187287234A4003BAE41 /* Charts-master */,
 			);
 			path = Greetings;
 			sourceTree = "<group>";
@@ -374,6 +378,9 @@
 			dependencies = (
 			);
 			name = Greetings;
+			packageProductDependencies = (
+				96CD5188287234C5003BAE41 /* Charts */,
+			);
 			productName = Greetings;
 			productReference = 960DACA326396859005DEABB /* Greetings.app */;
 			productType = "com.apple.product-type.application";
@@ -749,6 +756,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		96CD5188287234C5003BAE41 /* Charts */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Charts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 960DAC9B26396859005DEABB /* Project object */;
 }
