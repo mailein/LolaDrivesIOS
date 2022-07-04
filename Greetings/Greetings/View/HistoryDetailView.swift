@@ -1,5 +1,6 @@
 import SwiftUI
 import pcdfcore
+import Charts
 
 struct HistoryDetailView: View {
     var file: URL
@@ -8,6 +9,16 @@ struct HistoryDetailView: View {
             EventLogTabView(file: file)
                 .tabItem{
                     Text("Event log")
+                }
+            ChartView(entries: [
+                BarChartDataEntry(x: 1,y: 1),
+                BarChartDataEntry(x: 2,y: 2),
+                BarChartDataEntry(x: 3,y: 3),
+                BarChartDataEntry(x: 4,y: 4),
+                BarChartDataEntry(x: 5,y: 5)
+            ], label: "avg(NOₓ)")
+                .tabItem{
+                    Text("Chart")
                 }
             RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{

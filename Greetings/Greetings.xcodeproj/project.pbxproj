@@ -59,6 +59,7 @@
 		96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		96CD5189287234C5003BAE41 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 96CD5188287234C5003BAE41 /* Charts */; };
+		96CD518D287235C7003BAE41 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CD518C287235C7003BAE41 /* ChartView.swift */; };
 		96E8274A286DBC340095EA5B /* spec_custom.lola in Resources */ = {isa = PBXBuildFile; fileRef = 96E82749286DBC340095EA5B /* spec_custom.lola */; };
 		96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DA27DA72D600429CF1 /* Model.swift */; };
 		96ECF8DD27DA72F200429CF1 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DC27DA72F200429CF1 /* Menu.swift */; };
@@ -151,6 +152,7 @@
 		96C6F61527F1D538004C4B7D /* erc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erc.png; sourceTree = "<group>"; };
 		96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_cpec_final_rgb_v2.png; sourceTree = "<group>"; };
 		96CD5187287234A4003BAE41 /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
+		96CD518C287235C7003BAE41 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		96E82749286DBC340095EA5B /* spec_custom.lola */ = {isa = PBXFileReference; lastKnownFileType = text; path = spec_custom.lola; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
 				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
 				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
+				96CD518C287235C7003BAE41 /* ChartView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -533,6 +536,7 @@
 				96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */,
 				96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */,
 				96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */,
+				96CD518D287235C7003BAE41 /* ChartView.swift in Sources */,
 				96C43B932831AACE00F45FC4 /* EventStore.swift in Sources */,
 				96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */,
 				96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */,
