@@ -4,7 +4,7 @@ import pcdfcore
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
     @Published var outputs: [String: Double] = [:]
-    @Published var avgNoxAtFuelRate: [(String, Double)] = []
+    @Published var chartData: [(String, Double)] = []
     
     //MARK: - directory
     public static func dirURL() throws -> URL {
