@@ -2,6 +2,7 @@
 cargo/.idea/
 Greetings/Podfile.lock
 Greetings/Pod/
+Greetings/Greetings/debugToken
 
 # Xcode
 #

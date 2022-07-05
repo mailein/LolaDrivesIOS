@@ -19,6 +19,7 @@
 		9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */; };
 		966A1E38287421E500988BA3 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966A1E37287421E500988BA3 /* ChartView.swift */; };
 		966A1E3B287435F400988BA3 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 966A1E3A287435F400988BA3 /* SwiftUICharts */; };
+		966A1E3D287471FA00988BA3 /* debugToken in Resources */ = {isa = PBXBuildFile; fileRef = 966A1E3C287471F900988BA3 /* debugToken */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
 		9670CCA5286F2F9200E1BDC9 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9670CCA4286F2F9200E1BDC9 /* Uploader.swift */; };
 		969B982B28070FB9004A2123 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */; };
@@ -114,6 +115,7 @@
 		9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rde-lola-test-drive-spec-no-percentile1.lola"; sourceTree = "<group>"; };
 		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
 		966A1E37287421E500988BA3 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
+		966A1E3C287471F900988BA3 /* debugToken */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = debugToken; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
 		9670CCA4286F2F9200E1BDC9 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		969B982E28071147004A2123 /* spec_header.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_header.lola; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */,
 				963238282734CA62008070D5 /* LocationHelper.swift */,
 				9670CCA4286F2F9200E1BDC9 /* Uploader.swift */,
+				966A1E3C287471F900988BA3 /* debugToken */,
 			);
 			path = Greetings;
 			sourceTree = "<group>";
@@ -455,6 +458,7 @@
 				96B71F22271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf in Resources */,
 				969B9843280EB0E0004A2123 /* spec_fuel_rate_to_emf_diesel.spec in Resources */,
 				969B983E280EB0E0004A2123 /* spec_maf_to_fuel_rate_diesel.lola in Resources */,
+				966A1E3D287471FA00988BA3 /* debugToken in Resources */,
 				96B71F24271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf in Resources */,
 				969B9840280EB0E0004A2123 /* spec_maf_to_fuel_rate_gasoline_fae.lola in Resources */,
 				969B9841280EB0E0004A2123 /* spec_fuelrate_to_emf_gasoline.lola in Resources */,
