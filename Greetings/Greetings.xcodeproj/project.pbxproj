@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,8 @@
 		962F4AD928647D6C00DC15E5 /* MultiSensorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */; };
 		963238292734CA62008070D5 /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963238282734CA62008070D5 /* LocationHelper.swift */; };
 		9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */; };
+		966A1E38287421E500988BA3 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966A1E37287421E500988BA3 /* ChartView.swift */; };
+		966A1E3B287435F400988BA3 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 966A1E3A287435F400988BA3 /* SwiftUICharts */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
 		9670CCA5286F2F9200E1BDC9 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9670CCA4286F2F9200E1BDC9 /* Uploader.swift */; };
 		969B982B28070FB9004A2123 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */; };
@@ -111,6 +113,7 @@
 		963238282734CA62008070D5 /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
 		9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rde-lola-test-drive-spec-no-percentile1.lola"; sourceTree = "<group>"; };
 		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
+		966A1E37287421E500988BA3 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
 		9670CCA4286F2F9200E1BDC9 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		969B982E28071147004A2123 /* spec_header.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_header.lola; sourceTree = "<group>"; };
@@ -180,6 +183,7 @@
 				96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
 				C6988D887C7A3B49C886698A /* Pods_Greetings.framework in Frameworks */,
+				966A1E3B287435F400988BA3 /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +346,7 @@
 				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
 				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
 				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
+				966A1E37287421E500988BA3 /* ChartView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -374,6 +379,9 @@
 			dependencies = (
 			);
 			name = Greetings;
+			packageProductDependencies = (
+				966A1E3A287435F400988BA3 /* SwiftUICharts */,
+			);
 			productName = Greetings;
 			productReference = 960DACA326396859005DEABB /* Greetings.app */;
 			productType = "com.apple.product-type.application";
@@ -401,6 +409,9 @@
 				Base,
 			);
 			mainGroup = 960DAC9A26396859005DEABB;
+			packageReferences = (
+				966A1E39287435F400988BA3 /* XCRemoteSwiftPackageReference "ChartView" */,
+			);
 			productRefGroup = 960DACA426396859005DEABB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -526,6 +537,7 @@
 				96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */,
 				96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */,
 				96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */,
+				966A1E38287421E500988BA3 /* ChartView.swift in Sources */,
 				96C43B932831AACE00F45FC4 /* EventStore.swift in Sources */,
 				96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */,
 				96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */,
@@ -749,6 +761,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		966A1E39287435F400988BA3 /* XCRemoteSwiftPackageReference "ChartView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppPear/ChartView";
+			requirement = {
+				kind = exactVersion;
+				version = 1.5.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		966A1E3A287435F400988BA3 /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 966A1E39287435F400988BA3 /* XCRemoteSwiftPackageReference "ChartView" */;
+			productName = SwiftUICharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 960DAC9B26396859005DEABB /* Project object */;
 }

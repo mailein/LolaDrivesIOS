@@ -3,11 +3,16 @@ import pcdfcore
 
 struct HistoryDetailView: View {
     var file: URL
+    
     var body: some View {
         TabView{
             EventLogTabView(file: file)
                 .tabItem{
                     Text("Event log")
+                }
+            ChartView(file: file, title: "avg(nox)[mg] at fuel rate[l/h]")
+                .tabItem{
+                    Text("avg(NOx) at fuel rate")
                 }
             RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{
