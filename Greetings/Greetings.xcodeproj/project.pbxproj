@@ -150,6 +150,7 @@
 		96C6F61527F1D538004C4B7D /* erc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erc.png; sourceTree = "<group>"; };
 		96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_cpec_final_rgb_v2.png; sourceTree = "<group>"; };
 		96E82749286DBC340095EA5B /* spec_custom.lola */ = {isa = PBXFileReference; lastKnownFileType = text; path = spec_custom.lola; sourceTree = "<group>"; };
+		96EA54BA2874CF63008BB000 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		96ECF8DE27DA731100429CF1 /* CommandItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandItem.swift; sourceTree = "<group>"; };
@@ -176,8 +177,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				966A1E3E28749A4B00988BA3 /* pcdfcore.framework in Frameworks */,
 				9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */,
-				96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
 				C6988D887C7A3B49C886698A /* Pods_Greetings.framework in Frameworks */,
 			);
@@ -210,6 +211,7 @@
 		960DACA526396859005DEABB /* Greetings */ = {
 			isa = PBXGroup;
 			children = (
+				96EA54BA2874CF63008BB000 /* Config.xcconfig */,
 				96C6F5F727EE79F5004C4B7D /* www */,
 				9640B61527DA725400A3D38C /* Model */,
 				96EFC14326FB4FF900BE44A6 /* View */,
