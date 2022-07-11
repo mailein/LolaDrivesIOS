@@ -78,15 +78,6 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView(viewModel: ViewModel())
-.previewInterfaceOrientation(.portrait)
-//.previewInterfaceOrientation(.landscapeLeft)
-    }
-}
-
-
 
 //struct ContentView: View {
 //    var body: some View {

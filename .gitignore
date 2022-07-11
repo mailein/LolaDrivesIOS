@@ -3,7 +3,7 @@ cargo/.idea/
 Greetings/Podfile.lock
 Greetings/Pod/
 Greetings/Greetings/debugToken
-Greetings/Greetings/Config.xcconfig
+*.xcconfig
 
 # Xcode
 #

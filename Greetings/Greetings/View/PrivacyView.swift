@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PrivacyView: View {
     @EnvironmentObject var viewModel: ViewModel
+    var uploader = Uploader()
     let url = Bundle.main.url(forResource: "privacy", withExtension: "html")
     
     var body: some View {
