@@ -72,6 +72,7 @@ struct MenuView: View {
             locationHelper.alert!
         }
         .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
