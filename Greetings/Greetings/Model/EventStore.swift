@@ -128,6 +128,27 @@ class EventStore: ObservableObject {
         }
     }
     
+    static func saveToNotUploaded(fileName: String) {
+        DispatchQueue.main.async {
+            do {
+                let notUploaded = try fileURL(fileName: "NotUploaded")
+                let exists = FileManager.default.fileExists(atPath: notUploaded.path)
+                var notUploadedFile: FileHandle?
+                if !exists {
+                    try "".write(to: notUploaded, atomically: true, encoding: .utf8)
+                    notUploadedFile = try? FileHandle(forWritingTo: notUploaded)
+                }else{
+                    notUploadedFile = try? FileHandle(forUpdating: notUploaded)
+                }
+                try notUploadedFile?.seekToEnd()
+                try notUploadedFile?.write(contentsOf: fileName.data(using: .utf8)!)
+                try notUploadedFile?.close()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     //MARK: - helper methods
     public static func dateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()

@@ -15,6 +15,12 @@ struct PrivacyView: View {
                         Text("Enable data donations:")
                     }
                     .toggleStyle(.switch)
+                    .onChange(of: viewModel.model.dataDonationEnabled) {enabled in
+                        if enabled {
+                            print("enabled -> upload")
+                            uploader.uploadAll()
+                        }
+                    }
                 }
             }
     }
