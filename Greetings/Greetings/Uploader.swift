@@ -9,17 +9,23 @@ class Uploader {
         self.url = URL(string: Bundle.main.infoDictionary?["DEST_URL"] as! String)!
         let apiToken = Bundle.main.infoDictionary?["SECRET_TOKEN"] as! String
         let appVersion = Bundle.main.infoDictionary?["APP_VERSION"] as! String
-        let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
         self.request = URLRequest(url: self.url)
         
         request.httpMethod = "POST"
         request.setValue("application/ppcdf", forHTTPHeaderField: "Content-Type")
         request.setValue(apiToken, forHTTPHeaderField: "x-api-token")
         request.setValue(appVersion, forHTTPHeaderField: "x-app-version")
-        request.setValue("\(privacyPolicyVersion)", forHTTPHeaderField: "x-privacy-policy")
     }
     
     func uploadAll() {
+        let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
+        request.setValue("\(privacyPolicyVersion)", forHTTPHeaderField: "x-privacy-policy")
+        let privacyPolicyVersionAllowed = UserDefaults.standard.integer(forKey: "PrivacyPolicyVersionAllowed")//0 if doesn't exist
+        if privacyPolicyVersionAllowed < privacyPolicyVersion {
+            print("Forbidden! Currently allowed privacy version: \(privacyPolicyVersionAllowed), current privacy version: \(privacyPolicyVersion).")
+            return
+        }
+        
         DispatchQueue.main.async {
             do {
                 let notUploaded = try EventStore.fileURL(fileName: "NotUploaded")

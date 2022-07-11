@@ -69,6 +69,7 @@ struct ContentView: View {
         .onAppear{
             locationHelper.checkIfLocationServicesIsEnabled()
             obd.setLocationHelper(locationHelper)
+            Uploader().uploadAll()
         }
         .alert(isPresented: $locationHelper.showAlert) {
             locationHelper.alert!

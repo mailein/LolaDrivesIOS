@@ -17,11 +17,17 @@ struct PrivacyView: View {
                     .toggleStyle(.switch)
                     .onChange(of: viewModel.model.dataDonationEnabled) {enabled in
                         if enabled {
-                            print("enabled -> upload")
+                            let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
+                            UserDefaults.standard.set(privacyPolicyVersion, forKey: "PrivacyPolicyVersionAllowed")
                             uploader.uploadAll()
                         }
                     }
                 }
+            }
+            .onAppear{
+                let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
+                let privacyPolicyVersionAllowed = UserDefaults.standard.integer(forKey: "PrivacyPolicyVersionAllowed")
+                viewModel.model.dataDonationEnabled = privacyPolicyVersionAllowed >= privacyPolicyVersion
             }
     }
 }
