@@ -10,13 +10,9 @@ struct HistoryDetailView: View {
                 .tabItem{
                     Text("Event log")
                 }
-            ChartView(file: file, title: "avg(nox)[mg] at fuel rate[l/h]", keyPrefix: "nox_avg_at_fuel_rate_", scaler: 1000)
+            ChartsView(file: file)
                 .tabItem{
-                    Text("avg(NOx) at fuel rate")
-                }
-            ChartView(file: file, title: "avg(fuel rate)[l/h] at speed[km/h]", keyPrefix: "fuel_rate_avg_at_speed_", scaler: 1)
-                .tabItem{
-                    Text("avg(fuel rate) at speed")
+                    Text("Charts")
                 }
             RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{

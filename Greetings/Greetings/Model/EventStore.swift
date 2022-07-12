@@ -5,6 +5,7 @@ class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
     @Published var outputs: [String: Double] = [:]
     @Published var chartData: [(String, Double)] = []
+    @Published var speedValues: [Double] = []
     
     //MARK: - directory
     public static func dirURL() throws -> URL {

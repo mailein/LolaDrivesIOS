@@ -62,6 +62,7 @@
 		96C8995D26EB917000E2254D /* pcdfcore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		96E8274A286DBC340095EA5B /* spec_custom.lola in Resources */ = {isa = PBXBuildFile; fileRef = 96E82749286DBC340095EA5B /* spec_custom.lola */; };
+		96EB80E4287D825F00BB2501 /* ChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EB80E3287D825F00BB2501 /* ChartsView.swift */; };
 		96ECF8DB27DA72D600429CF1 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DA27DA72D600429CF1 /* Model.swift */; };
 		96ECF8DD27DA72F200429CF1 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DC27DA72F200429CF1 /* Menu.swift */; };
 		96ECF8DF27DA731100429CF1 /* CommandItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8DE27DA731100429CF1 /* CommandItem.swift */; };
@@ -155,6 +156,7 @@
 		96C6F61527F1D538004C4B7D /* erc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erc.png; sourceTree = "<group>"; };
 		96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_cpec_final_rgb_v2.png; sourceTree = "<group>"; };
 		96E82749286DBC340095EA5B /* spec_custom.lola */ = {isa = PBXFileReference; lastKnownFileType = text; path = spec_custom.lola; sourceTree = "<group>"; };
+		96EB80E3287D825F00BB2501 /* ChartsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsView.swift; sourceTree = "<group>"; };
 		96ECF8DA27DA72D600429CF1 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		96ECF8DC27DA72F200429CF1 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		96ECF8DE27DA731100429CF1 /* CommandItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandItem.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
 				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
 				966A1E37287421E500988BA3 /* ChartView.swift */,
+				96EB80E3287D825F00BB2501 /* ChartsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				96EFC14D26FB6E4A00BE44A6 /* HelpView.swift in Sources */,
 				96EFC14726FB510E00BE44A6 /* RdeView.swift in Sources */,
 				96C6F5F527EE6EAE004C4B7D /* UrlWebView.swift in Sources */,
+				96EB80E4287D825F00BB2501 /* ChartsView.swift in Sources */,
 				96ECF8EA27DA74F200429CF1 /* ViewModel.swift in Sources */,
 				96EFC15126FB6F4100BE44A6 /* PrivacyView.swift in Sources */,
 				96FEAE8326CE6251005255D0 /* Util.swift in Sources */,
@@ -698,7 +702,7 @@
 					"\"$(PROJECT_DIR)/../cargo/target/universal/release\"",
 					"\"${PROJECT_DIR}/Pods/OBD2-Swift\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "de.uni-saarland.stud.Greetings";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.uni-saarland.stud.s8mechen";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Greetings/Greetings-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -735,7 +739,7 @@
 					"\"${PROJECT_DIR}/Pods/OBD2-Swift\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.uni-saarland.stud.Greetings";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.uni-saarland.stud.s8mechen";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Greetings/Greetings-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
