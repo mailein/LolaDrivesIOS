@@ -14,23 +14,15 @@ struct Uploader {
             request.setValue(apiToken, forHTTPHeaderField: "x-api-token")
             request.setValue(appVersion, forHTTPHeaderField: "x-app-version")
             request.setValue("\(privacyPolicyVersion)", forHTTPHeaderField: "x-privacy-policy")
+            
+            let notUploadedkey = "NotUploaded"
+            let notUploaded: [String] = UserDefaults.standard.array(forKey: notUploadedkey) as? [String] ?? []
             do {
-                let notUploaded = try EventStore.fileURL(fileName: "NotUploaded")
-                let notUploadedExists = FileManager.default.fileExists(atPath: notUploaded.path)
-                if notUploadedExists {
-                    let fileRead = try? FileHandle(forReadingFrom: notUploaded)
-                    guard let dataRead = try fileRead?.readToEnd() else {
-                        return
-                    }
-                    let contentStr = String(decoding: dataRead, as: UTF8.self)
-                    try fileRead?.close()
-                    let fileNames = contentStr.components(separatedBy: "\n").filter{ !$0.isEmpty }
-                    for fileName in fileNames {
-                        let file = try EventStore.fileURL(fileName: fileName)
-                        let fileExists = FileManager.default.fileExists(atPath: file.path)
-                        if fileExists {
-                            self.upload(file: file, request: &request)//Escaping closure captures mutating 'self' parameter, solution: change from struct to class
-                        }
+                for fileName in notUploaded {
+                    let file = try EventStore.fileURL(fileName: fileName)
+                    let fileExists = FileManager.default.fileExists(atPath: file.path)
+                    if fileExists {
+                        self.upload(file: file, request: &request)//Escaping closure captures mutating 'self' parameter, solution: change from struct to class
                     }
                 }
             } catch {
@@ -54,6 +46,7 @@ struct Uploader {
             if let mimeType = response.mimeType{
                 print("response mime type: \(mimeType)")
             }
+            EventStore.removeFromNotUploaded(fileName: file.lastPathComponent)
         }
         task.resume()
         print("\(file.path) should be uploaded")

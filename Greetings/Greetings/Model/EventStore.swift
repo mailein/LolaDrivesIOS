@@ -128,28 +128,6 @@ class EventStore: ObservableObject {
         }
     }
     
-    static func saveToNotUploaded(fileName: String) {
-        DispatchQueue.main.async {
-            do {
-                let notUploaded = try fileURL(fileName: "NotUploaded")
-                let exists = FileManager.default.fileExists(atPath: notUploaded.path)
-                var notUploadedFile: FileHandle?
-                if !exists {
-                    try "".write(to: notUploaded, atomically: true, encoding: .utf8)
-                    notUploadedFile = try? FileHandle(forWritingTo: notUploaded)
-                }else{
-                    notUploadedFile = try? FileHandle(forUpdating: notUploaded)
-                }
-                try notUploadedFile?.seekToEnd()
-                let str = fileName + "\n"
-                try notUploadedFile?.write(contentsOf: str.data(using: .utf8)!)
-                try notUploadedFile?.close()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
     //MARK: - helper methods
     public static func dateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
@@ -158,4 +136,27 @@ class EventStore: ObservableObject {
         return dateFormatter
     }
     
+    
+    
+    public static func addToNotUploaded(fileName: String) {
+        DispatchQueue.main.async {
+            let notUploadedkey = "NotUploaded"
+            var notUploaded: [String] = UserDefaults.standard.array(forKey: notUploadedkey) as? [String] ?? []
+            notUploaded.append(fileName)
+            UserDefaults.standard.set(notUploaded, forKey: notUploadedkey)
+            print("added \(fileName) to UserDefaults NotUploaded")
+        }
+    }
+    
+    public static func removeFromNotUploaded(fileName: String) {
+        DispatchQueue.main.async {
+            let notUploadedkey = "NotUploaded"
+            var notUploaded: [String] = UserDefaults.standard.array(forKey: notUploadedkey) as? [String] ?? []
+            let i = notUploaded.firstIndex(of: fileName)
+            if let i = i {
+                notUploaded.remove(at: i)
+                print("removed \(fileName) from UserDefaults NotUploaded")
+            }
+        }
+    }
 }
