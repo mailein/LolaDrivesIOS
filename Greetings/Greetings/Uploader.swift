@@ -1,32 +1,19 @@
 import Foundation
 
 //https://developer.apple.com/documentation/foundation/url_loading_system/uploading_data_to_a_website
-class Uploader {
-    var url: URL
-    var request: URLRequest
-    
-    init() {
-        self.url = URL(string: Bundle.main.infoDictionary?["DEST_URL"] as! String)!
-        let apiToken = Bundle.main.infoDictionary?["SECRET_TOKEN"] as! String
-        let appVersion = Bundle.main.infoDictionary?["APP_VERSION"] as! String
-        self.request = URLRequest(url: self.url)
-        
-        request.httpMethod = "POST"
-        request.setValue("application/ppcdf", forHTTPHeaderField: "Content-Type")
-        request.setValue(apiToken, forHTTPHeaderField: "x-api-token")
-        request.setValue(appVersion, forHTTPHeaderField: "x-app-version")
-    }
-    
+struct Uploader {
     func uploadAll() {
-        let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
-        request.setValue("\(privacyPolicyVersion)", forHTTPHeaderField: "x-privacy-policy")
-        let privacyPolicyVersionAllowed = UserDefaults.standard.integer(forKey: "PrivacyPolicyVersionAllowed")//0 if doesn't exist
-        if privacyPolicyVersionAllowed < privacyPolicyVersion {
-            print("Forbidden! Currently allowed privacy version: \(privacyPolicyVersionAllowed), current privacy version: \(privacyPolicyVersion).")
-            return
-        }
-        
         DispatchQueue.main.async {
+            let url = URL(string: Bundle.main.infoDictionary?["DEST_URL"] as! String)!
+            let apiToken = Bundle.main.infoDictionary?["SECRET_TOKEN"] as! String
+            let appVersion = Bundle.main.infoDictionary?["APP_VERSION"] as! String
+            let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/ppcdf", forHTTPHeaderField: "Content-Type")
+            request.setValue(apiToken, forHTTPHeaderField: "x-api-token")
+            request.setValue(appVersion, forHTTPHeaderField: "x-app-version")
+            request.setValue("\(privacyPolicyVersion)", forHTTPHeaderField: "x-privacy-policy")
             do {
                 let notUploaded = try EventStore.fileURL(fileName: "NotUploaded")
                 let notUploadedExists = FileManager.default.fileExists(atPath: notUploaded.path)
@@ -42,7 +29,7 @@ class Uploader {
                         let file = try EventStore.fileURL(fileName: fileName)
                         let fileExists = FileManager.default.fileExists(atPath: file.path)
                         if fileExists {
-                            self.upload(file: file)//Escaping closure captures mutating 'self' parameter, solution: change from struct to class
+                            self.upload(file: file, request: &request)//Escaping closure captures mutating 'self' parameter, solution: change from struct to class
                         }
                     }
                 }
@@ -52,9 +39,9 @@ class Uploader {
         }
     }
     
-    func upload(file: URL) {
+    func upload(file: URL, request: inout URLRequest) {
         request.setValue(file.deletingPathExtension().lastPathComponent, forHTTPHeaderField: "x-donation-file-name")
-        let task = URLSession.shared.uploadTask(with: self.request, fromFile: file) { data, response, error in
+        let task = URLSession.shared.uploadTask(with: request, fromFile: file) { data, response, error in
             if let error = error {
                 print("error: \(error)")
                 return
