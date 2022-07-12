@@ -6,6 +6,7 @@ class EventStore: ObservableObject {
     @Published var outputs: [String: Double] = [:]
     @Published var chartData: [(String, Double)] = []
     @Published var speedValues: [Double] = []
+    @Published var noxValues: [Double] = []
     
     //MARK: - directory
     public static func dirURL() throws -> URL {
