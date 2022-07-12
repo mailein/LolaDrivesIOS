@@ -141,7 +141,8 @@ class EventStore: ObservableObject {
                     notUploadedFile = try? FileHandle(forUpdating: notUploaded)
                 }
                 try notUploadedFile?.seekToEnd()
-                try notUploadedFile?.write(contentsOf: fileName.data(using: .utf8)!)
+                let str = fileName + "\n"
+                try notUploadedFile?.write(contentsOf: str.data(using: .utf8)!)
                 try notUploadedFile?.close()
             } catch {
                 print(error.localizedDescription)
@@ -153,7 +154,7 @@ class EventStore: ObservableObject {
     public static func dateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "de_DE_POSIX")
-        dateFormatter.dateFormat = "yyyy.MM.dd, HH:mm:ss"
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         return dateFormatter
     }
     
