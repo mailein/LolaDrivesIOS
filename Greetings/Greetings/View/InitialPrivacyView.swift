@@ -32,5 +32,8 @@ struct InitialPrivacyView: View {
             .foregroundColor(.white)
         }
         .navigationBarBackButtonHidden(true)
+        .onDisappear {
+            UserDefaults.standard.set(true, forKey: "initialScreenDisplayed")
+        }
     }
 }

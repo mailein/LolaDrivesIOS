@@ -11,9 +11,6 @@ struct ContentView: View {
                 MenuView()
             }else {
                 InitialDisclaimerView()
-                    .onDisappear {
-                        UserDefaults.standard.set(true, forKey: "initialScreenDisplayed")
-                    }
             }
         }
         .environmentObject(viewModel)
