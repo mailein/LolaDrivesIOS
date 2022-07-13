@@ -13,6 +13,8 @@ class CommandItem: Identifiable{
     init (mode: Int = 1, pid: String, name: String, unit: String, obdCommand: LTOBD2PID, enabled: Bool = false) {
         self.mode = mode
         self.pid = pid
+        //hashValue differs after each app restart, so use name in ProfileData, as it's unique among [CommandItem] within the same profile
+        //document: Hash values are not guaranteed to be equal across different executions of your program.
         self.id = Int(pid, radix: 16)! + unit.hashValue
         self.name = name
         self.unit = unit

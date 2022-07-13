@@ -53,5 +53,10 @@ class ViewModel: ObservableObject {
     func startLiveMonitoringToggle(){
         model.startLiveMonitoring.toggle()
     }
+    
+    //MARK: - profiles view
+    func editProfile(to editedProfile: Profile) {
+        model.editProfileData(to: editedProfile)
+    }
 }
 
