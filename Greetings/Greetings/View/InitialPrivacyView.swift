@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct InitialPrivacyView: View {
-    @State private var display = false
+    @Binding var isDisclaimerPresenting: Bool
+    @Binding var isPrivacyPresenting: Bool
     
     /*
      Q: How to use navLink together with an action?
@@ -10,19 +11,15 @@ struct InitialPrivacyView: View {
     var body: some View {
         VStack{
             BaseWebView(title: "privacy")
-            NavigationLink(destination: MenuView(), isActive: $display) { EmptyView() }
             HStack{
                 Button(action: {
-                    UserDefaults.standard.set(0, forKey: "PrivacyPolicyVersionAllowed")
-                    display = true
+                    notAllowed()
                 }, label: {
                     Text("NO")
                 })
                 Spacer()
                 Button(action: {
-                    let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
-                    UserDefaults.standard.set(privacyPolicyVersion, forKey: "PrivacyPolicyVersionAllowed")
-                    display = true
+                    allowed()
                 }, label: {
                     Text("ENABLE DATA DONATIONS")
                 })
@@ -35,5 +32,18 @@ struct InitialPrivacyView: View {
         .onDisappear {
             UserDefaults.standard.set(true, forKey: "initialScreenDisplayed")
         }
+    }
+    
+    func notAllowed() {
+        UserDefaults.standard.set(0, forKey: "PrivacyPolicyVersionAllowed")
+        isDisclaimerPresenting = false
+        isPrivacyPresenting = false
+    }
+    
+    func allowed() {
+        let privacyPolicyVersion = Int(Bundle.main.infoDictionary?["PRIVACY_POLICY_VERSION"] as! String) ?? 0
+        UserDefaults.standard.set(privacyPolicyVersion, forKey: "PrivacyPolicyVersionAllowed")
+        isDisclaimerPresenting = false
+        isPrivacyPresenting = false
     }
 }

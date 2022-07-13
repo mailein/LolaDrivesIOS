@@ -3,17 +3,21 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
     @StateObject var obd = MyOBD()
-    let initialScreenDisplayed = UserDefaults.standard.bool(forKey: "initialScreenDisplayed")
+    
+    @State private var isDisclaimerPresenting = true
+    @State private var isPrivacyPresenting = false
     
     var body: some View {
         NavigationView{
-            if initialScreenDisplayed{
-                MenuView()
-            }else {
-                InitialDisclaimerView()
-            }
+            MenuView()
+                .fullScreenCover(isPresented: $isDisclaimerPresenting) {
+                    InitialDisclaimerView(isDisclaimerPresenting: $isDisclaimerPresenting, isPrivacyPresenting: $isPrivacyPresenting)
+                }
         }
         .environmentObject(viewModel)
         .environmentObject(obd)
+        .onAppear{
+            isDisclaimerPresenting = !UserDefaults.standard.bool(forKey: "initialScreenDisplayed")
+        }
     }
 }
