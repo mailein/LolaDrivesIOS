@@ -155,7 +155,8 @@ class EventStore: ObservableObject {
             let i = notUploaded.firstIndex(of: fileName)
             if let i = i {
                 notUploaded.remove(at: i)
-                print("removed \(fileName) from UserDefaults NotUploaded")
+                UserDefaults.standard.set(notUploaded, forKey: notUploadedkey)
+                print("removed \(fileName) from UserDefaults NotUploaded: \(UserDefaults.standard.array(forKey: notUploadedkey))")
             }
         }
     }
