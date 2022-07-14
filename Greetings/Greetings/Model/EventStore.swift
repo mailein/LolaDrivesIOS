@@ -7,6 +7,9 @@ class EventStore: ObservableObject {
     @Published var chartData: [(String, Double)] = []
     @Published var speedValues: [Double] = []
     @Published var noxValues: [Double] = []
+    @Published var altitudeValues: [Double] = []
+    @Published var fuelrateValues: [Double] = []
+    @Published var accelerationValues: [Double] = []
     
     //MARK: - directory
     public static func dirURL() throws -> URL {
@@ -139,4 +142,11 @@ class EventStore: ObservableObject {
         return dateFormatter
     }
     
+    public func resetValues() {
+        self.speedValues = []
+        self.noxValues = []
+        self.altitudeValues = []
+        self.fuelrateValues = []
+        self.accelerationValues = []
+    }
 }

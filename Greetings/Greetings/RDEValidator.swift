@@ -124,10 +124,10 @@ class RDEValidator {
     }
 
     public func collectData(event: PCDFEvent, rdeProfileCount: Int, altitude: Double? = nil, isPaused: Bool) -> [String: Double] { //todo async, swift5.5
-        if altitude != nil {
+        if altitude != nil {//for collecting data in OBD
             inputs[.ALTITUDE] = altitude
         }
-        if(event.type == pcdfcore.EventType.gps){
+        if(event.type == pcdfcore.EventType.gps){//for collecting data in RDEValidator
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
         }else if(event.type == pcdfcore.EventType.obdResponse){
             // Reduces the event if possible (e.g. NOx or FuelRate events) using the PCDFCore library.
