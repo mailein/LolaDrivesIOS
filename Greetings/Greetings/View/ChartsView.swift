@@ -20,6 +20,11 @@ struct ChartsView: View {
             } else {
                 Text("nox chart not available")
             }
+            if !eventStore.accelerationValues.isEmpty {
+                LineChartView(data: eventStore.accelerationValues, title: "acceleration[m/s2]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.2f")
+            } else {
+                Text("acceleration chart not available")
+            }
         }
         .onAppear{
             //reset upon different files
@@ -51,20 +56,30 @@ struct ChartsView: View {
                         .filter{ $0 is FuelRateReducedEvent }
                         .map{ ($0 as! FuelRateReducedEvent).fuelRate }
                     
-                    //avg(nox) at fuelrate, avg(fuelrate) at speed
                     let rdeValidator = RDEValidator()
                     do {
-                        eventStore.outputs = try rdeValidator.monitorOfflineFinalOutput(data: events)
+                        eventStore.outputs = try rdeValidator.monitorOffline(data: events)
                         
+                        //avg(nox) at fuelrate
                         var keyPrefix = "nox_avg_at_fuel_rate_"
                         var scaler = 1000
                         eventStore.avgNoxAtFuelrate = extract(from: eventStore.outputs, keyPrefix: keyPrefix, scaler: scaler)
                         print("avg(nox) at fuelrate: \(eventStore.avgNoxAtFuelrate)")
                         
+                        //avg(fuelrate) at speed
                         keyPrefix = "fuel_rate_avg_at_speed_"
                         scaler = 1
                         eventStore.avgFuelrateAtSpeed = extract(from: eventStore.outputs, keyPrefix: keyPrefix, scaler: scaler)
                         print("avg(fuelrate) at speed: \(eventStore.avgNoxAtFuelrate)")
+                        
+                        //acceleration
+                        var accelerationValues: [Double] = []
+                        for output in rdeValidator.allOutputs {
+                            if let acceleration = output["a"] {
+                                accelerationValues.append(acceleration)
+                            }
+                        }
+                        eventStore.accelerationValues = accelerationValues
                     } catch {
                         print(error.localizedDescription)
                     }

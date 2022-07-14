@@ -18,7 +18,7 @@ class RustGreetings {
             "u_avg_v",
             "r_avg_v",
             "m_avg_v",
-//        "a",
+        "a",
 //        "va",
 //        "u_va_pct_h", //=va if a >= 0.1 && is_urban
             "u_va_pct",

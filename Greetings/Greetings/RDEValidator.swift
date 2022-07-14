@@ -16,6 +16,7 @@ class RDEValidator {
     // The sensor profile of the car which is determined.
     var rdeProfile: [OBDCommand] = []
     let rustGreetings: RustGreetings
+    var allOutputs: [[String: Double]] = []
     
     private var specBody: String
     private var specHeader: String
@@ -30,7 +31,7 @@ class RDEValidator {
     private var specMAFToFuelRateGasoline: String
     private var specCustom: String
     
-    enum RDE_RTLOLA_INPUT_QUANTITIES { 
+    enum RDE_RTLOLA_INPUT_QUANTITIES {
         case VELOCITY
         case ALTITUDE
         case TEMPERATURE
@@ -71,7 +72,8 @@ class RDEValidator {
         specCustom = specFile(filename: "spec_custom.lola")
     }
 
-    private func monitorOfflineBase(data: [PCDFEvent]) throws {
+    // data are all the events from a ppcdf file
+    public func monitorOffline(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
         if(data.isEmpty || data.count < 13){
             throw RdeError.IllegalState
         }
@@ -109,32 +111,13 @@ class RDEValidator {
         let (spec, extraNames) = buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.fuelType)
         // Setup RTLola Monitor
         rustGreetings.initmonitor(s: spec, customOutputNames: extraNames)
-    }
-    
-    // data are all the events from a ppcdf file
-    public func monitorOfflineFinalOutput(data: [PCDFEvent]) throws -> [String: Double] { //data = EventStore.load()
-        try monitorOfflineBase(data: data)
         
         var result = [String: Double]()
         for event in data {
             let lolaResult = collectData(event: event, rdeProfileCount: rdeProfile.count, isPaused: self.isPaused) //todo await, swift5.5
             if(!lolaResult.isEmpty){
                 result = lolaResult
-            }
-        }
-        
-        print("Result: \(result)")
-        return result
-    }
-    
-    public func monitorOfflineAllOutputs(data: [PCDFEvent]) throws -> [[String: Double]] {
-        try monitorOfflineBase(data: data)
-        
-        var result = [[String: Double]]()
-        for event in data {
-            let lolaResult = collectData(event: event, rdeProfileCount: rdeProfile.count, isPaused: self.isPaused) //todo await, swift5.5
-            if(!lolaResult.isEmpty){
-                result.append(lolaResult)
+                allOutputs.append(lolaResult)
             }
         }
         

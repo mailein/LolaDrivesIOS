@@ -10,7 +10,7 @@ class EventStore: ObservableObject {
     @Published var noxValues: [Double] = []
     @Published var altitudeValues: [Double] = []
     @Published var fuelrateValues: [Double] = []
-    @Published var accelerationValues: [Double] = []
+    @Published var accelerationValues: [Double] = [] //[m/s2]
     
     //MARK: - directory
     public static func dirURL() throws -> URL {
