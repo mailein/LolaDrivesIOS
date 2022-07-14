@@ -4,7 +4,8 @@ import pcdfcore
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
     @Published var outputs: [String: Double] = [:]
-    @Published var chartData: [(String, Double)] = []
+    @Published var avgNoxAtFuelrate: [(String, Double)] = []
+    @Published var avgFuelrateAtSpeed: [(String, Double)] = []
     @Published var speedValues: [Double] = []
     @Published var noxValues: [Double] = []
     @Published var altitudeValues: [Double] = []

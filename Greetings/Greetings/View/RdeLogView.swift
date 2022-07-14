@@ -83,7 +83,7 @@ struct RdeResultView: View{
                 if case .success(let events) = result {
                     let rdeValidator = RDEValidator()
                     do {
-                        eventStore.outputs = try rdeValidator.monitorOffline(data: events)
+                        eventStore.outputs = try rdeValidator.monitorOfflineFinalOutput(data: events)
                     } catch {
                         print(error.localizedDescription)
                     }
