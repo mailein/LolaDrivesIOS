@@ -27,3 +27,42 @@ class Profile: Identifiable, Hashable, ObservableObject{
         hasher.combine(name)
     }
 }
+
+//because Profile is not easily Codable, use a new struct,
+//so that it can be transformed to Data and saved in UserDefaults
+struct ProfileData: Codable {
+    let id: UUID
+    let name: String
+    let commandNames: [String: Bool]
+    var isSelected: Bool
+    
+    init(profile: Profile){
+        self.id = profile.id
+        self.name = profile.name
+        self.commandNames = profile.commands.reduce(into: [String: Bool]()) { (dict, commandItem) in
+            dict[commandItem.name] = commandItem.enabled
+        }
+        self.isSelected = profile.isSelected
+    }
+    
+    func toData() -> Data? {
+        do {
+            let encoder = JSONEncoder()
+            return try encoder.encode(self)
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
+    func restoreProfile() -> Profile {
+        let profile = Profile("new", commands: ProfileCommands.commands)
+        profile.id = self.id
+        profile.name = self.name
+        for command in profile.commands {
+            command.enabled = self.commandNames[command.name]!
+        }
+        profile.isSelected = isSelected
+        return profile
+    }
+}

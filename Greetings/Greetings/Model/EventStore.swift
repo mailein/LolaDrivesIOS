@@ -132,8 +132,32 @@ class EventStore: ObservableObject {
     public static func dateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "de_DE_POSIX")
-        dateFormatter.dateFormat = "yyyy.MM.dd, HH:mm:ss"
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         return dateFormatter
     }
     
+    
+    
+    public static func addToNotUploaded(fileName: String) {
+        DispatchQueue.main.async {
+            let notUploadedkey = "NotUploaded"
+            var notUploaded: [String] = UserDefaults.standard.array(forKey: notUploadedkey) as? [String] ?? []
+            notUploaded.append(fileName)
+            UserDefaults.standard.set(notUploaded, forKey: notUploadedkey)
+            print("added \(fileName) to UserDefaults NotUploaded")
+        }
+    }
+    
+    public static func removeFromNotUploaded(fileName: String) {
+        DispatchQueue.main.async {
+            let notUploadedkey = "NotUploaded"
+            var notUploaded: [String] = UserDefaults.standard.array(forKey: notUploadedkey) as? [String] ?? []
+            let i = notUploaded.firstIndex(of: fileName)
+            if let i = i {
+                notUploaded.remove(at: i)
+                UserDefaults.standard.set(notUploaded, forKey: notUploadedkey)
+                print("removed \(fileName) from UserDefaults NotUploaded: \(UserDefaults.standard.array(forKey: notUploadedkey))")
+            }
+        }
+    }
 }

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>APP_VERSION</key>
+	<string>$(APP_VERSION)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -18,12 +20,18 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>DEST_URL</key>
+	<string>$(DEST_URL)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Connecting to OBD2 adapters</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs location to get the altitude.</string>
+	<key>PRIVACY_POLICY_VERSION</key>
+	<string>$(PRIVACY_POLICY_VERSION)</string>
+	<key>SECRET_TOKEN</key>
+	<string>$(SECRET_TOKEN)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

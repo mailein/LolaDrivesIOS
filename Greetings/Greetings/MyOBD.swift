@@ -589,6 +589,10 @@ class MyOBD: ObservableObject{
     private func genFileName() -> String {
         let dateFormatter = EventStore.dateFormatter()
         let fileName = "\(dateFormatter.string(from: Date())).ppcdf"
+        
+        //write this file name to the not yet uploaded list
+        EventStore.addToNotUploaded(fileName: fileName)
+        
         return fileName
     }
     

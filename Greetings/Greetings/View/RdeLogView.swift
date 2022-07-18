@@ -264,7 +264,7 @@ struct RdeResultView: View{
             let help: HelpMsg
             var totalDistance: Double? = -1
             var avg_speed: Double? = -1
-            let headlineColor = Color.cyan
+            let headlineColor = Color(red: 68/255.0, green: 188/255.0, blue: 212/255.0)//the same as in style.css
             
             init(help: HelpMsg, totalDistance: Double? = nil, avg_speed: Double? = nil){
                 self.help = help

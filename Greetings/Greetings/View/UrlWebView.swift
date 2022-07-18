@@ -9,7 +9,7 @@ struct UrlWebView: UIViewRepresentable {
     
     init(url: URL) {
         self.url = url
-        self.urlString = try? String(contentsOf: url, encoding: String.Encoding.utf8)
+        self.urlString = try? String(contentsOf: url, encoding: String.Encoding.utf8)//encoding, so that punctuations are displayed correctly
     }
     
     func makeUIView(context: Context) -> WKWebView {
