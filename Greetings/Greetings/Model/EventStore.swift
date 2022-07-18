@@ -192,3 +192,8 @@ class EventStore: ObservableObject {
         return ret
     }
 }
+
+enum ChartDataName: String, CaseIterable, Identifiable {
+    case avgNoxAtFuelrate, avgFuelrateAtSpeed, speed, nox, altitude, fuelrate, acceleration
+    var id: Self { self }
+}

@@ -5,26 +5,24 @@ import Charts
 struct ChartsView: View {
     var file: URL
     @StateObject private var eventStore = EventStore()
+    @State private var selectedChart: ChartDataName = .avgNoxAtFuelrate
     
     var body: some View {
         //ScrollView doesn't work automatically with Charts without specifying the width and height of the chart
         //when tapping on the chart, you can't scroll, you have to tap the blank space outside the chart -> may be use a selector?
-        ScrollView(.horizontal){
-            HStack{
-                SingleChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]")
-                    .frame(width: 300, height: 500)
-                SingleChartView(entries: [
-                    BarChartDataEntry(x: 1,y: 1),
-                    BarChartDataEntry(x: 2,y: 2),
-                    BarChartDataEntry(x: 3,y: 3),
-                    BarChartDataEntry(x: 4,y: 4),
-                    BarChartDataEntry(x: 5,y: 5)
-                ], label: "avg(NOₓ)")
-                .frame(width: 300, height: 500)
+        VStack{
+            Picker("Chart", selection: $selectedChart){
+                Text("avg nox at fuel rate").tag(ChartDataName.avgNoxAtFuelrate)
+                Text("avg fuel rate at speed").tag(ChartDataName.avgFuelrateAtSpeed)
+                Text("speed").tag(ChartDataName.speed)
+                Text("nox").tag(ChartDataName.nox)
+                Text("altitude").tag(ChartDataName.altitude)
+                Text("fuel rate").tag(ChartDataName.fuelrate)
+                Text("acceleration").tag(ChartDataName.acceleration)
                 //            BarChartView(data: ChartData(values: eventStore.avgNoxAtFuelrate), title: "avg(nox)[mg] at fuel rate[l/h]", form: ChartForm.extraLarge, dropShadow: false, valueSpecifier: "%.2f")
                 //            BarChartView(data: ChartData(values: eventStore.avgFuelrateAtSpeed), title: "avg(fuel rate)[l/h] at speed[km/h]", form: ChartForm.extraLarge, dropShadow: false, valueSpecifier: "%.2f")
                 //            if !eventStore.speedValues.isEmpty {
-                //                LineChartView(data: eventStore.speedValues, title: "speed[km/h]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.0f")
+                //                LineChartView(data: eventStore.speedValues, title: "", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.0f")
                 //            } else {
                 //                Text("speed chart not available")
                 //            }
@@ -38,6 +36,24 @@ struct ChartsView: View {
                 //            } else {
                 //                Text("acceleration chart not available")
                 //            }
+            }
+            .pickerStyle(.wheel)
+            .frame(height: 100)
+            switch selectedChart {
+            case .avgNoxAtFuelrate:
+                SingleChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]")
+            case .avgFuelrateAtSpeed:
+                SingleChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgFuelrateAtSpeed), label: "avg(fuel rate)[l/h] at speed[km/h]")
+            case .speed:
+                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.speedValues), label: "speed[km/h]")
+            case .nox:
+                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.noxValues), label: "nox[ppm]")
+            case .altitude:
+                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.altitudeValues), label: "altitude[m]")
+            case .fuelrate:
+                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.fuelrateValues), label: "fuel rate[l/h]")
+            case .acceleration:
+                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.accelerationValues), label: "acceleration[m/s2]")
             }
         }
         .onAppear{
