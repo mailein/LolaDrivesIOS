@@ -179,7 +179,7 @@ class EventStore: ObservableObject {
     public func tuplesToDataEntries(tuples: [(String, Double)]) -> [BarChartDataEntry] {
         var ret: [BarChartDataEntry] = []
         for (i, tuple) in tuples.enumerated() {
-            ret.append(BarChartDataEntry(x: Double(i), y: tuple.1 * 1000))
+            ret.append(BarChartDataEntry(x: Double(i), y: tuple.1))
         }
         return ret
     }

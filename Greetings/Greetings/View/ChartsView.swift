@@ -100,7 +100,7 @@ struct ChartsView: View {
                         keyPrefix = "fuel_rate_avg_at_speed_"
                         scaler = 1
                         eventStore.avgFuelrateAtSpeed = extract(from: eventStore.outputs, keyPrefix: keyPrefix, scaler: scaler)
-                        print("avg(fuelrate) at speed: \(eventStore.avgNoxAtFuelrate)")
+                        print("avg(fuelrate) at speed: \(eventStore.avgFuelrateAtSpeed)")
                         
                         //acceleration
                         var accelerationValues: [Double] = []
