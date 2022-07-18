@@ -23,14 +23,14 @@ struct SingleBarChartView: UIViewRepresentable {
         let dataSet = BarChartDataSet(entries: entries)
         dataSet.colors = [.green]
         dataSet.label = label
-        
         let data = BarChartData(dataSet: dataSet)
-        
         return data
     }
     
     func formatXAxis(xAxis: XAxis) {
         xAxis.labelPosition = .bottom
+        xAxis.labelRotatedHeight = 25
+        xAxis.labelRotationAngle = -30
         xAxis.valueFormatter = IndexAxisValueFormatter(values: self.xIndex)
     }
 }
