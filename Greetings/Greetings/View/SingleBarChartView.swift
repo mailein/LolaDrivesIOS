@@ -6,6 +6,7 @@ struct SingleBarChartView: UIViewRepresentable {
     
     var entries: [BarChartDataEntry]
     var label: String
+    var xIndex: [String]
     
     func makeUIView(context: Context) -> BarChartView {
         let chart = BarChartView()
@@ -15,6 +16,7 @@ struct SingleBarChartView: UIViewRepresentable {
     
     func updateUIView(_ uiView: BarChartView, context: Context) {
         uiView.data = addData()//This will enable automatic chart update in case data changes.
+        formatXAxis(xAxis: uiView.xAxis)
     }
     
     func addData() -> BarChartData {
@@ -25,5 +27,10 @@ struct SingleBarChartView: UIViewRepresentable {
         let data = BarChartData(dataSet: dataSet)
         
         return data
+    }
+    
+    func formatXAxis(xAxis: XAxis) {
+        xAxis.labelPosition = .bottom
+        xAxis.valueFormatter = IndexAxisValueFormatter(values: self.xIndex)
     }
 }

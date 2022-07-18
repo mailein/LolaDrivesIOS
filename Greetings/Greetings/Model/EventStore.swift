@@ -191,6 +191,14 @@ class EventStore: ObservableObject {
         }
         return ret
     }
+    
+    public func getXIndexValues(tuples: [(String, Double)]) -> [String] {
+        return tuples.map{ $0.0.replacingOccurrences(of: "_", with: "-") }
+    }
+    
+    public func getXIndexValues(array: [Double]) -> [String] {
+        return stride(from: 0, to: array.count, by: 1).map{ String($0) }
+    }
 }
 
 enum ChartDataName: String, CaseIterable, Identifiable {

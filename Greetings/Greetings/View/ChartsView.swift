@@ -41,25 +41,25 @@ struct ChartsView: View {
             .frame(height: 80)
             switch selectedChart {
             case .avgNoxAtFuelrate:
-                SingleBarChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]")
+                SingleBarChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]", xIndex: eventStore.getXIndexValues(tuples: eventStore.avgNoxAtFuelrate))
                     .background(Color.white)//so that the picker choices are not displayed behind the transparent background
             case .avgFuelrateAtSpeed:
-                SingleBarChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgFuelrateAtSpeed), label: "avg(fuel rate)[l/h] at speed[km/h]")
+                SingleBarChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgFuelrateAtSpeed), label: "avg(fuel rate)[l/h] at speed[km/h]", xIndex: eventStore.getXIndexValues(tuples: eventStore.avgFuelrateAtSpeed))
                     .background(Color.white)
             case .speed:
-                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.speedValues), label: "speed[km/h]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.speedValues), label: "speed[km/h]", xIndex: eventStore.getXIndexValues(array: eventStore.speedValues))
                     .background(Color.white)
             case .nox:
-                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.noxValues), label: "nox[ppm]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.noxValues), label: "nox[ppm]", xIndex: eventStore.getXIndexValues(array: eventStore.noxValues))
                     .background(Color.white)
             case .altitude:
-                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.altitudeValues), label: "altitude[m]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.altitudeValues), label: "altitude[m]", xIndex: eventStore.getXIndexValues(array: eventStore.altitudeValues))
                     .background(Color.white)
             case .fuelrate:
-                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.fuelrateValues), label: "fuel rate[l/h]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.fuelrateValues), label: "fuel rate[l/h]", xIndex: eventStore.getXIndexValues(array: eventStore.fuelrateValues))
                     .background(Color.white)
             case .acceleration:
-                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.accelerationValues), label: "acceleration[m/s2]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.accelerationValues), label: "acceleration[m/s2]", xIndex: eventStore.getXIndexValues(array: eventStore.accelerationValues))
                     .background(Color.white)
             }
         }
