@@ -1,5 +1,6 @@
 import Foundation
 import pcdfcore
+import Charts
 
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
@@ -172,5 +173,22 @@ class EventStore: ObservableObject {
         self.altitudeValues = []
         self.fuelrateValues = []
         self.accelerationValues = []
+    }
+    
+    //MARK: - map to suitable data type
+    public func tuplesToDataEntries(tuples: [(String, Double)]) -> [BarChartDataEntry] {
+        var ret: [BarChartDataEntry] = []
+        for (i, tuple) in tuples.enumerated() {
+            ret.append(BarChartDataEntry(x: Double(i), y: tuple.1 * 1000))
+        }
+        return ret
+    }
+    
+    public func arrayToDataEntries(array: [Double]) -> [BarChartDataEntry] {
+        var ret: [BarChartDataEntry] = []
+        for i in 0..<array.count {
+            ret.append(BarChartDataEntry(x: Double(i), y: array[i]))
+        }
+        return ret
     }
 }

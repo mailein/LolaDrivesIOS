@@ -1,29 +1,44 @@
 import SwiftUI
 import pcdfcore
+import Charts
 
 struct ChartsView: View {
     var file: URL
     @StateObject private var eventStore = EventStore()
     
     var body: some View {
-        ScrollView{
-//            BarChartView(data: ChartData(values: eventStore.avgNoxAtFuelrate), title: "avg(nox)[mg] at fuel rate[l/h]", form: ChartForm.extraLarge, dropShadow: false, valueSpecifier: "%.2f")
-//            BarChartView(data: ChartData(values: eventStore.avgFuelrateAtSpeed), title: "avg(fuel rate)[l/h] at speed[km/h]", form: ChartForm.extraLarge, dropShadow: false, valueSpecifier: "%.2f")
-//            if !eventStore.speedValues.isEmpty {
-//                LineChartView(data: eventStore.speedValues, title: "speed[km/h]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.0f")
-//            } else {
-//                Text("speed chart not available")
-//            }
-//            if !eventStore.noxValues.isEmpty {
-//                LineChartView(data: eventStore.noxValues, title: "nox[ppm]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.0f")
-//            } else {
-//                Text("nox chart not available")
-//            }
-//            if !eventStore.accelerationValues.isEmpty {
-//                LineChartView(data: eventStore.accelerationValues, title: "acceleration[m/s2]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.2f")
-//            } else {
-//                Text("acceleration chart not available")
-//            }
+        //ScrollView doesn't work automatically with Charts without specifying the width and height of the chart
+        //when tapping on the chart, you can't scroll, you have to tap the blank space outside the chart -> may be use a selector?
+        ScrollView(.horizontal){
+            HStack{
+                SingleChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]")
+                    .frame(width: 300, height: 500)
+                SingleChartView(entries: [
+                    BarChartDataEntry(x: 1,y: 1),
+                    BarChartDataEntry(x: 2,y: 2),
+                    BarChartDataEntry(x: 3,y: 3),
+                    BarChartDataEntry(x: 4,y: 4),
+                    BarChartDataEntry(x: 5,y: 5)
+                ], label: "avg(NOₓ)")
+                .frame(width: 300, height: 500)
+                //            BarChartView(data: ChartData(values: eventStore.avgNoxAtFuelrate), title: "avg(nox)[mg] at fuel rate[l/h]", form: ChartForm.extraLarge, dropShadow: false, valueSpecifier: "%.2f")
+                //            BarChartView(data: ChartData(values: eventStore.avgFuelrateAtSpeed), title: "avg(fuel rate)[l/h] at speed[km/h]", form: ChartForm.extraLarge, dropShadow: false, valueSpecifier: "%.2f")
+                //            if !eventStore.speedValues.isEmpty {
+                //                LineChartView(data: eventStore.speedValues, title: "speed[km/h]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.0f")
+                //            } else {
+                //                Text("speed chart not available")
+                //            }
+                //            if !eventStore.noxValues.isEmpty {
+                //                LineChartView(data: eventStore.noxValues, title: "nox[ppm]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.0f")
+                //            } else {
+                //                Text("nox chart not available")
+                //            }
+                //            if !eventStore.accelerationValues.isEmpty {
+                //                LineChartView(data: eventStore.accelerationValues, title: "acceleration[m/s2]", form: ChartForm.extraLarge, rateValue: 0, dropShadow: false, valueSpecifier: "%.2f")
+                //            } else {
+                //                Text("acceleration chart not available")
+                //            }
+            }
         }
         .onAppear{
             //reset upon different files

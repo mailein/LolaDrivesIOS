@@ -1,7 +1,7 @@
 import SwiftUI
 import Charts
 
-struct ChartView: UIViewRepresentable {
+struct SingleChartView: UIViewRepresentable {
     typealias UIViewType = BarChartView
     
     var entries: [BarChartDataEntry]
