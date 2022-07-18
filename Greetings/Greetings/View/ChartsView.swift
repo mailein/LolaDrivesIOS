@@ -11,7 +11,7 @@ struct ChartsView: View {
         //ScrollView doesn't work automatically with Charts without specifying the width and height of the chart
         //when tapping on the chart, you can't scroll, you have to tap the blank space outside the chart -> may be use a selector?
         VStack{
-            Picker("Chart", selection: $selectedChart){
+            Picker("Please choose a chart", selection: $selectedChart){
                 Text("avg nox at fuel rate").tag(ChartDataName.avgNoxAtFuelrate)
                 Text("avg fuel rate at speed").tag(ChartDataName.avgFuelrateAtSpeed)
                 Text("speed").tag(ChartDataName.speed)
@@ -38,22 +38,29 @@ struct ChartsView: View {
                 //            }
             }
             .pickerStyle(.wheel)
-            .frame(height: 100)
+            .frame(height: 80)
             switch selectedChart {
             case .avgNoxAtFuelrate:
-                SingleChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]")
+                SingleBarChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgNoxAtFuelrate), label: "avg(nox)[mg] at fuel rate[l/h]")
+                    .background(Color.white)//so that the picker choices are not displayed behind the transparent background
             case .avgFuelrateAtSpeed:
-                SingleChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgFuelrateAtSpeed), label: "avg(fuel rate)[l/h] at speed[km/h]")
+                SingleBarChartView(entries: eventStore.tuplesToDataEntries(tuples: eventStore.avgFuelrateAtSpeed), label: "avg(fuel rate)[l/h] at speed[km/h]")
+                    .background(Color.white)
             case .speed:
-                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.speedValues), label: "speed[km/h]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.speedValues), label: "speed[km/h]")
+                    .background(Color.white)
             case .nox:
-                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.noxValues), label: "nox[ppm]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.noxValues), label: "nox[ppm]")
+                    .background(Color.white)
             case .altitude:
-                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.altitudeValues), label: "altitude[m]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.altitudeValues), label: "altitude[m]")
+                    .background(Color.white)
             case .fuelrate:
-                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.fuelrateValues), label: "fuel rate[l/h]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.fuelrateValues), label: "fuel rate[l/h]")
+                    .background(Color.white)
             case .acceleration:
-                SingleChartView(entries: eventStore.arrayToDataEntries(array: eventStore.accelerationValues), label: "acceleration[m/s2]")
+                SingleLineChartView(entries: eventStore.arrayToDataEntries(array: eventStore.accelerationValues), label: "acceleration[m/s2]")
+                    .background(Color.white)
             }
         }
         .onAppear{

@@ -14,6 +14,7 @@
 		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
 		9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		962759CB28854C1F00967FAC /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 962759CA28854C1F00967FAC /* Charts */; };
+		962759CD2885A17300967FAC /* SingleLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962759CC2885A17300967FAC /* SingleLineChartView.swift */; };
 		962B13D826D7E432001F8760 /* MyOBD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962B13D726D7E432001F8760 /* MyOBD.swift */; };
 		962F4AD928647D6C00DC15E5 /* MultiSensorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */; };
 		963238292734CA62008070D5 /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963238282734CA62008070D5 /* LocationHelper.swift */; };
@@ -61,7 +62,7 @@
 		96C6F61A27F1D538004C4B7D /* erc.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61527F1D538004C4B7D /* erc.png */; };
 		96C6F61B27F1D538004C4B7D /* logo_cpec_final_rgb_v2.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */; };
 		96C8995E26EB917000E2254D /* pcdfcore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96F77EB926B3276D00B22DE2 /* pcdfcore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		96CD518D287235C7003BAE41 /* SingleChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CD518C287235C7003BAE41 /* SingleChartView.swift */; };
+		96CD518D287235C7003BAE41 /* SingleBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CD518C287235C7003BAE41 /* SingleBarChartView.swift */; };
 		96E08BB0287C25C400164C87 /* disclaimer.html in Resources */ = {isa = PBXBuildFile; fileRef = 96E08BAF287C25C400164C87 /* disclaimer.html */; };
 		96E8274A286DBC340095EA5B /* spec_custom.lola in Resources */ = {isa = PBXBuildFile; fileRef = 96E82749286DBC340095EA5B /* spec_custom.lola */; };
 		96EB80E4287D825F00BB2501 /* ChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EB80E3287D825F00BB2501 /* ChartsView.swift */; };
@@ -113,6 +114,7 @@
 		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
 		962759C928854C0F00967FAC /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
+		962759CC2885A17300967FAC /* SingleLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineChartView.swift; sourceTree = "<group>"; };
 		962B13D726D7E432001F8760 /* MyOBD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOBD.swift; sourceTree = "<group>"; };
 		962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSensorReducer.swift; sourceTree = SOURCE_ROOT; };
 		963238282734CA62008070D5 /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
@@ -159,7 +161,7 @@
 		96C6F61427F1D538004C4B7D /* uds.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uds.png; sourceTree = "<group>"; };
 		96C6F61527F1D538004C4B7D /* erc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erc.png; sourceTree = "<group>"; };
 		96C6F61627F1D538004C4B7D /* logo_cpec_final_rgb_v2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_cpec_final_rgb_v2.png; sourceTree = "<group>"; };
-		96CD518C287235C7003BAE41 /* SingleChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleChartView.swift; sourceTree = "<group>"; };
+		96CD518C287235C7003BAE41 /* SingleBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleBarChartView.swift; sourceTree = "<group>"; };
 		96E08BAC287C13A900164C87 /* ConfigDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigDebug.xcconfig; sourceTree = "<group>"; };
 		96E08BAD287C13BA00164C87 /* ConfigRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigRelease.xcconfig; sourceTree = "<group>"; };
 		96E08BAE287C1F5B00164C87 /* ConfigBase.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigBase.xcconfig; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 		96EFC14326FB4FF900BE44A6 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				9648C84F287CCD60004E0650 /* ContentView.swift */,
 				960DACA826396859005DEABB /* MenuView.swift */,
 				96EFC14426FB508F00BE44A6 /* NavBar.swift */,
 				96EFC14126FB4F9400BE44A6 /* RdeSettingsView.swift */,
@@ -358,16 +361,16 @@
 				96C43B94283563CB00F45FC4 /* HistoryDetailView.swift */,
 				96EFC15026FB6F4100BE44A6 /* PrivacyView.swift */,
 				96EFC14C26FB6E4A00BE44A6 /* HelpView.swift */,
+				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
+				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
 				96C6F5F227E7727B004C4B7D /* CapsuleView.swift */,
 				96C6F5F427EE6EAE004C4B7D /* UrlWebView.swift */,
-				96C6F60C27F1CDDB004C4B7D /* AcknowledgementsView.swift */,
 				96C6F60E27F1CF63004C4B7D /* BaseWebView.swift */,
-				96C6F61027F1CFF8004C4B7D /* ImpressumView.swift */,
-				96CD518C287235C7003BAE41 /* SingleChartView.swift */,
 				9648C84B287CC610004E0650 /* InitialDisclaimerView.swift */,
 				9648C84D287CCBF4004E0650 /* InitialPrivacyView.swift */,
-				9648C84F287CCD60004E0650 /* ContentView.swift */,
 				96EB80E3287D825F00BB2501 /* ChartsView.swift */,
+				96CD518C287235C7003BAE41 /* SingleBarChartView.swift */,
+				962759CC2885A17300967FAC /* SingleLineChartView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -534,6 +537,7 @@
 				960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */,
 				96EFC14926FB69D500BE44A6 /* HistoryView.swift in Sources */,
 				96EFC14B26FB6E3200BE44A6 /* MonitoringView.swift in Sources */,
+				962759CD2885A17300967FAC /* SingleLineChartView.swift in Sources */,
 				9670CCA5286F2F9200E1BDC9 /* Uploader.swift in Sources */,
 				96EFC14D26FB6E4A00BE44A6 /* HelpView.swift in Sources */,
 				9648C84E287CCBF4004E0650 /* InitialPrivacyView.swift in Sources */,
@@ -562,7 +566,7 @@
 				96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */,
 				96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */,
 				96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */,
-				96CD518D287235C7003BAE41 /* SingleChartView.swift in Sources */,
+				96CD518D287235C7003BAE41 /* SingleBarChartView.swift in Sources */,
 				96C43B932831AACE00F45FC4 /* EventStore.swift in Sources */,
 				96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */,
 				96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */,

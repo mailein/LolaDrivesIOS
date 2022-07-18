@@ -184,10 +184,10 @@ class EventStore: ObservableObject {
         return ret
     }
     
-    public func arrayToDataEntries(array: [Double]) -> [BarChartDataEntry] {
-        var ret: [BarChartDataEntry] = []
+    public func arrayToDataEntries(array: [Double]) -> [ChartDataEntry] {
+        var ret: [ChartDataEntry] = []
         for i in 0..<array.count {
-            ret.append(BarChartDataEntry(x: Double(i), y: array[i]))
+            ret.append(ChartDataEntry(x: Double(i), y: array[i]))
         }
         return ret
     }
