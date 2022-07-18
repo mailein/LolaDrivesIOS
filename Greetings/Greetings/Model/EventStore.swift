@@ -4,6 +4,13 @@ import pcdfcore
 class EventStore: ObservableObject {
     @Published var events: [PCDFEvent] = []
     @Published var outputs: [String: Double] = [:]
+    @Published var avgNoxAtFuelrate: [(String, Double)] = []
+    @Published var avgFuelrateAtSpeed: [(String, Double)] = []
+    @Published var speedValues: [Double] = []
+    @Published var noxValues: [Double] = []
+    @Published var altitudeValues: [Double] = []
+    @Published var fuelrateValues: [Double] = []
+    @Published var accelerationValues: [Double] = [] //[m/s2]
     
     //MARK: - directory
     public static func dirURL() throws -> URL {
@@ -136,8 +143,6 @@ class EventStore: ObservableObject {
         return dateFormatter
     }
     
-    
-    
     public static func addToNotUploaded(fileName: String) {
         DispatchQueue.main.async {
             let notUploadedkey = "NotUploaded"
@@ -159,5 +164,13 @@ class EventStore: ObservableObject {
                 print("removed \(fileName) from UserDefaults NotUploaded: \(UserDefaults.standard.array(forKey: notUploadedkey))")
             }
         }
+    }
+
+    public func resetValues() {
+        self.speedValues = []
+        self.noxValues = []
+        self.altitudeValues = []
+        self.fuelrateValues = []
+        self.accelerationValues = []
     }
 }

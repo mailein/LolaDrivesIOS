@@ -16,6 +16,7 @@ class RDEValidator {
     // The sensor profile of the car which is determined.
     var rdeProfile: [OBDCommand] = []
     let rustGreetings: RustGreetings
+    var allOutputs: [[String: Double]] = []
     
     private var specBody: String
     private var specHeader: String
@@ -30,7 +31,7 @@ class RDEValidator {
     private var specMAFToFuelRateGasoline: String
     private var specCustom: String
     
-    enum RDE_RTLOLA_INPUT_QUANTITIES { 
+    enum RDE_RTLOLA_INPUT_QUANTITIES {
         case VELOCITY
         case ALTITUDE
         case TEMPERATURE
@@ -116,6 +117,7 @@ class RDEValidator {
             let lolaResult = collectData(event: event, rdeProfileCount: rdeProfile.count, isPaused: self.isPaused) //todo await, swift5.5
             if(!lolaResult.isEmpty){
                 result = lolaResult
+                allOutputs.append(lolaResult)
             }
         }
         
@@ -124,10 +126,10 @@ class RDEValidator {
     }
 
     public func collectData(event: PCDFEvent, rdeProfileCount: Int, altitude: Double? = nil, isPaused: Bool) -> [String: Double] { //todo async, swift5.5
-        if altitude != nil {
+        if altitude != nil {//for collecting data in OBD
             inputs[.ALTITUDE] = altitude
         }
-        if(event.type == pcdfcore.EventType.gps){
+        if(event.type == pcdfcore.EventType.gps){//for collecting data in RDEValidator
             inputs[.ALTITUDE] = (event as! GPSEvent).altitude
         }else if(event.type == pcdfcore.EventType.obdResponse){
             // Reduces the event if possible (e.g. NOx or FuelRate events) using the PCDFCore library.
@@ -280,11 +282,11 @@ class RDEValidator {
         var extraNames: [String] = []
         let (specNoxAvgAtFuelRate, outputNamesNoxAvgAtFuelRate) = genCustomSpecNoxAvgAtFuelRate()
         s.append(specCustom + specNoxAvgAtFuelRate)
-//        extraNames.append(contentsOf: outputNamesNoxAvgAtFuelRate)
+        extraNames.append(contentsOf: outputNamesNoxAvgAtFuelRate)
         
         let (specFuelRateAvgAtSpeed, outputNamesFuelRateAvgAtSpeed) = genCustomSpecFuelRateAvgAtSpeed()
         s.append(specFuelRateAvgAtSpeed)
-//        extraNames.append(contentsOf: outputNamesFuelRateAvgAtSpeed)
+        extraNames.append(contentsOf: outputNamesFuelRateAvgAtSpeed)
 
         return (s, extraNames)
     }

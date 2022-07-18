@@ -4,21 +4,16 @@ import Charts
 
 struct HistoryDetailView: View {
     var file: URL
+    
     var body: some View {
         TabView{
             EventLogTabView(file: file)
                 .tabItem{
                     Text("Event log")
                 }
-            ChartView(entries: [
-                BarChartDataEntry(x: 1,y: 1),
-                BarChartDataEntry(x: 2,y: 2),
-                BarChartDataEntry(x: 3,y: 3),
-                BarChartDataEntry(x: 4,y: 4),
-                BarChartDataEntry(x: 5,y: 5)
-            ], label: "avg(NOₓ)")
+            ChartsView(file: file)
                 .tabItem{
-                    Text("Chart")
+                    Text("Charts")
                 }
             RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{
