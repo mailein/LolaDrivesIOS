@@ -15,6 +15,7 @@
 		9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		962759CB28854C1F00967FAC /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 962759CA28854C1F00967FAC /* Charts */; };
 		962759CD2885A17300967FAC /* SingleLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962759CC2885A17300967FAC /* SingleLineChartView.swift */; };
+		962759CF2886B76900967FAC /* BalloonMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962759CE2886B76900967FAC /* BalloonMarker.swift */; };
 		962B13D826D7E432001F8760 /* MyOBD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962B13D726D7E432001F8760 /* MyOBD.swift */; };
 		962F4AD928647D6C00DC15E5 /* MultiSensorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */; };
 		963238292734CA62008070D5 /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963238282734CA62008070D5 /* LocationHelper.swift */; };
@@ -115,6 +116,7 @@
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
 		962759C928854C0F00967FAC /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
 		962759CC2885A17300967FAC /* SingleLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineChartView.swift; sourceTree = "<group>"; };
+		962759CE2886B76900967FAC /* BalloonMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonMarker.swift; sourceTree = "<group>"; };
 		962B13D726D7E432001F8760 /* MyOBD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOBD.swift; sourceTree = "<group>"; };
 		962F4AD828647D6C00DC15E5 /* MultiSensorReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSensorReducer.swift; sourceTree = SOURCE_ROOT; };
 		963238282734CA62008070D5 /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				96EB80E3287D825F00BB2501 /* ChartsView.swift */,
 				96CD518C287235C7003BAE41 /* SingleBarChartView.swift */,
 				962759CC2885A17300967FAC /* SingleLineChartView.swift */,
+				962759CE2886B76900967FAC /* BalloonMarker.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
 				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,
 				96C6F60F27F1CF63004C4B7D /* BaseWebView.swift in Sources */,
+				962759CF2886B76900967FAC /* BalloonMarker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

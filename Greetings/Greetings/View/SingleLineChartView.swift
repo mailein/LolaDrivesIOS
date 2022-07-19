@@ -13,11 +13,12 @@ struct SingleLineChartView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: LineChartView, context: Context) {
-        addData(uiView)//This will enable automatic chart update in case data changes.
+        addData(to: uiView)//This will enable automatic chart update in case data changes.
         formatXAxis(xAxis: uiView.xAxis)
+        setupBalloonMarker(to: uiView)
     }
     
-    func addData(_ lineChart: LineChartView) {
+    func addData(to lineChart: LineChartView) {
         let dataSet = LineChartDataSet(entries: entries)
         formatDataSet(dataSet: dataSet, label: self.label, color: .blue)
         let data = LineChartData(dataSet: dataSet)
@@ -39,5 +40,15 @@ struct SingleLineChartView: UIViewRepresentable {
     func formatXAxis(xAxis: XAxis) {
         xAxis.labelPosition = .bottom
         xAxis.valueFormatter = IndexAxisValueFormatter(values: self.xIndex)
+    }
+    
+    func setupBalloonMarker(to lineChart: LineChartView) {
+        let marker = BalloonMarker(color: UIColor(white: 180/255, alpha: 1),
+                                   font: .systemFont(ofSize: 12),
+                                   textColor: .white,
+                                   insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8))
+        marker.chartView = lineChart
+        marker.minimumSize = CGSize(width: 80, height: 40)
+        lineChart.marker = marker
     }
 }
