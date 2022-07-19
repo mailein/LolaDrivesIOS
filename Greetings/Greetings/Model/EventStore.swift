@@ -179,7 +179,7 @@ class EventStore: ObservableObject {
     public func tuplesToDataEntries(tuples: [(String, Double)]) -> [BarChartDataEntry] {
         var ret: [BarChartDataEntry] = []
         for (i, tuple) in tuples.enumerated() {
-            ret.append(BarChartDataEntry(x: Double(i), y: tuple.1))
+            ret.append(BarChartDataEntry(x: Double(i), y: Double(String(format: "%.2f", tuple.1))!))
         }
         return ret
     }
@@ -187,7 +187,7 @@ class EventStore: ObservableObject {
     public func arrayToDataEntries(array: [Double]) -> [ChartDataEntry] {
         var ret: [ChartDataEntry] = []
         for i in 0..<array.count {
-            ret.append(ChartDataEntry(x: Double(i), y: array[i]))
+            ret.append(ChartDataEntry(x: Double(i), y: Double(String(format: "%.2f", array[i]))!))
         }
         return ret
     }
