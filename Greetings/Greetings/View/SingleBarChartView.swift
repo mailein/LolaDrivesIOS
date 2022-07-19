@@ -16,6 +16,7 @@ struct SingleBarChartView: UIViewRepresentable {
         addData(to: uiView)//This will enable automatic chart update in case data changes.
         formatXAxis(xAxis: uiView.xAxis)
         setupBalloonMarker(to: uiView)
+        uiView.animate(xAxisDuration: 2, yAxisDuration: 2)
     }
     
     func addData(to barChart: BarChartView) {

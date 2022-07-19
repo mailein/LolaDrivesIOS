@@ -17,6 +17,7 @@ struct SingleLineChartView: UIViewRepresentable {
         formatXAxis(xAxis: uiView.xAxis)
 //        formatChart(uiView)
         setupBalloonMarker(to: uiView)
+        uiView.animate(xAxisDuration: 2, yAxisDuration: 2)
     }
     
     func addData(to lineChart: LineChartView) {
