@@ -15,6 +15,7 @@ struct SingleLineChartView: UIViewRepresentable {
     func updateUIView(_ uiView: LineChartView, context: Context) {
         addData(to: uiView)//This will enable automatic chart update in case data changes.
         formatXAxis(xAxis: uiView.xAxis)
+//        formatChart(uiView)
         setupBalloonMarker(to: uiView)
     }
     
@@ -40,6 +41,13 @@ struct SingleLineChartView: UIViewRepresentable {
     func formatXAxis(xAxis: XAxis) {
         xAxis.labelPosition = .bottom
         xAxis.valueFormatter = IndexAxisValueFormatter(values: self.xIndex)
+    }
+    
+    func formatChart(_ lineChart: LineChartView) {
+        lineChart.scaleXEnabled = true
+        lineChart.scaleYEnabled = true
+        lineChart.doubleTapToZoomEnabled = true
+        lineChart.setVisibleXRangeMaximum(20)
     }
     
     func setupBalloonMarker(to lineChart: LineChartView) {
