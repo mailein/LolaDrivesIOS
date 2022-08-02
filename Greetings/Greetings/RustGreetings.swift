@@ -2,7 +2,7 @@ import Foundation
 
 class RustGreetings {
     //both inputs and outputs should be in the same order as in spec file
-    private var RELEVANT_OUTPUTS = [
+    private var INITIAL_RELEVANT_OUTPUTS = [
 //        "vp",//is_urban: vp <= 60.0, is_rural: (60.0 < vp) && (vp <= 90.0), is_motorway: 90.0 < vp
 //        "altitudep",
 //        "temperaturep",
@@ -42,6 +42,7 @@ class RustGreetings {
         "nox_per_kilometer_m",
         "nox_avg_m"
         ]
+    private var RELEVANT_OUTPUTS: [String] = []
     
 //    func sayHello(to: String) -> String {
 //        let result = rust_greeting(to)
@@ -56,6 +57,7 @@ class RustGreetings {
     
     func initmonitor(s: String, customOutputNames: [String]) -> String{
         print("spec file: \(s)")
+        resetRelevantOutputs()
         appendCustomOutputNames(names: customOutputNames)
         let result = rust_initmonitor(s, RELEVANT_OUTPUTS.joined(separator: ","))
         let swift_result = String(cString: result!)
@@ -79,6 +81,10 @@ class RustGreetings {
             let dict = Dictionary(uniqueKeysWithValues: zip(RELEVANT_OUTPUTS, swift_result))
             return dict
         }
+    }
+    
+    func resetRelevantOutputs() {
+        self.RELEVANT_OUTPUTS = self.INITIAL_RELEVANT_OUTPUTS
     }
     
     func appendCustomOutputNames(names: [String]) {
