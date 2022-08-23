@@ -106,6 +106,9 @@ class MyOBD: ObservableObject{
     }
     
     deinit {
+        _obd2Adapter?.disconnect()
+        _transporter.disconnect()
+        connected = false
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -130,16 +133,31 @@ class MyOBD: ObservableObject{
     }
     
     private func connect () -> () {
-        _transporter = LTBTLESerialTransporter.init(identifier: nil, serviceUUIDs: _serviceUUIDs)
-        //The closure is called after transporter has connected! So updateSensorData() should be called inside the closure after adapter connects; emmmm, no need, because when the state changed to connected, updateSensorData() will be called
-        _transporter.connect{(inputStream : InputStream?, outputStream : OutputStream?) -> () in
-            if((inputStream == nil)){
-                print("Could not connect to OBD2 adapter")
-                return;
+        if self._obd2Adapter == nil {
+            _transporter = LTBTLESerialTransporter.init(identifier: nil, serviceUUIDs: _serviceUUIDs)
+            //The closure is called after transporter has connected! So updateSensorData() should be called inside the closure after adapter connects; emmmm, no need, because when the state changed to connected, updateSensorData() will be called
+            _transporter.connect{(inputStream : InputStream?, outputStream : OutputStream?) -> () in
+                if((inputStream == nil)){
+                    print("Could not connect to OBD2 adapter")
+                    return;
+                }
+                self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
+                self._obd2Adapter!.connect()
+                print("adapter init and connected")
+                DispatchQueue.main.async {//Publishing changes from background threads is not allowed
+                    self.connected = true
+                }
+                
+                //It seems the correct obd BLE can be automatically discovered and connected,
+                //so I only need to show green(connected) or red(disconnected).
+                //Unnecessary to show all possible adapters.
+                self.connectedAdapterName = self._transporter.getAdapter().name!
+                let allDevices = self._transporter.getAllDevices()
+                print("adapter: \(self._transporter.getAdapter()), all devices: \(allDevices)")
             }
-            self._obd2Adapter = LTOBD2AdapterELM327.init(inputStream: inputStream!, outputStream: outputStream!)
+        } else {
             self._obd2Adapter!.connect()
-            print("adapter init and connected")
+            print("adapter reconnected")
             DispatchQueue.main.async {//Publishing changes from background threads is not allowed
                 self.connected = true
             }
@@ -155,9 +173,7 @@ class MyOBD: ObservableObject{
     }
     
     public func disconnect () {
-        _obd2Adapter?.disconnect()
-        _transporter.disconnect()
-        connected = false
+        connected = true // stay connected, but stop the command transmission
         isOngoing = false
         
 //        printPpcdf()
@@ -168,10 +184,10 @@ class MyOBD: ObservableObject{
         DispatchQueue.main.async {
             switch self._obd2Adapter?.adapterState{
             case OBD2AdapterStateConnected://OBD2AdapterStateDiscovering,
-                print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
+                print("onAdapterStateConnected: \(self._obd2Adapter?.friendlyAdapterState)")
                 self.updateSensorDataForSupportedPids()
             case OBD2AdapterStateError, OBD2AdapterStateGone:
-                print("onAdapterChangedState: \(self._obd2Adapter?.friendlyAdapterState)")
+                print("onAdapterStateGone: \(self._obd2Adapter?.friendlyAdapterState)")
                 self.disconnect()
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
@@ -354,6 +370,10 @@ class MyOBD: ObservableObject{
     
     //MARK: - loop: send and receive obd commands
     private func updateSensorData () {
+        if !isOngoing {
+            return
+        }
+        
         var commandItems: [CommandItem] = self.rdeCommands
         if self.isLiveMonitoring {
             commandItems = self.selectedCommands
@@ -644,8 +664,8 @@ class MyOBD: ObservableObject{
     }
     
     private func resetState(isLive: Bool, selected: [CommandItem]){
-        _serviceUUIDs = []
-        _transporter = LTBTLESerialTransporter()
+//        _serviceUUIDs = []
+//        _transporter = LTBTLESerialTransporter()
 //        _obd2Adapter = nil
         supportedPids = []
         initCommands(commands: &rdeCommands)
