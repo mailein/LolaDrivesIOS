@@ -186,9 +186,11 @@ class MyOBD: ObservableObject{
             case OBD2AdapterStateConnected://OBD2AdapterStateDiscovering,
                 print("onAdapterStateConnected: \(self._obd2Adapter?.friendlyAdapterState)")
                 self.updateSensorDataForSupportedPids()
+                self.connected = true
             case OBD2AdapterStateError, OBD2AdapterStateGone:
                 print("onAdapterStateGone: \(self._obd2Adapter?.friendlyAdapterState)")
-                self.disconnect()
+                self.connected = false
+                self.isOngoing = false
             default:
                 print("Unhandled adapter state \(self._obd2Adapter?.friendlyAdapterState)")
             }
