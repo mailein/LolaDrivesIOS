@@ -7,7 +7,7 @@ struct HistoryDetailView: View {
     
     var body: some View {
         TabView{
-            EventLogTabView(file: file)
+            EventLogView(file: file)
                 .tabItem{
                     Text("Event log")
                 }
@@ -30,7 +30,7 @@ struct HistoryDetailView: View {
     }
 }
 
-struct EventLogTabView: View{
+struct EventLogView: View{
     var file: URL
     @StateObject private var eventStore = EventStore()
     

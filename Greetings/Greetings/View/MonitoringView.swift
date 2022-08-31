@@ -129,7 +129,7 @@ struct MonitoringView: View {
     
     func liveMonitoring(){
         if viewModel.isStartLiveMonitoringButton() {//start live monitoring
-            obd.viewDidLoad(isLiveMonitoring: true, selectedCommands: viewModel.getSelectedProfileCommands())
+            obd.run(isLiveMonitoring: true, selectedCommands: viewModel.getSelectedProfileCommands())
         }else{//stop live monitoring
             obd.disconnect()
         }

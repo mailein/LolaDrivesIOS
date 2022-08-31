@@ -50,7 +50,7 @@ struct RdeSettingsView: View{
                 } else {
                     unableToTap = false
                     viewModel.startRDE()
-                    obd.viewDidLoad(isLiveMonitoring: false, selectedCommands: [])
+                    obd.run(isLiveMonitoring: false, selectedCommands: [])
                 }
             })
         }
