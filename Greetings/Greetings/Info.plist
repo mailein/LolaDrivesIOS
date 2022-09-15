@@ -26,8 +26,10 @@
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Connecting to OBD2 adapters</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>The RDE test running in background still needs location to get the altitude.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs location to get the altitude.</string>
+	<string>The RDE test needs location to get the altitude.</string>
 	<key>PRIVACY_POLICY_VERSION</key>
 	<string>$(PRIVACY_POLICY_VERSION)</string>
 	<key>SECRET_TOKEN</key>
@@ -62,7 +64,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>gps</key>
-	<string>gps</string>
 </dict>
 </plist>

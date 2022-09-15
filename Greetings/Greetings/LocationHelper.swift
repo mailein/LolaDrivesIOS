@@ -39,25 +39,25 @@ final class LocationHelper: NSObject, ObservableObject, CLLocationManagerDelegat
             return
         }
         switch locationManager.authorizationStatus {
-            
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .restricted:
-            alert = LocationAlert.restricted
-            showAlert = true
-        case .denied:
-            alert = LocationAlert.denied
-            showAlert = true
-        case .authorizedAlways, .authorizedWhenInUse:
-            altitude = locationManager.location!.altitude
-            longitude = locationManager.location!.coordinate.longitude
-            latitude = locationManager.location!.coordinate.latitude
-            gps_speed = locationManager.location!.speed
-            print("assign altitude to \(altitude)")
-            alert = nil
-            showAlert = false
-        @unknown default:
-            break
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .restricted:
+                alert = LocationAlert.restricted
+                showAlert = true
+            case .denied:
+                alert = LocationAlert.denied
+                showAlert = true
+            case .authorizedWhenInUse:
+                locationManager.requestAlwaysAuthorization()
+                altitude = locationManager.location!.altitude
+                longitude = locationManager.location!.coordinate.longitude
+                latitude = locationManager.location!.coordinate.latitude
+                gps_speed = locationManager.location!.speed
+                print("assign altitude to \(altitude)")
+                alert = nil
+                showAlert = false
+            @unknown default:
+                break
         }
     }
     
