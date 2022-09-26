@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "960DACA226396859005DEABB"
-               BuildableName = "Greetings.app"
-               BlueprintName = "Greetings"
-               ReferencedContainer = "container:Greetings.xcodeproj">
+               BuildableName = "LolaDrives.app"
+               BlueprintName = "LolaDrives"
+               ReferencedContainer = "container:LolaDrives.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -59,9 +59,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "960DACA226396859005DEABB"
-            BuildableName = "Greetings.app"
-            BlueprintName = "Greetings"
-            ReferencedContainer = "container:Greetings.xcodeproj">
+            BuildableName = "LolaDrives.app"
+            BlueprintName = "LolaDrives"
+            ReferencedContainer = "container:LolaDrives.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -83,9 +83,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "960DACA226396859005DEABB"
-            BuildableName = "Greetings.app"
-            BlueprintName = "Greetings"
-            ReferencedContainer = "container:Greetings.xcodeproj">
+            BuildableName = "LolaDrives.app"
+            BlueprintName = "LolaDrives"
+            ReferencedContainer = "container:LolaDrives.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

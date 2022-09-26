@@ -84,7 +84,7 @@
 		96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EFC14E26FB6F1400BE44A6 /* ProfilesView.swift */; };
 		96EFC15126FB6F4100BE44A6 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EFC15026FB6F4100BE44A6 /* PrivacyView.swift */; };
 		96FEAE8326CE6251005255D0 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FEAE8226CE6251005255D0 /* Util.swift */; };
-		C6988D887C7A3B49C886698A /* Pods_Greetings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9729F66D373FA68AA030A10 /* Pods_Greetings.framework */; };
+		EF56647696A52676436E4B82 /* Pods_LolaDrives.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38D88F1F1A212119249DBEF8 /* Pods_LolaDrives.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -102,9 +102,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5B5806C2B8A4FB5A7682F178 /* Pods-Greetings.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greetings.debug.xcconfig"; path = "Target Support Files/Pods-Greetings/Pods-Greetings.debug.xcconfig"; sourceTree = "<group>"; };
-		8D15ED78B4394F1548B5880B /* Pods-Greetings.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greetings.release.xcconfig"; path = "Target Support Files/Pods-Greetings/Pods-Greetings.release.xcconfig"; sourceTree = "<group>"; };
-		960DACA326396859005DEABB /* Greetings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Greetings.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		38D88F1F1A212119249DBEF8 /* Pods_LolaDrives.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LolaDrives.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		422FF82BD96538E01B021A56 /* Pods-LolaDrives.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LolaDrives.release.xcconfig"; path = "Target Support Files/Pods-LolaDrives/Pods-LolaDrives.release.xcconfig"; sourceTree = "<group>"; };
+		73AB7C3AF9D206D567FA795C /* Pods-LolaDrives.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LolaDrives.debug.xcconfig"; path = "Target Support Files/Pods-LolaDrives/Pods-LolaDrives.debug.xcconfig"; sourceTree = "<group>"; };
+		960DACA326396859005DEABB /* LolaDrives.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LolaDrives.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		960DACA626396859005DEABB /* GreetingsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreetingsApp.swift; sourceTree = "<group>"; };
 		960DACA826396859005DEABB /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		960DACAA2639685A005DEABB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -112,7 +113,7 @@
 		960DACAF2639685A005DEABB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		960DACB62639687D005DEABB /* libgreetings.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgreetings.a; path = ../cargo/target/universal/release/libgreetings.a; sourceTree = "<group>"; };
 		960DACB7263968A5005DEABB /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
-		960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Greetings-Bridging-Header.h"; sourceTree = "<group>"; };
+		960DACBA26396965005DEABB /* LolaDrives-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LolaDrives-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
 		962759C928854C0F00967FAC /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
 		962759CC2885A17300967FAC /* SingleLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineChartView.swift; sourceTree = "<group>"; };
@@ -188,7 +189,6 @@
 		96EFC15026FB6F4100BE44A6 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		96F77EB926B3276D00B22DE2 /* pcdfcore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = pcdfcore.framework; path = "../../pcdf-core/pcdfcore/build/bin/native/releaseFramework/pcdfcore.framework"; sourceTree = "<group>"; };
 		96FEAE8226CE6251005255D0 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		A9729F66D373FA68AA030A10 /* Pods_Greetings.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Greetings.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,8 +198,8 @@
 			files = (
 				9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
-				C6988D887C7A3B49C886698A /* Pods_Greetings.framework in Frameworks */,
 				962759CB28854C1F00967FAC /* Charts in Frameworks */,
+				EF56647696A52676436E4B82 /* Pods_LolaDrives.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,7 +212,7 @@
 				969B982D280710C3004A2123 /* lola */,
 				96B71F2B271D7C6A00AB2E8E /* ppcdf */,
 				966BAB97268398040075984D /* greetings.h */,
-				960DACA526396859005DEABB /* Greetings */,
+				960DACA526396859005DEABB /* LolaDrives */,
 				960DACA426396859005DEABB /* Products */,
 				960DACB52639687D005DEABB /* Frameworks */,
 				E3FE97F6A5DC1AA896415E16 /* Pods */,
@@ -222,12 +222,12 @@
 		960DACA426396859005DEABB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				960DACA326396859005DEABB /* Greetings.app */,
+				960DACA326396859005DEABB /* LolaDrives.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		960DACA526396859005DEABB /* Greetings */ = {
+		960DACA526396859005DEABB /* LolaDrives */ = {
 			isa = PBXGroup;
 			children = (
 				962759C928854C0F00967FAC /* Charts-master */,
@@ -239,7 +239,7 @@
 				960DACAA2639685A005DEABB /* Assets.xcassets */,
 				960DACAF2639685A005DEABB /* Info.plist */,
 				960DACAC2639685A005DEABB /* Preview Content */,
-				960DACBA26396965005DEABB /* Greetings-Bridging-Header.h */,
+				960DACBA26396965005DEABB /* LolaDrives-Bridging-Header.h */,
 				960DACBB26396D95005DEABB /* RustGreetings.swift */,
 				96A0DADC26BC205900934FCA /* RDEValidator.swift */,
 				96FEAE8226CE6251005255D0 /* Util.swift */,
@@ -251,7 +251,7 @@
 				96E08BAD287C13BA00164C87 /* ConfigRelease.xcconfig */,
 				96E08BAE287C1F5B00164C87 /* ConfigBase.xcconfig */,
 			);
-			path = Greetings;
+			path = LolaDrives;
 			sourceTree = "<group>";
 		};
 		960DACAC2639685A005DEABB /* Preview Content */ = {
@@ -268,7 +268,7 @@
 				96F77EB926B3276D00B22DE2 /* pcdfcore.framework */,
 				960DACB7263968A5005DEABB /* libresolv.tbd */,
 				960DACB62639687D005DEABB /* libgreetings.a */,
-				A9729F66D373FA68AA030A10 /* Pods_Greetings.framework */,
+				38D88F1F1A212119249DBEF8 /* Pods_LolaDrives.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -381,8 +381,8 @@
 		E3FE97F6A5DC1AA896415E16 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				5B5806C2B8A4FB5A7682F178 /* Pods-Greetings.debug.xcconfig */,
-				8D15ED78B4394F1548B5880B /* Pods-Greetings.release.xcconfig */,
+				73AB7C3AF9D206D567FA795C /* Pods-LolaDrives.debug.xcconfig */,
+				422FF82BD96538E01B021A56 /* Pods-LolaDrives.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -390,9 +390,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		960DACA226396859005DEABB /* Greetings */ = {
+		960DACA226396859005DEABB /* LolaDrives */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 960DACB22639685A005DEABB /* Build configuration list for PBXNativeTarget "Greetings" */;
+			buildConfigurationList = 960DACB22639685A005DEABB /* Build configuration list for PBXNativeTarget "LolaDrives" */;
 			buildPhases = (
 				9407FB67632F3C08CBA70891 /* [CP] Check Pods Manifest.lock */,
 				960DAC9F26396859005DEABB /* Sources */,
@@ -405,12 +405,12 @@
 			);
 			dependencies = (
 			);
-			name = Greetings;
+			name = LolaDrives;
 			packageProductDependencies = (
 				962759CA28854C1F00967FAC /* Charts */,
 			);
 			productName = Greetings;
-			productReference = 960DACA326396859005DEABB /* Greetings.app */;
+			productReference = 960DACA326396859005DEABB /* LolaDrives.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -427,7 +427,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 960DAC9E26396859005DEABB /* Build configuration list for PBXProject "Greetings" */;
+			buildConfigurationList = 960DAC9E26396859005DEABB /* Build configuration list for PBXProject "LolaDrives" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -436,13 +436,11 @@
 				Base,
 			);
 			mainGroup = 960DAC9A26396859005DEABB;
-			packageReferences = (
-			);
 			productRefGroup = 960DACA426396859005DEABB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				960DACA226396859005DEABB /* Greetings */,
+				960DACA226396859005DEABB /* LolaDrives */,
 			);
 		};
 /* End PBXProject section */
@@ -506,7 +504,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Greetings-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-LolaDrives-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -519,15 +517,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Greetings/Pods-Greetings-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-LolaDrives/Pods-LolaDrives-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Greetings/Pods-Greetings-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-LolaDrives/Pods-LolaDrives-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Greetings/Pods-Greetings-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LolaDrives/Pods-LolaDrives-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -703,12 +701,12 @@
 		};
 		960DACB32639685A005DEABB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B5806C2B8A4FB5A7682F178 /* Pods-Greetings.debug.xcconfig */;
+			baseConfigurationReference = 73AB7C3AF9D206D567FA795C /* Pods-LolaDrives.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Greetings/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"LolaDrives/Preview Content\"";
 				DEVELOPMENT_TEAM = TN69MHQ4SY;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -719,7 +717,7 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/LTSupportAutomotive/LTSupportAutomotive.framework/Headers\"",
 				);
-				INFOPLIST_FILE = Greetings/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/LolaDrives/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -731,7 +729,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "de.uni-saarland.stud.s8mechen";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Greetings/Greetings-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/LolaDrives/LolaDrives-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -739,12 +737,12 @@
 		};
 		960DACB42639685A005DEABB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D15ED78B4394F1548B5880B /* Pods-Greetings.release.xcconfig */;
+			baseConfigurationReference = 422FF82BD96538E01B021A56 /* Pods-LolaDrives.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Greetings/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"LolaDrives/Preview Content\"";
 				DEVELOPMENT_TEAM = TN69MHQ4SY;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -755,7 +753,7 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/LTSupportAutomotive/LTSupportAutomotive.framework/Headers\"",
 				);
-				INFOPLIST_FILE = Greetings/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/LolaDrives/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -768,7 +766,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.uni-saarland.stud.s8mechen";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/Greetings/Greetings-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/LolaDrives/LolaDrives-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -777,7 +775,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		960DAC9E26396859005DEABB /* Build configuration list for PBXProject "Greetings" */ = {
+		960DAC9E26396859005DEABB /* Build configuration list for PBXProject "LolaDrives" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				960DACB02639685A005DEABB /* Debug */,
@@ -786,7 +784,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		960DACB22639685A005DEABB /* Build configuration list for PBXNativeTarget "Greetings" */ = {
+		960DACB22639685A005DEABB /* Build configuration list for PBXNativeTarget "LolaDrives" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				960DACB32639685A005DEABB /* Debug */,
