@@ -7,7 +7,7 @@ struct MenuView: View {
         GridItem(.flexible())
     ]
     @ObservedObject var locationHelper = LocationHelper()
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     
 //TODO: columns auto fit when phone is rotated
@@ -19,7 +19,7 @@ struct MenuView: View {
                     NavigationLink(destination: {
                         switch menuItem.title {
                         case "RDE":
-                            if !viewModel.model.started {
+                            if !model.started {
                                 RdeSettingsView()
                             }else{
                                 RdeView()

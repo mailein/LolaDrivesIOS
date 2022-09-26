@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RdeSettingsView: View{
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     @State var unableToTap = false
     
@@ -14,11 +14,11 @@ struct RdeSettingsView: View{
                 .foregroundColor(.gray)
             Spacer()
 
-            Text("\(Int(viewModel.model.distanceSetting)) km")
+            Text("\(Int(model.distanceSetting)) km")
                 .font(.system(size: 60))
             
             Slider(
-                value: $viewModel.model.distanceSetting,
+                value: $model.distanceSetting,
                 in: 48...100
             ) {
                 Text("distance")
@@ -45,11 +45,11 @@ struct RdeSettingsView: View{
                     .cornerRadius(10)
             }
             .simultaneousGesture(TapGesture().onEnded{
-                if !viewModel.isStartLiveMonitoringButton() {
+                if !model.startLiveMonitoring {
                     unableToTap = true
                 } else {
                     unableToTap = false
-                    viewModel.startRDE()
+                    model.startRDE()
                     obd.run(isLiveMonitoring: false, selectedCommands: [])
                 }
             })

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RdeView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     
     var body: some View {
@@ -39,7 +39,7 @@ struct RdeView: View {
     }
     
     struct TopIndicatorsSection: View{
-        @EnvironmentObject var viewModel: ViewModel
+        @EnvironmentObject var model: Model
         var t_u: Double//obd.outputValues[4,5,6] // in seconds
         var t_r: Double
         var t_m: Double
@@ -89,7 +89,7 @@ struct RdeView: View {
     }
 
     struct CategoryDistanceDynamicsSection: View{
-        @EnvironmentObject var viewModel: ViewModel
+        @EnvironmentObject var model: Model
         @EnvironmentObject var obd: MyOBD
         var terrain: Category
         
@@ -98,11 +98,10 @@ struct RdeView: View {
                 Text(terrain.rawValue)
                     .font(.title3)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+                let totalDistance = Int(model.distanceSetting)
                 switch terrain {
                 case .URBAN:
                     let distance = !obd.outputValues.keys.contains("d_u") ? 0 : obd.outputValues["d_u"]!
-                    let totalDistance = viewModel.getDistanceSetting()
                     let duration = !obd.outputValues.keys.contains("t_u") ? 0 : obd.outputValues["t_u"]!
                     let avgv = !obd.outputValues.keys.contains("u_avg_v") ? 0 : obd.outputValues["u_avg_v"]!
                     let rpa = !obd.outputValues.keys.contains("u_rpa") ? 0 : obd.outputValues["u_rpa"]!
@@ -113,7 +112,6 @@ struct RdeView: View {
                     DynamicsBar(terrain: .URBAN, avg_v: avgv, rpa: rpa, pct: pct)
                 case .RURAL:
                     let distance = !obd.outputValues.keys.contains("d_r") ? 0 : obd.outputValues["d_r"]!
-                    let totalDistance = viewModel.getDistanceSetting()
                     let duration = !obd.outputValues.keys.contains("t_r") ? 0 : obd.outputValues["t_r"]!
                     let avgv = !obd.outputValues.keys.contains("r_avg_v") ? 0 : obd.outputValues["r_avg_v"]!
                     let rpa = !obd.outputValues.keys.contains("r_rpa") ? 0 : obd.outputValues["r_rpa"]!
@@ -124,7 +122,6 @@ struct RdeView: View {
                     DynamicsBar(terrain: .RURAL, avg_v: avgv, rpa: rpa, pct: pct)
                 case .MOTORWAY:
                     let distance = !obd.outputValues.keys.contains("d_m") ? 0 : obd.outputValues["d_m"]!
-                    let totalDistance = viewModel.getDistanceSetting()
                     let duration = !obd.outputValues.keys.contains("t_m") ? 0 : obd.outputValues["t_m"]!
                     let avgv = !obd.outputValues.keys.contains("m_avg_v") ? 0 : obd.outputValues["m_avg_v"]!
                     let rpa = !obd.outputValues.keys.contains("m_rpa") ? 0 : obd.outputValues["m_rpa"]!
@@ -139,7 +136,7 @@ struct RdeView: View {
     }
 
     struct StopRdeNavLink: View{
-        @EnvironmentObject var viewModel: ViewModel
+        @EnvironmentObject var model: Model
         @EnvironmentObject var obd: MyOBD
         
         var body: some View{

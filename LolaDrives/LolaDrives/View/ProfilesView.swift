@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct ProfilesView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
 //    @Binding var profiles: [Profile]//model
     @State private var unableToSelect = false
     
     var body: some View {
         List {
-            ForEach($viewModel.model.profiles) { $profile in
+            ForEach($model.profiles) { $profile in
                 NavigationLink(destination: ProfileEditView(profile: $profile)){
                     Text(profile.name)
                     if profile.isSelected{
@@ -18,9 +18,9 @@ struct ProfilesView: View {
                 .disabled(obd.isLiveMonitoringOngoing())//viewModel.isStartLiveMonitoring() doesn't change here, because viewmodel doesn't publish the property change, model does.
                 .swipeActions(edge: .trailing, allowsFullSwipe: false){
                     Button(role: .destructive){
-                        if viewModel.isStartLiveMonitoringButton() {
+                        if model.startLiveMonitoring {
                             unableToSelect = false
-                            viewModel.deleteProfile(profile)
+                            model.deleteProfile(profile)
                         }else{
                             unableToSelect = true
                         }
@@ -30,9 +30,9 @@ struct ProfilesView: View {
                 }
                 .swipeActions(edge: .leading, allowsFullSwipe: false){
                     Button{
-                        if viewModel.isStartLiveMonitoringButton() {
+                        if model.startLiveMonitoring {
                             unableToSelect = false
-                            viewModel.selectProfile(profile)
+                            model.setSelectedProfile(to: profile)
                         }else{
                             unableToSelect = true
                         }
@@ -51,6 +51,9 @@ struct ProfilesView: View {
             .alert("Unable to select / delete during live monitoring", isPresented: $unableToSelect) { Button("OK", role: .cancel, action: {})
             }
         }
+        .onAppear{
+            model.getSelectedProfile()
+        }
         .toolbar{
             ToolbarItem(placement: .bottomBar){
                 NewButton()
@@ -65,25 +68,25 @@ struct ProfilesView: View {
     func NewButton()-> Button<Text> {
         Button("New"){
             let commands = ProfileCommands.commands
-            viewModel.addProfile(Profile("new profile", commands: commands))
+            model.addProfile(Profile("new profile", commands: commands))
         }
     }
     func delete(at offsets: IndexSet) {
-        viewModel.model.profiles.remove(atOffsets: offsets)
-        if !viewModel.model.profiles.isEmpty {
-            let selected = viewModel.model.selectedProfile
-            let index = viewModel.model.profiles.firstIndex(of: selected)
+        model.profiles.remove(atOffsets: offsets)
+        if !model.profiles.isEmpty {
+            let selected = model.getSelectedProfile()
+            let index = model.profiles.firstIndex(of: selected!)
             if offsets.contains(index!) {
-                viewModel.selectProfile(viewModel.model.profiles[0])
+                model.setSelectedProfile(to: model.profiles[0])
             }
         }
     }
     func reorder(from source: IndexSet, to destination: Int){
-        viewModel.model.profiles.move(fromOffsets: source, toOffset: destination)
+        model.profiles.move(fromOffsets: source, toOffset: destination)
     }
     func indexOf(profile: Profile) -> Int {
-        for index in 0..<viewModel.model.profiles.count{//don't use ForEach(0..<viewModel.model.profiles.count, \.self){index in ...}
-            if profile.id == viewModel.model.profiles[index].id {
+        for index in 0..<model.profiles.count{//don't use ForEach(0..<viewModel.model.profiles.count, \.self){index in ...}
+            if profile.id == model.profiles[index].id {
                 return index
             }
         }

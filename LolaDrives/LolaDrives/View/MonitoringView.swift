@@ -2,7 +2,7 @@ import SwiftUI
 //import LTSupportAutomotive
 
 struct MonitoringView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     
     var body: some View {
@@ -92,7 +92,7 @@ struct MonitoringView: View {
             Button(action: {
                 liveMonitoring()
             }, label: {
-                let (text, color) = viewModel.isStartLiveMonitoringButton() ? ("Start Live Monitoring", Color.green) : ("Stop Live Monitoring", Color.red)
+                let (text, color) = model.startLiveMonitoring ? ("Start Live Monitoring", Color.green) : ("Stop Live Monitoring", Color.red)
                 Text(text)
                     .bold()
                     .font(.title2)
@@ -102,7 +102,7 @@ struct MonitoringView: View {
                     .cornerRadius(10)
                     .padding()
             })
-            .disabled(viewModel.model.isRDEMonitoring)
+            .disabled(model.isRDEMonitoring)
         }
         .navigationBarTitle("Monitoring")
 //        .navigationBarTitleDisplayMode(.inline)
@@ -113,7 +113,7 @@ struct MonitoringView: View {
         }
         .onAppear{
             //rule out current ongoing live monitoring or ongoing rde monitoring
-            if viewModel.isStartLiveMonitoringButton() && !obd.isRunning() {
+            if model.startLiveMonitoring && !obd.isRunning() {
                 liveMonitoring()
             }
         }
@@ -128,12 +128,13 @@ struct MonitoringView: View {
     }
     
     func liveMonitoring(){
-        if viewModel.isStartLiveMonitoringButton() {//start live monitoring
-            obd.run(isLiveMonitoring: true, selectedCommands: viewModel.getSelectedProfileCommands())
+        if model.startLiveMonitoring {//start live monitoring
+            let selectedProfile = model.getSelectedProfile()
+            obd.run(isLiveMonitoring: true, selectedCommands: selectedProfile == nil ? [] : selectedProfile!.commands.filter{ $0.enabled })
         }else{//stop live monitoring
             obd.disconnect()
         }
-        viewModel.startLiveMonitoringToggle()
+        model.startLiveMonitoring.toggle()
     }
 }
 

@@ -1,23 +1,23 @@
 import Foundation
 
-struct Model{
+class Model: ObservableObject{
     //RDE view
-    var started: Bool = false
-    var isRDEMonitoring: Bool = false
+    @Published var started: Bool = false
+    @Published var isRDEMonitoring: Bool = false
     var distanceSetting: Float = 83
     //RDE details view
     var totalTime: Double = 0
     
     //Monitoring view
-    var startLiveMonitoring: Bool = true
+    @Published var startLiveMonitoring: Bool = true
     
     //profiles view
-    var profiles: [Profile]
-    var selectedProfile: Profile
+    @Published var profiles: [Profile]
+    @Published var selectedProfile: Profile?
     let profilesDataKey: String = "ProfilesData"
     
     //privacy view
-    var dataDonationEnabled: Bool = false
+    @Published var dataDonationEnabled: Bool = false
     
     init() {
         let profilesData: [Data] = UserDefaults.standard.array(forKey: profilesDataKey) as? [Data] ?? []
@@ -49,40 +49,53 @@ struct Model{
                     return Profile("error decoding ProfileData", commands: ProfileCommands.commands)
                 }
             }
-            selectedProfile = profiles.filter{ $0.isSelected }.first!
+            selectedProfile = nil
         }
     }
     
     //func to update the properties
     //MARK: - RDE
-    mutating func setDistanceSetting (to newDistanceSetting: Float) {
+    func setDistanceSetting (to newDistanceSetting: Float) {
         self.distanceSetting = newDistanceSetting
     }
     
-    mutating func startRDE() {
+    func startRDE() {
         isRDEMonitoring = true
         started = true
     }
     
-    mutating func exitRDE() {
+    func exitRDE() {
         isRDEMonitoring = false
         started = false
     }
     
     //MARK: - Profiles
-    mutating func setSelectedProfile (to newProfile: Profile) {
-        print("select profile \(newProfile.name)")
-        if self.selectedProfile.id == newProfile.id {
-            print("you can't deselect without selecting any profile first")
-            return
+    func getSelectedProfile() -> Profile? {
+        if selectedProfile != nil {
+            return selectedProfile
+        }else if !profiles.isEmpty {
+            selectedProfile = profiles.filter{ $0.isSelected }.first!//because selectedProfile can't be set with self in init, so workaround here
+            return selectedProfile
+        }else{
+            return nil
         }
+    }
+    
+    func setSelectedProfile (to newProfile: Profile) {
+        print("select profile \(newProfile.name)")
+//        if self.selectedProfile!.id == newProfile.id {
+//            print("you can't deselect without selecting any profile first")
+//            return
+//        }
         //deselect the old one
-        let lastIndex = self.profiles.firstIndex(of: self.selectedProfile)
-        if lastIndex != nil {
-            let p = profiles[lastIndex!]
-            p.isSelected.toggle()
-            
-            selectToggleProfileData(p)
+        if self.selectedProfile != nil {
+            let lastIndex = self.profiles.firstIndex(of: self.selectedProfile!)
+            if lastIndex != nil {
+                let p = profiles[lastIndex!]
+                p.isSelected.toggle()
+                
+                selectToggleProfileData(p)
+            }
         }
         //select the new one
         self.selectedProfile = newProfile
@@ -95,13 +108,18 @@ struct Model{
         }
     }
     
-    mutating func addProfile (_ newProfile: Profile) {
+    func addProfile (_ newProfile: Profile) {
         self.profiles.append(newProfile)
         
         addProfileData(newProfile)
+        
+        //if this is the first profile, also set it to selectedProfile
+        if profiles.count == 1 {        
+            setSelectedProfile(to: newProfile)
+        }
     }
     
-    mutating func deleteProfile (_ profile: Profile) {
+    func deleteProfile (_ profile: Profile) {
         let index = self.profiles.firstIndex(of: profile)
         if index != nil {
             self.profiles.remove(at: index!)
@@ -110,7 +128,10 @@ struct Model{
         }
         
         //deleting the selected profile shall set new selected profile
-        if profile.id == self.selectedProfile.id && !profiles.isEmpty {
+        if profiles.isEmpty {
+            selectedProfile = nil
+        }
+        if !profiles.isEmpty && profile.id == self.selectedProfile!.id {//this selectedProfile is the old selected one
             setSelectedProfile(to: profiles[0])
         }
     }

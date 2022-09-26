@@ -17,7 +17,7 @@ struct HistoryDetailView: View {
                 }
             RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{
-                    Text("RDE profile")
+                    Text("RDE Result")
                 }
         }
         .navigationBarTitleDisplayMode(.inline)

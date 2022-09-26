@@ -2,7 +2,7 @@ import SwiftUI
 import pcdfcore
 
 struct RdeLogView: View{
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     
     var body: some View{
@@ -10,7 +10,7 @@ struct RdeLogView: View{
             .toolbar{
                 ToolbarItem(placement: .navigationBarLeading){
                     Button(action: {
-                        viewModel.exitRDE()
+                        model.exitRDE()
                     }) {
                         HStack(spacing: 0) {
                             Image(systemName: "chevron.backward")

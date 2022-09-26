@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel = ViewModel()
+    @StateObject var model = Model()
     @StateObject var obd = MyOBD()
     
     @State private var isDisclaimerPresenting = true
@@ -14,7 +14,7 @@ struct ContentView: View {
                     InitialDisclaimerView(isDisclaimerPresenting: $isDisclaimerPresenting, isPrivacyPresenting: $isPrivacyPresenting)
                 }
         }
-        .environmentObject(viewModel)
+        .environmentObject(model)
         .environmentObject(obd)
         .onAppear{
             isDisclaimerPresenting = !UserDefaults.standard.bool(forKey: "initialScreenDisplayed")

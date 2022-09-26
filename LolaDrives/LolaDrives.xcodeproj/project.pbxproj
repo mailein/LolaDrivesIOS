@@ -74,7 +74,6 @@
 		96ECF8E327DA734300429CF1 /* ProfileCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8E227DA734300429CF1 /* ProfileCommands.swift */; };
 		96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8E427DA739600429CF1 /* Dynamics.swift */; };
 		96ECF8E727DA745C00429CF1 /* ProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8E627DA745C00429CF1 /* ProfileEditView.swift */; };
-		96ECF8EA27DA74F200429CF1 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECF8E927DA74F200429CF1 /* ViewModel.swift */; };
 		96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EFC14126FB4F9400BE44A6 /* RdeSettingsView.swift */; };
 		96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EFC14426FB508F00BE44A6 /* NavBar.swift */; };
 		96EFC14726FB510E00BE44A6 /* RdeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EFC14626FB510E00BE44A6 /* RdeView.swift */; };
@@ -178,7 +177,6 @@
 		96ECF8E227DA734300429CF1 /* ProfileCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCommands.swift; sourceTree = "<group>"; };
 		96ECF8E427DA739600429CF1 /* Dynamics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamics.swift; sourceTree = "<group>"; };
 		96ECF8E627DA745C00429CF1 /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
-		96ECF8E927DA74F200429CF1 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		96EFC14126FB4F9400BE44A6 /* RdeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeSettingsView.swift; sourceTree = "<group>"; };
 		96EFC14426FB508F00BE44A6 /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
 		96EFC14626FB510E00BE44A6 /* RdeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeView.swift; sourceTree = "<group>"; };
@@ -234,7 +232,6 @@
 				96C6F5F727EE79F5004C4B7D /* www */,
 				9640B61527DA725400A3D38C /* Model */,
 				96EFC14326FB4FF900BE44A6 /* View */,
-				96ECF8E827DA74DB00429CF1 /* ViewModel */,
 				960DACA626396859005DEABB /* GreetingsApp.swift */,
 				960DACAA2639685A005DEABB /* Assets.xcassets */,
 				960DACAF2639685A005DEABB /* Info.plist */,
@@ -337,14 +334,6 @@
 				96C6F61427F1D538004C4B7D /* uds.png */,
 			);
 			path = www;
-			sourceTree = "<group>";
-		};
-		96ECF8E827DA74DB00429CF1 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				96ECF8E927DA74F200429CF1 /* ViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		96EFC14326FB4FF900BE44A6 /* View */ = {
@@ -545,7 +534,6 @@
 				96EFC14726FB510E00BE44A6 /* RdeView.swift in Sources */,
 				96C6F5F527EE6EAE004C4B7D /* UrlWebView.swift in Sources */,
 				96EB80E4287D825F00BB2501 /* ChartsView.swift in Sources */,
-				96ECF8EA27DA74F200429CF1 /* ViewModel.swift in Sources */,
 				96EFC15126FB6F4100BE44A6 /* PrivacyView.swift in Sources */,
 				96FEAE8326CE6251005255D0 /* Util.swift in Sources */,
 				963238292734CA62008070D5 /* LocationHelper.swift in Sources */,

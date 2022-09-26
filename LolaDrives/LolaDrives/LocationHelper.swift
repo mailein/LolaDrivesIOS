@@ -47,7 +47,7 @@ final class LocationHelper: NSObject, ObservableObject, CLLocationManagerDelegat
             case .denied:
                 alert = LocationAlert.denied
                 showAlert = true
-            case .authorizedWhenInUse:
+            case .authorizedAlways, .authorizedWhenInUse://authorizedAlways can NOT be omitted here: in order to set altitude, etc.
                 locationManager.requestAlwaysAuthorization()
                 altitude = locationManager.location!.altitude
                 longitude = locationManager.location!.coordinate.longitude

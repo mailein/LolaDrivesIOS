@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     @State var allFiles = EventStore.getAllFiles()
     @State var unableToDelete = false
@@ -15,7 +15,7 @@ struct HistoryView: View {
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false){
                     Button(role: .destructive){
-                        if !viewModel.isStartLiveMonitoringButton() || obd.isRunning() {
+                        if !model.startLiveMonitoring || obd.isRunning() {
                             unableToDelete = true
                         } else {
                             unableToDelete = false

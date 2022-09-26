@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct NavBar: ViewModifier{
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     
     func body(content: Content) -> some View {

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProfileEditView: View{
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var model: Model
     @Binding var profile: Profile
     
     var body: some View{
@@ -34,7 +34,7 @@ struct ProfileEditView: View{
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .onDisappear{
-                viewModel.editProfile(to: profile) //TextField.onSubmit only works if user taps return in keyboard, Toggle.onSubmit doesn't respond either. so how to capture the new values? update onDisappear is a workaround
+                model.editProfileData(to: profile) //TextField.onSubmit only works if user taps return in keyboard, Toggle.onSubmit doesn't respond either. so how to capture the new values? update onDisappear is a workaround
             }
         }
     }
