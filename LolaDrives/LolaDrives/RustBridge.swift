@@ -1,6 +1,6 @@
 import Foundation
 
-class RustGreetings {
+class RustBridge {
     //both inputs and outputs should be in the same order as in spec file
     private var INITIAL_RELEVANT_OUTPUTS = [
 //        "vp",//is_urban: vp <= 60.0, is_rural: (60.0 < vp) && (vp <= 90.0), is_motorway: 90.0 < vp

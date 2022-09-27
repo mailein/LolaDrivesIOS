@@ -15,7 +15,7 @@ class RDEValidator {
     
     // The sensor profile of the car which is determined.
     var rdeProfile: [OBDCommand] = []
-    let rustGreetings: RustGreetings
+    let rustBridge: RustBridge
     var allOutputs: [[String: Double]] = []
     
     private var specBody: String
@@ -55,8 +55,8 @@ class RDEValidator {
          .FUEL_RATE : nil,
          .FUEL_AIR_EQUIVALENCE : nil]
 
-    init(rustGreetings: RustGreetings = RustGreetings()) {
-        self.rustGreetings = rustGreetings
+    init(rustBridge: RustBridge = RustBridge()) {
+        self.rustBridge = rustBridge
         //load spec file
         specBody = specFile(filename: "spec_body.lola")
         specHeader = specFile(filename: "spec_header.lola")
@@ -110,7 +110,7 @@ class RDEValidator {
         
         let (spec, extraNames) = buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.fuelType)
         // Setup RTLola Monitor
-        rustGreetings.initmonitor(s: spec, customOutputNames: extraNames)
+        rustBridge.initmonitor(s: spec, customOutputNames: extraNames)
         
         var result = [String: Double]()
         for event in data {
@@ -158,7 +158,7 @@ class RDEValidator {
                 print("Sending(Lola): \(inputsToSend)")
             }
             // Send latest received inputs to the RTLola monitor to update our streams, in return we receive an array of values of selected OutputStreams (see: lola-rust-bridge) which we send to the outputchannel (e.g. the UI).
-            let lolaResult = rustGreetings.sendevent(inputs: &inputsToSend, len_in: UInt32(inputsToSend.count))
+            let lolaResult = rustBridge.sendevent(inputs: &inputsToSend, len_in: UInt32(inputsToSend.count))
             
             if(VERBOSITY_MODE){
                 print("Receiving(Lola): \(lolaResult)")

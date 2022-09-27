@@ -18,7 +18,7 @@ class MyOBD: ObservableObject{
     private var fuelType: LTOBD2PID
     
     // LOLA
-    private let rustGreetings = RustGreetings()
+    private let rustBridge = RustBridge()
     
     @Published var mySpeed : String = "No data"
     @Published var myAltitude : String = "No data"
@@ -102,7 +102,7 @@ class MyOBD: ObservableObject{
         }
         connectedAdapterName = ""
         
-        rdeValidator = RDEValidator(rustGreetings: rustGreetings)
+        rdeValidator = RDEValidator(rustBridge: rustBridge)
     }
     
     deinit {
@@ -281,7 +281,7 @@ class MyOBD: ObservableObject{
                                 //TODO: if not supported, throw exception?
                                 if supported {
                                     let (specFile, extraNames) = self.rdeValidator.buildSpec(fuelRateSupported: self.fuelRateSupported, fuelType: self.myFuelType)
-                                    self.rustGreetings.initmonitor(s: specFile, customOutputNames: extraNames)
+                                    self.rustBridge.initmonitor(s: specFile, customOutputNames: extraNames)
                                     self.updateSensorData()
                                 }else{
                                     print("ERROR: Car is NOT compatible for RDE tests.")

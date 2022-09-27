@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		960DACA726396859005DEABB /* GreetingsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACA626396859005DEABB /* GreetingsApp.swift */; };
+		960DACA726396859005DEABB /* LolaDrivesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACA626396859005DEABB /* LolaDrivesApp.swift */; };
 		960DACA926396859005DEABB /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACA826396859005DEABB /* MenuView.swift */; };
 		960DACAB2639685A005DEABB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DACAA2639685A005DEABB /* Assets.xcassets */; };
 		960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DACAD2639685A005DEABB /* Preview Assets.xcassets */; };
-		960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustGreetings.swift */; };
+		960DACBC26396D95005DEABB /* RustBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustBridge.swift */; };
 		9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		962759CB28854C1F00967FAC /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 962759CA28854C1F00967FAC /* Charts */; };
 		962759CD2885A17300967FAC /* SingleLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962759CC2885A17300967FAC /* SingleLineChartView.swift */; };
@@ -105,7 +105,7 @@
 		422FF82BD96538E01B021A56 /* Pods-LolaDrives.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LolaDrives.release.xcconfig"; path = "Target Support Files/Pods-LolaDrives/Pods-LolaDrives.release.xcconfig"; sourceTree = "<group>"; };
 		73AB7C3AF9D206D567FA795C /* Pods-LolaDrives.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LolaDrives.debug.xcconfig"; path = "Target Support Files/Pods-LolaDrives/Pods-LolaDrives.debug.xcconfig"; sourceTree = "<group>"; };
 		960DACA326396859005DEABB /* LolaDrives.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LolaDrives.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		960DACA626396859005DEABB /* GreetingsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreetingsApp.swift; sourceTree = "<group>"; };
+		960DACA626396859005DEABB /* LolaDrivesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LolaDrivesApp.swift; sourceTree = "<group>"; };
 		960DACA826396859005DEABB /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		960DACAA2639685A005DEABB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		960DACAD2639685A005DEABB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		960DACB62639687D005DEABB /* libgreetings.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgreetings.a; path = ../cargo/target/universal/release/libgreetings.a; sourceTree = "<group>"; };
 		960DACB7263968A5005DEABB /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		960DACBA26396965005DEABB /* LolaDrives-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LolaDrives-Bridging-Header.h"; sourceTree = "<group>"; };
-		960DACBB26396D95005DEABB /* RustGreetings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustGreetings.swift; sourceTree = "<group>"; };
+		960DACBB26396D95005DEABB /* RustBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustBridge.swift; sourceTree = "<group>"; };
 		962759C928854C0F00967FAC /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
 		962759CC2885A17300967FAC /* SingleLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineChartView.swift; sourceTree = "<group>"; };
 		962759CE2886B76900967FAC /* BalloonMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonMarker.swift; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 		9648C84F287CCD60004E0650 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rde-lola-test-drive-spec-no-percentile1.lola"; sourceTree = "<group>"; };
 		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
-		966BAB97268398040075984D /* greetings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = greetings.h; path = ../cargo/src/greetings.h; sourceTree = "<group>"; };
+		966BAB97268398040075984D /* bridgeLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bridgeLib.h; path = ../cargo/src/bridgeLib.h; sourceTree = "<group>"; };
 		9670CCA4286F2F9200E1BDC9 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		969B982E28071147004A2123 /* spec_header.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_header.lola; sourceTree = "<group>"; };
 		969B9832280EB0DF004A2123 /* spec_fuel_rate_input.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuel_rate_input.lola; sourceTree = "<group>"; };
@@ -209,7 +209,7 @@
 			children = (
 				969B982D280710C3004A2123 /* lola */,
 				96B71F2B271D7C6A00AB2E8E /* ppcdf */,
-				966BAB97268398040075984D /* greetings.h */,
+				966BAB97268398040075984D /* bridgeLib.h */,
 				960DACA526396859005DEABB /* LolaDrives */,
 				960DACA426396859005DEABB /* Products */,
 				960DACB52639687D005DEABB /* Frameworks */,
@@ -232,12 +232,12 @@
 				96C6F5F727EE79F5004C4B7D /* www */,
 				9640B61527DA725400A3D38C /* Model */,
 				96EFC14326FB4FF900BE44A6 /* View */,
-				960DACA626396859005DEABB /* GreetingsApp.swift */,
+				960DACA626396859005DEABB /* LolaDrivesApp.swift */,
 				960DACAA2639685A005DEABB /* Assets.xcassets */,
 				960DACAF2639685A005DEABB /* Info.plist */,
 				960DACAC2639685A005DEABB /* Preview Content */,
 				960DACBA26396965005DEABB /* LolaDrives-Bridging-Header.h */,
-				960DACBB26396D95005DEABB /* RustGreetings.swift */,
+				960DACBB26396D95005DEABB /* RustBridge.swift */,
 				96A0DADC26BC205900934FCA /* RDEValidator.swift */,
 				96FEAE8226CE6251005255D0 /* Util.swift */,
 				962B13D726D7E432001F8760 /* MyOBD.swift */,
@@ -524,7 +524,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				960DACBC26396D95005DEABB /* RustGreetings.swift in Sources */,
+				960DACBC26396D95005DEABB /* RustBridge.swift in Sources */,
 				96EFC14926FB69D500BE44A6 /* HistoryView.swift in Sources */,
 				96EFC14B26FB6E3200BE44A6 /* MonitoringView.swift in Sources */,
 				962759CD2885A17300967FAC /* SingleLineChartView.swift in Sources */,
@@ -560,7 +560,7 @@
 				96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */,
 				96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */,
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
-				960DACA726396859005DEABB /* GreetingsApp.swift in Sources */,
+				960DACA726396859005DEABB /* LolaDrivesApp.swift in Sources */,
 				96C6F60F27F1CF63004C4B7D /* BaseWebView.swift in Sources */,
 				962759CF2886B76900967FAC /* BalloonMarker.swift in Sources */,
 			);
