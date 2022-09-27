@@ -9,15 +9,15 @@ struct HistoryDetailView: View {
         TabView{
             EventLogView(file: file)
                 .tabItem{
-                    Text("Event log")
+                    Label("Event log", systemImage: "doc.plaintext")
                 }
             ChartsView(file: file)
                 .tabItem{
-                    Text("Charts")
+                    Label("Charts", systemImage: "chart.xyaxis.line")
                 }
             RdeResultView(fileName: file.lastPathComponent)
                 .tabItem{
-                    Text("RDE Result")
+                    Label("RDE Result", systemImage: "car")
                 }
         }
         .navigationBarTitleDisplayMode(.inline)

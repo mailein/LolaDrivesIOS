@@ -9,7 +9,7 @@ struct CapsuleView: View{
     private var barWidth: CGFloat = 1
     private var ballHeight: CGFloat = 10
     
-    let VERBOSITY_MODE = true
+    let VERBOSITY_MODE = false
     
     init(barOffsets: [Double] = [0, 1], ballOffsets: [Double] = [0, 1], capsuleCategory: CapsuleCategory, width: Double = 0){
         self.barOffsets = barOffsets
