@@ -10,7 +10,7 @@ struct HistoryView: View {
         List {
             //need to bind to all files, so that the view updates when a file is deleted
             ForEach($allFiles, id: \.self) {$fileURL in
-                NavigationLink(destination: HistoryDetailView(file: fileURL)){
+                NavigationLink(destination: HistoryDetailView(fileURL: fileURL)){
                     Text(fileURL.deletingPathExtension().lastPathComponent)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false){

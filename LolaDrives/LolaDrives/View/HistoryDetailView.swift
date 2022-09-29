@@ -3,19 +3,19 @@ import pcdfcore
 import Charts
 
 struct HistoryDetailView: View {
-    var file: URL
+    var fileURL: URL
     
     var body: some View {
         TabView{
-            EventLogView(file: file)
+            EventLogView(fileURL: fileURL)
                 .tabItem{
                     Label("Event log", systemImage: "doc.plaintext")
                 }
-            ChartsView(file: file)
+            ChartsView(fileURL: fileURL)
                 .tabItem{
                     Label("Charts", systemImage: "chart.xyaxis.line")
                 }
-            RdeResultView(fileName: file.lastPathComponent)
+            RdeResultView(fileName: fileURL.lastPathComponent)
                 .tabItem{
                     Label("RDE Result", systemImage: "car")
                 }
@@ -23,7 +23,7 @@ struct HistoryDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar{
             ToolbarItem(placement: .principal) {
-                Text(file.deletingPathExtension().lastPathComponent)
+                Text(fileURL.deletingPathExtension().lastPathComponent)
             }
         }
         .padding(.top, 1)//a hopefully invisible workaround, otherwise TabView being inside NavigationView causes the navigation bar to be transparent
@@ -31,11 +31,22 @@ struct HistoryDetailView: View {
 }
 
 struct EventLogView: View{
-    var file: URL
+    var fileURL: URL
+    var fileName: String
     @StateObject private var eventStore = EventStore()
     
-    init(file: URL){
-        self.file = file
+    init(fileURL: URL){
+        self.fileURL = fileURL
+        self.fileName = fileURL.lastPathComponent
+    }
+    
+    init(fileName: String){
+        do{
+            try self.fileURL = EventStore.fileURL(fileName: fileName)
+        }catch{
+            self.fileURL = URL(fileURLWithPath: "")
+        }
+        self.fileName = fileName
     }
     
     var body: some View{
@@ -50,7 +61,7 @@ struct EventLogView: View{
             }
         }
         .onAppear{
-            EventStore.load(fileURL: file){result in
+            EventStore.load(fileURL: fileURL){result in
                 if case .success(let e) = result {
                     eventStore.events = e
                 }

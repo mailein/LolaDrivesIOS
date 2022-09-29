@@ -2,11 +2,28 @@ import SwiftUI
 import pcdfcore
 
 struct RdeLogView: View{
+    @State var selectedTab = 2
     @EnvironmentObject var model: Model
     @EnvironmentObject var obd: MyOBD
     
     var body: some View{
-        RdeResultView(fileName: obd.getFileName())
+        TabView(selection: $selectedTab){
+            EventLogView(fileName: obd.getFileName())
+                .tabItem{
+                    Label("Event log", systemImage: "doc.plaintext")
+                }
+                .tag(0)
+            ChartsView(fileName: obd.getFileName())
+                .tabItem{
+                    Label("Charts", systemImage: "chart.xyaxis.line")
+                }
+                .tag(1)
+            RdeResultView(fileName: obd.getFileName())
+                .tabItem{
+                    Label("RDE Result", systemImage: "car")
+                }
+                .tag(2)
+        }
             .toolbar{
                 ToolbarItem(placement: .navigationBarLeading){
                     Button(action: {

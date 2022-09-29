@@ -3,9 +3,24 @@ import pcdfcore
 import Charts
 
 struct ChartsView: View {
-    var file: URL
+    var fileURL: URL
+    var fileName: String
     @StateObject private var eventStore = EventStore()
     @State private var selectedChart: ChartDataName = .avgNoxAtFuelrate
+    
+    init(fileURL: URL){
+        self.fileURL = fileURL
+        self.fileName = fileURL.lastPathComponent
+    }
+    
+    init(fileName: String){
+        do {
+            try self.fileURL = EventStore.fileURL(fileName: fileName)
+        }catch{
+            self.fileURL = URL(fileURLWithPath: "")
+        }
+        self.fileName = fileName
+    }
     
     var body: some View {
         //ScrollView doesn't work automatically with Charts without specifying the width and height of the chart
@@ -67,7 +82,7 @@ struct ChartsView: View {
             //reset upon different files
             eventStore.resetValues()
             
-            EventStore.load(fileURL: file) { result in
+            EventStore.load(fileURL: fileURL) { result in
                 if case .success(let events) = result {
                     //altitude
                     let gpsEvents: [GPSEvent] = events
