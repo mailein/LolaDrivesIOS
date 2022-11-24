@@ -25,22 +25,25 @@ struct RdeLogView: View{
                 .tag(2)
         }
             .toolbar{
-                ToolbarItem(placement: .navigationBarLeading){
-                    Button(action: {
-                        model.exitRDE()
-                    }) {
-                        HStack(spacing: 0) {
-                            Image(systemName: "chevron.backward")
-                                .aspectRatio(contentMode: .fill)
-                            Text("Configuration")
-                        }
-                    }
-                }
+//                ToolbarItem(placement: .navigationBarLeading){
+//                    Button(action: {
+//                        model.exitRDE()
+//                    }) {
+//                        HStack(spacing: 0) {
+//                            Image(systemName: "chevron.backward")
+//                                .aspectRatio(contentMode: .fill)
+//                            Text("Configuration")
+//                        }
+//                    }
+//                }
                 ToolbarItem(placement: .navigationBarTrailing){
                     ConnectedDisconnectedView(connected: obd.isConnected())
                 }
             }
-            .navigationBarBackButtonHidden(true)
+//            .navigationBarBackButtonHidden(true)
+            .onDisappear{
+                model.exitRDE()
+            }
     }
 }
 
