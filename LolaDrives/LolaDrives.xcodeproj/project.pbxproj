@@ -114,7 +114,7 @@
 		960DACB7263968A5005DEABB /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		960DACBA26396965005DEABB /* LolaDrives-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LolaDrives-Bridging-Header.h"; sourceTree = "<group>"; };
 		960DACBB26396D95005DEABB /* RustBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RustBridge.swift; sourceTree = "<group>"; };
-		962759C928854C0F00967FAC /* Charts-master */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-master"; path = "../../../../../Downloads/Charts-master"; sourceTree = "<group>"; };
+		960F72E3293AC10B000F3D16 /* Charts-4.1.0 */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "Charts-4.1.0"; path = "../../../../../Downloads/Charts-4.1.0"; sourceTree = "<group>"; };
 		962759CC2885A17300967FAC /* SingleLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleLineChartView.swift; sourceTree = "<group>"; };
 		962759CE2886B76900967FAC /* BalloonMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonMarker.swift; sourceTree = "<group>"; };
 		962B13D726D7E432001F8760 /* MyOBD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOBD.swift; sourceTree = "<group>"; };
@@ -228,7 +228,7 @@
 		960DACA526396859005DEABB /* LolaDrives */ = {
 			isa = PBXGroup;
 			children = (
-				962759C928854C0F00967FAC /* Charts-master */,
+				960F72E3293AC10B000F3D16 /* Charts-4.1.0 */,
 				96C6F5F727EE79F5004C4B7D /* www */,
 				9640B61527DA725400A3D38C /* Model */,
 				96EFC14326FB4FF900BE44A6 /* View */,
