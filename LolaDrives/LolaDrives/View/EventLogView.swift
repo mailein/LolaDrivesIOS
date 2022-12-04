@@ -37,5 +37,6 @@ struct EventLogView: View{
                 }
             }
         }
+        .padding(.top, -30)
     }
 }
