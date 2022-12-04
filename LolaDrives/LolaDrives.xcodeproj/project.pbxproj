@@ -38,6 +38,9 @@
 		969B9844280EB0E0004A2123 /* spec_body.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B983A280EB0E0004A2123 /* spec_body.lola */; };
 		969B9845280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */; };
 		96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A0DADC26BC205900934FCA /* RDEValidator.swift */; };
+		96B508D3293CDC7800221F0B /* RdeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B508D2293CDC7800221F0B /* RdeResultView.swift */; };
+		96B508D5293CDCCA00221F0B /* EventLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B508D4293CDCCA00221F0B /* EventLogView.swift */; };
+		96B508D7293CDCFE00221F0B /* RdeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B508D6293CDCFE00221F0B /* RdeTabView.swift */; };
 		96B71F20271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F1F271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf */; };
 		96B71F22271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F21271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf */; };
 		96B71F24271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 96B71F23271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf */; };
@@ -139,6 +142,9 @@
 		969B983A280EB0E0004A2123 /* spec_body.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_body.lola; sourceTree = "<group>"; };
 		969B983B280EB0E0004A2123 /* spec_fuelrate_to_co2_gasoline.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuelrate_to_co2_gasoline.lola; sourceTree = "<group>"; };
 		96A0DADC26BC205900934FCA /* RDEValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDEValidator.swift; sourceTree = "<group>"; };
+		96B508D2293CDC7800221F0B /* RdeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeResultView.swift; sourceTree = "<group>"; };
+		96B508D4293CDCCA00221F0B /* EventLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogView.swift; sourceTree = "<group>"; };
+		96B508D6293CDCFE00221F0B /* RdeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RdeTabView.swift; sourceTree = "<group>"; };
 		96B71F1F271D7C2600AB2E8E /* 2021-09-13_11-45-26.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_11-45-26.ppcdf"; sourceTree = "<group>"; };
 		96B71F21271D7C3500AB2E8E /* 2021-09-13_12-02-52.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-02-52.ppcdf"; sourceTree = "<group>"; };
 		96B71F23271D7C4100AB2E8E /* 2021-09-13_12-03-30.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "2021-09-13_12-03-30.ppcdf"; sourceTree = "<group>"; };
@@ -345,6 +351,9 @@
 				96EFC14126FB4F9400BE44A6 /* RdeSettingsView.swift */,
 				96EFC14626FB510E00BE44A6 /* RdeView.swift */,
 				96C6F5F027E618E5004C4B7D /* RdeLogView.swift */,
+				96B508D2293CDC7800221F0B /* RdeResultView.swift */,
+				96B508D6293CDCFE00221F0B /* RdeTabView.swift */,
+				96B508D4293CDCCA00221F0B /* EventLogView.swift */,
 				96EFC14A26FB6E3200BE44A6 /* MonitoringView.swift */,
 				96ECF8E627DA745C00429CF1 /* ProfileEditView.swift */,
 				96EFC14E26FB6F1400BE44A6 /* ProfilesView.swift */,
@@ -543,6 +552,7 @@
 				96ECF8E127DA732700429CF1 /* Profile.swift in Sources */,
 				962F4AD928647D6C00DC15E5 /* MultiSensorReducer.swift in Sources */,
 				96ECF8E327DA734300429CF1 /* ProfileCommands.swift in Sources */,
+				96B508D3293CDC7800221F0B /* RdeResultView.swift in Sources */,
 				96ECF8DF27DA731100429CF1 /* CommandItem.swift in Sources */,
 				96C6F5F327E7727B004C4B7D /* CapsuleView.swift in Sources */,
 				962B13D826D7E432001F8760 /* MyOBD.swift in Sources */,
@@ -553,6 +563,7 @@
 				96C6F60D27F1CDDB004C4B7D /* AcknowledgementsView.swift in Sources */,
 				9648C84C287CC610004E0650 /* InitialDisclaimerView.swift in Sources */,
 				96C6F5F127E618E5004C4B7D /* RdeLogView.swift in Sources */,
+				96B508D7293CDCFE00221F0B /* RdeTabView.swift in Sources */,
 				96ECF8E527DA739600429CF1 /* Dynamics.swift in Sources */,
 				96EFC14526FB508F00BE44A6 /* NavBar.swift in Sources */,
 				96CD518D287235C7003BAE41 /* SingleBarChartView.swift in Sources */,
@@ -560,6 +571,7 @@
 				96EFC14F26FB6F1400BE44A6 /* ProfilesView.swift in Sources */,
 				96EFC14226FB4F9400BE44A6 /* RdeSettingsView.swift in Sources */,
 				96A0DADD26BC205900934FCA /* RDEValidator.swift in Sources */,
+				96B508D5293CDCCA00221F0B /* EventLogView.swift in Sources */,
 				960DACA726396859005DEABB /* LolaDrivesApp.swift in Sources */,
 				96C6F60F27F1CF63004C4B7D /* BaseWebView.swift in Sources */,
 				962759CF2886B76900967FAC /* BalloonMarker.swift in Sources */,
