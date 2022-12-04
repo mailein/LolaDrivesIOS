@@ -32,7 +32,7 @@ struct HistoryView: View {
             }
         }
         .navigationTitle("History")
-        .padding(.top, -30)
+//        .padding(.top, -30)
     }
 }
 
