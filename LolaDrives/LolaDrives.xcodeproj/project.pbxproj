@@ -12,7 +12,6 @@
 		960DACAB2639685A005DEABB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DACAA2639685A005DEABB /* Assets.xcassets */; };
 		960DACAE2639685A005DEABB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DACAD2639685A005DEABB /* Preview Assets.xcassets */; };
 		960DACBC26396D95005DEABB /* RustBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960DACBB26396D95005DEABB /* RustBridge.swift */; };
-		9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB62639687D005DEABB /* libgreetings.a */; };
 		962759CB28854C1F00967FAC /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 962759CA28854C1F00967FAC /* Charts */; };
 		962759CD2885A17300967FAC /* SingleLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962759CC2885A17300967FAC /* SingleLineChartView.swift */; };
 		962759CF2886B76900967FAC /* BalloonMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962759CE2886B76900967FAC /* BalloonMarker.swift */; };
@@ -25,6 +24,7 @@
 		9651D72B26CAAE14000F9A44 /* nox-valid.ppcdf in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */; };
 		966BAB962683979D0075984D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DACB7263968A5005DEABB /* libresolv.tbd */; };
 		9670CCA5286F2F9200E1BDC9 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9670CCA4286F2F9200E1BDC9 /* Uploader.swift */; };
+		96808AC92943EE52001F1089 /* libLolaDrives.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96808AC82943EDE7001F1089 /* libLolaDrives.a */; };
 		969B982B28070FB9004A2123 /* rde-lola-test-drive-spec-no-percentile1.lola in Resources */ = {isa = PBXBuildFile; fileRef = 9651D72826CAAB81000F9A44 /* rde-lola-test-drive-spec-no-percentile1.lola */; };
 		969B982F28071147004A2123 /* spec_header.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B982E28071147004A2123 /* spec_header.lola */; };
 		969B983C280EB0E0004A2123 /* spec_fuel_rate_input.lola in Resources */ = {isa = PBXBuildFile; fileRef = 969B9832280EB0DF004A2123 /* spec_fuel_rate_input.lola */; };
@@ -130,6 +130,7 @@
 		9651D72A26CAAE14000F9A44 /* nox-valid.ppcdf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nox-valid.ppcdf"; sourceTree = "<group>"; };
 		966BAB97268398040075984D /* bridgeLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bridgeLib.h; path = ../cargo/src/bridgeLib.h; sourceTree = "<group>"; };
 		9670CCA4286F2F9200E1BDC9 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
+		96808AC82943EDE7001F1089 /* libLolaDrives.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLolaDrives.a; path = ../cargo/target/universal/release/libLolaDrives.a; sourceTree = "<group>"; };
 		969B982E28071147004A2123 /* spec_header.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_header.lola; sourceTree = "<group>"; };
 		969B9832280EB0DF004A2123 /* spec_fuel_rate_input.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_fuel_rate_input.lola; sourceTree = "<group>"; };
 		969B9833280EB0DF004A2123 /* spec_maf_to_fuel_rate_diesel_fae.lola */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spec_maf_to_fuel_rate_diesel_fae.lola; sourceTree = "<group>"; };
@@ -200,9 +201,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9623A15F27C58572007DDA99 /* libgreetings.a in Frameworks */,
 				966BAB962683979D0075984D /* libresolv.tbd in Frameworks */,
 				962759CB28854C1F00967FAC /* Charts in Frameworks */,
+				96808AC92943EE52001F1089 /* libLolaDrives.a in Frameworks */,
 				EF56647696A52676436E4B82 /* Pods_LolaDrives.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -268,6 +269,7 @@
 		960DACB52639687D005DEABB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				96808AC82943EDE7001F1089 /* libLolaDrives.a */,
 				96F77EB926B3276D00B22DE2 /* pcdfcore.framework */,
 				960DACB7263968A5005DEABB /* libresolv.tbd */,
 				960DACB62639687D005DEABB /* libgreetings.a */,
