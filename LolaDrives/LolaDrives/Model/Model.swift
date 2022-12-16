@@ -4,9 +4,7 @@ class Model: ObservableObject{
     //RDE view
     @Published var started: Bool = false
     @Published var isRDEMonitoring: Bool = false
-    var distanceSetting: Float = 83
-    //RDE details view
-    var totalTime: Double = 0
+    @Published var distanceSetting: Float = 83
     
     //Monitoring view
     @Published var startLiveMonitoring: Bool = true
