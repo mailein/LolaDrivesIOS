@@ -6,7 +6,7 @@ Plug an OBD-II adapter into the car's OBD-II port, and connect your iPhone with 
 then follow the instructions in the App.
 
 # More info
-For more information on background, scientific paper, how to use, please visit https://www.loladrives.app/
+For more information on background, scientific paper, Android version, please visit https://www.loladrives.app/
 
 # Frameworks
 
