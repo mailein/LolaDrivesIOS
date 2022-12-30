@@ -39,7 +39,7 @@ LolaDrives for iOS uses the following frameworks:
       ```
       .\gradlew linkNative
       ```
-      to generate the framework.
+      to generate the PCDFCore framework.
     
     - Finally import the framework *build/bin/native/releaseFramework/pcdfcore.framework* to XCode: TARGETS, General tab, Frameworks, Libraries, and Embedded Content.
   
