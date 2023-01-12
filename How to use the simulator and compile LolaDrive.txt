@@ -1,0 +1,36 @@
+========How to use the simulator? Begin=========
+
+1.
+Simulator: power on, plug USB to computer, 
+In OBD-2-simulator, run
+	ls /dev
+find 
+	tty.usbmodem11101
+and note it down.
+
+2.
+Add nox-valid.ppcdf to OBD-2-simulator/kotlin,
+if build failed because of unresolved reference to pcdf stuff, also put pcdfcore folder to OBD-2-simulator/kotlin, 
+Simulator: power on, plug USB to computer, plug in OBD II adpter,
+in OBD-2-simulator/kotlin, run
+	gradle run --args "nox-valid.ppcdf tty.usbmodem11101"
+
+	ctrl+c to stop
+
+3.
+Find other car data recordings (*.ppcdf files) in
+https://api.loladrives.app/debug/donations/4Mh8PvP5i9Z8nxJcoz4C5T5qfBERihp/index
+
+========How to use the simulator? End=========
+
+
+
+
+========How to compile lola drive locally? Begin========
+
+in pcdfcore/pcdfcore, run 
+	gradle publishToMavenLocal
+open rde-app in Android Studio, build(the hammer icon) first
+connect android phone to the computer and select the device and run
+
+========How to compile lola drive locally? End========
